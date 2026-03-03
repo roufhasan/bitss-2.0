@@ -14,10 +14,12 @@ import {
   Globe,
   Server,
   ChevronRight,
-  Star,
+  Shield,
+  Menu,
+  X,
 } from "lucide-react";
 
-// ─── DATA ────────────────────────────────────────────────────────────────────
+// ─── DATA ─────────────────────────────────────────────────────────────────────
 
 const PRODUCTS = [
   {
@@ -26,8 +28,15 @@ const PRODUCTS = [
     name: "Bitss WAP Protect",
     tag: "Web Admin & Portal",
     icon: Lock,
-    color: "#C8102E",
-    glow: "rgba(200,16,46,0.25)",
+    accent: "#DC2626",
+    accentText: "text-red-600",
+    accentBg: "bg-red-50",
+    accentDot: "bg-red-500",
+    accentBtn: "text-red-600 hover:text-red-700",
+    iconBg: "bg-red-100",
+    layer: "Web Layer",
+    layerClass: "bg-red-50 text-red-600 border-red-100",
+    hoverBorder: "hover:border-red-300",
     desc: "Login enforcement, admin-zone hardening, database administration firewall, and proactive protection for your website control layer.",
     features: [
       "Login brute-force prevention",
@@ -35,16 +44,22 @@ const PRODUCTS = [
       "DB admin firewall",
       "Proactive threat blocking",
     ],
-    layer: "Web Layer",
   },
   {
     id: "contact",
-    short: "Contact Form Shield",
+    short: "Contact Shield",
     name: "Bitss C",
     tag: "Form Protection",
     icon: MailX,
-    color: "#E85D04",
-    glow: "rgba(232,93,4,0.22)",
+    accent: "#EA580C",
+    accentText: "text-orange-600",
+    accentBg: "bg-orange-50",
+    accentDot: "bg-orange-500",
+    accentBtn: "text-orange-600 hover:text-orange-700",
+    iconBg: "bg-orange-100",
+    layer: "Web Layer",
+    layerClass: "bg-orange-50 text-orange-600 border-orange-100",
+    hoverBorder: "hover:border-orange-300",
     desc: "A dedicated shield for your website contact page — blocks malware payloads, virus uploads, and malicious form submissions before they reach your server.",
     features: [
       "Payload scanning on submit",
@@ -52,16 +67,22 @@ const PRODUCTS = [
       "Bot & spam filtering",
       "Clean submission guarantee",
     ],
-    layer: "Web Layer",
   },
   {
     id: "vwar-web",
-    short: "VWAR for Websites",
+    short: "VWAR Web",
     name: "Bitss VWAR Web",
     tag: "Server-Side Defense",
     icon: ScanLine,
-    color: "#F5A623",
-    glow: "rgba(245,166,35,0.2)",
+    accent: "#D97706",
+    accentText: "text-amber-600",
+    accentBg: "bg-amber-50",
+    accentDot: "bg-amber-500",
+    accentBtn: "text-amber-600 hover:text-amber-700",
+    iconBg: "bg-amber-100",
+    layer: "Server Layer",
+    layerClass: "bg-amber-50 text-amber-700 border-amber-100",
+    hoverBorder: "hover:border-amber-300",
     desc: "Server-side malware and virus scanning with real-time threat blocking for your website files and database. Keeps your hosting environment clean.",
     features: [
       "Deep file system scanning",
@@ -69,16 +90,22 @@ const PRODUCTS = [
       "Real-time threat blocking",
       "Quarantine & reporting",
     ],
-    layer: "Server Layer",
   },
   {
     id: "vwar-win",
-    short: "VWAR for Windows",
+    short: "VWAR Windows",
     name: "Bitss VWAR Windows",
     tag: "Endpoint Protection",
     icon: MonitorSmartphone,
-    color: "#0EA5E9",
-    glow: "rgba(14,165,233,0.2)",
+    accent: "#0284C7",
+    accentText: "text-sky-600",
+    accentBg: "bg-sky-50",
+    accentDot: "bg-sky-500",
+    accentBtn: "text-sky-600 hover:text-sky-700",
+    iconBg: "bg-sky-100",
+    layer: "Endpoint Layer",
+    layerClass: "bg-sky-50 text-sky-600 border-sky-100",
+    hoverBorder: "hover:border-sky-300",
     desc: "Real-time malware and virus protection for Windows laptops and desktops. Constant background defense for every device in your organization.",
     features: [
       "Real-time process monitoring",
@@ -86,39 +113,50 @@ const PRODUCTS = [
       "Lightweight background agent",
       "Instant quarantine & alerts",
     ],
-    layer: "Endpoint Layer",
   },
   {
     id: "usb",
-    short: "USB Key Protection",
+    short: "USB Protect",
     name: "Bitss USB Protect",
     tag: "Removable Media",
     icon: Usb,
-    color: "#22C55E",
-    glow: "rgba(34,197,94,0.2)",
-    desc: "Automatically scans and sanitizes USB storage keys the moment they are plugged in — preventing infected drives from spreading malware across your network.",
+    accent: "#059669",
+    accentText: "text-emerald-600",
+    accentBg: "bg-emerald-50",
+    accentDot: "bg-emerald-500",
+    accentBtn: "text-emerald-600 hover:text-emerald-700",
+    iconBg: "bg-emerald-100",
+    layer: "Media Layer",
+    layerClass: "bg-emerald-50 text-emerald-600 border-emerald-100",
+    hoverBorder: "hover:border-emerald-300",
+    desc: "Auto-scans and sanitizes USB storage keys the moment they are plugged in — preventing infected drives from spreading malware across your network.",
     features: [
       "Auto-scan on plug-in",
       "Malware removal before access",
       "Drive health reporting",
       "Policy-based USB control",
     ],
-    layer: "Media Layer",
   },
 ];
 
 const BUNDLES = [
   {
     name: "Web Shield Pack",
-    desc: "Complete web-layer security",
+    desc: "Complete web-layer security for your online presence.",
     products: ["WAP Protect", "Contact Form Shield", "VWAR for Websites"],
-    color: "#C8102E",
-    popular: false,
     icon: Globe,
+    iconBg: "bg-red-100",
+    iconColor: "text-red-600",
+    border: "border-slate-200 hover:border-red-300",
+    bg: "bg-white",
+    checkColor: "text-red-500",
+    btnClass:
+      "border border-slate-200 text-slate-700 hover:border-red-400 hover:text-red-600 hover:bg-red-50",
+    popular: false,
   },
   {
     name: "Full Coverage",
-    desc: "Every entry point. One ecosystem.",
+    desc: "Every entry point secured. One ecosystem, full chain.",
     products: [
       "WAP Protect",
       "Contact Form Shield",
@@ -126,23 +164,122 @@ const BUNDLES = [
       "VWAR for Windows",
       "USB Key Protection",
     ],
-    color: "#F5A623",
-    popular: true,
     icon: ShieldCheck,
+    iconBg: "bg-red-600",
+    iconColor: "text-white",
+    border: "border-red-600",
+    bg: "bg-white",
+    checkColor: "text-red-500",
+    btnClass: "bg-red-600 hover:bg-red-700 text-white",
+    popular: true,
   },
   {
-    name: "Endpoint + Media Pack",
-    desc: "Device & removable media defense",
+    name: "Endpoint + Media",
+    desc: "Device and removable media protection for your team.",
     products: ["VWAR for Windows", "USB Key Protection"],
-    color: "#0EA5E9",
-    popular: false,
     icon: Server,
+    iconBg: "bg-sky-100",
+    iconColor: "text-sky-600",
+    border: "border-slate-200 hover:border-sky-300",
+    bg: "bg-white",
+    checkColor: "text-sky-500",
+    btnClass:
+      "border border-slate-200 text-slate-700 hover:border-sky-400 hover:text-sky-600 hover:bg-sky-50",
+    popular: false,
   },
 ];
 
-// ─── HOOKS ───────────────────────────────────────────────────────────────────
+const TICKER = [
+  {
+    type: "BLOCKED",
+    msg: "Malware payload in contact form submission",
+    color: "text-emerald-400",
+  },
+  {
+    type: "BLOCKED",
+    msg: "Brute-force login attempt — admin panel",
+    color: "text-emerald-400",
+  },
+  {
+    type: "ALERT",
+    msg: "Suspicious USB drive detected — WKSTN-07",
+    color: "text-amber-400",
+  },
+  {
+    type: "BLOCKED",
+    msg: "SQL injection via contact form — neutralized",
+    color: "text-emerald-400",
+  },
+  {
+    type: "BLOCKED",
+    msg: "Ransomware signature on Windows endpoint",
+    color: "text-emerald-400",
+  },
+  {
+    type: "INFO",
+    msg: "Threat intelligence updated — 3,841 new IOCs",
+    color: "text-sky-400",
+  },
+];
 
-function useInView(threshold = 0.15) {
+const STATS = [
+  { v: "500K+", l: "Endpoints Protected" },
+  { v: "99.9%", l: "Detection Rate" },
+  { v: "< 1ms", l: "Response Time" },
+  { v: "24/7", l: "Monitoring" },
+];
+
+const WHY = [
+  {
+    icon: Shield,
+    label: "AI-First Defense",
+    desc: "Deep learning trained on billions of threat signals.",
+  },
+  {
+    icon: Globe,
+    label: "Global Intel",
+    desc: "12M sensors across 150+ countries, updated live.",
+  },
+  {
+    icon: Zap,
+    label: "Zero-Trust Ready",
+    desc: "Every request verified. Every session monitored.",
+  },
+  {
+    icon: CheckCircle2,
+    label: "Compliance Built-in",
+    desc: "GDPR, ISO 27001, PCI DSS out of the box.",
+  },
+];
+
+const TESTIMONIALS = [
+  {
+    q: "After a near-miss ransomware attack we switched to Bitss. Six months in, they've blocked 47 intrusion attempts without a single breach.",
+    name: "Md. Rafiqul Islam",
+    role: "CTO, Dhaka Commerce Group",
+  },
+  {
+    q: "The SOC team responded in under 3 minutes. Their threat hunting uncovered an APT group dormant in our network for weeks.",
+    name: "Sarah Chen",
+    role: "CISO, FinTech Global",
+  },
+  {
+    q: "Bitss found 34 critical misconfigurations on day one. ROI was immediate. The compliance reporting alone is worth the cost.",
+    name: "James Okonkwo",
+    role: "VP Security, Meridian Health",
+  },
+];
+
+const NAV_LINKS = [
+  { label: "Products", href: "#products" },
+  { label: "Solutions", href: "#ecosystem" },
+  { label: "Pricing", href: "#bundles" },
+  { label: "About", href: "#about" },
+];
+
+// ─── HOOKS ────────────────────────────────────────────────────────────────────
+
+function useInView(threshold = 0.08) {
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
   useEffect(() => {
@@ -158,346 +295,143 @@ function useInView(threshold = 0.15) {
   return [ref, inView];
 }
 
-// ─── COMPONENTS ──────────────────────────────────────────────────────────────
+// ─── SMALL COMPONENTS ────────────────────────────────────────────────────────
 
-function SectionTag({ children }) {
+function Tag({ children }) {
   return (
-    <span
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: "8px",
-        padding: "4px 12px",
-        border: "1px solid rgba(200,16,46,0.35)",
-        color: "#C8102E",
-        fontFamily: "'JetBrains Mono', monospace",
-        fontSize: "10px",
-        letterSpacing: "0.2em",
-        textTransform: "uppercase",
-      }}
-    >
-      <span
-        style={{
-          width: 6,
-          height: 6,
-          borderRadius: "50%",
-          background: "#C8102E",
-          display: "inline-block",
-        }}
-      />
+    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-100 text-red-600 text-[11px] font-semibold tracking-wide uppercase">
+      <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
       {children}
     </span>
   );
 }
 
-function ProductCard({ product, index }) {
+function ProductCard({ p, i }) {
   const [ref, inView] = useInView();
-  const [hovered, setHovered] = useState(false);
-  const Icon = product.icon;
-
+  const [hov, setHov] = useState(false);
+  const Icon = p.icon;
   return (
     <div
       ref={ref}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        position: "relative",
-        padding: "28px 24px",
-        border: `1px solid ${hovered ? product.color + "60" : "rgba(255,255,255,0.06)"}`,
-        background: hovered
-          ? `rgba(255,255,255,0.04)`
-          : "rgba(255,255,255,0.015)",
-        cursor: "default",
-        transition: "all 0.4s ease",
-        opacity: inView ? 1 : 0,
-        transform: inView ? "translateY(0)" : "translateY(32px)",
-        transitionDelay: `${index * 0.1}s`,
-        boxShadow: hovered ? `0 0 40px ${product.glow}` : "none",
-        backdropFilter: "blur(4px)",
-        clipPath:
-          "polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px))",
-      }}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{ transitionDelay: `${i * 0.06}s` }}
+      className={`relative flex flex-col bg-white rounded-2xl border p-5 sm:p-6 cursor-default transition-all duration-500
+        ${hov ? `border-transparent shadow-xl shadow-slate-200/80 -translate-y-1 ${p.hoverBorder}` : "border-slate-200 shadow-sm"}
+        ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}
+      `}
     >
-      {/* Layer badge */}
+      {/* Top accent bar */}
       <div
-        style={{
-          position: "absolute",
-          top: 16,
-          right: 16,
-          padding: "2px 8px",
-          background: product.color + "18",
-          border: `1px solid ${product.color}30`,
-          fontSize: 9,
-          color: product.color,
-          fontFamily: "'JetBrains Mono', monospace",
-          letterSpacing: "0.15em",
-          textTransform: "uppercase",
-        }}
+        className="absolute top-0 left-6 right-6 h-0.5 rounded-full transition-all duration-300"
+        style={{ background: hov ? p.accent : "transparent" }}
+      />
+      {/* Layer badge — hidden on very small screens to avoid overlap */}
+      <span
+        className={`hidden sm:inline-flex absolute top-4 right-4 text-[9px] font-semibold tracking-wide px-2 py-0.5 rounded-full border ${p.layerClass}`}
       >
-        {product.layer}
-      </div>
-
-      {/* Number */}
-      <div
-        style={{
-          fontFamily: "'Barlow Condensed', sans-serif",
-          fontSize: 11,
-          color: product.color + "70",
-          letterSpacing: "0.3em",
-          marginBottom: 16,
-          fontWeight: 700,
-        }}
-      >
-        {String(index + 1).padStart(2, "0")}
-      </div>
-
-      {/* Icon */}
-      <div
-        style={{
-          marginBottom: 16,
-          color: product.color,
-          transform: hovered ? "scale(1.15)" : "scale(1)",
-          transition: "transform 0.3s ease",
-          filter: hovered ? `drop-shadow(0 0 8px ${product.color})` : "none",
-        }}
-      >
-        <Icon size={32} strokeWidth={1.5} />
-      </div>
-
-      {/* Name */}
-      <div
-        style={{
-          fontFamily: "'Barlow Condensed', sans-serif",
-          fontSize: 22,
-          fontWeight: 900,
-          color: "#F0F4FF",
-          letterSpacing: "0.02em",
-          marginBottom: 4,
-          lineHeight: 1.1,
-        }}
-      >
-        {product.name}
-      </div>
-      <div
-        style={{
-          fontSize: 11,
-          color: product.color,
-          marginBottom: 14,
-          fontFamily: "'JetBrains Mono', monospace",
-          letterSpacing: "0.1em",
-        }}
-      >
-        {product.tag}
-      </div>
-
-      {/* Desc */}
-      <p
-        style={{
-          fontSize: 13,
-          color: "#8892A4",
-          lineHeight: 1.65,
-          marginBottom: 20,
-        }}
-      >
-        {product.desc}
+        {p.layer}
+      </span>
+      {/* Index */}
+      <p className="font-mono text-[10px] tracking-widest text-slate-300 mb-3">
+        {String(i + 1).padStart(2, "0")}
       </p>
-
-      {/* Features */}
-      <ul
-        style={{
-          listStyle: "none",
-          padding: 0,
-          margin: 0,
-          display: "flex",
-          flexDirection: "column",
-          gap: 8,
-        }}
+      {/* Icon + mobile layer badge row */}
+      <div className="flex items-center justify-between mb-3 sm:block">
+        <div
+          className={`inline-flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-300 ${p.iconBg} ${hov ? "scale-110" : ""}`}
+        >
+          <Icon size={20} strokeWidth={1.75} style={{ color: p.accent }} />
+        </div>
+        <span
+          className={`sm:hidden inline-flex text-[9px] font-semibold tracking-wide px-2 py-0.5 rounded-full border ${p.layerClass}`}
+        >
+          {p.layer}
+        </span>
+      </div>
+      <h3 className="font-['Barlow_Condensed'] text-[19px] sm:text-[21px] font-black text-slate-900 leading-tight mb-0.5">
+        {p.name}
+      </h3>
+      <p
+        className={`text-[10px] font-semibold tracking-wide uppercase mb-3 ${p.accentText}`}
       >
-        {product.features.map((f) => (
+        {p.tag}
+      </p>
+      <p className="text-slate-500 text-[13px] leading-relaxed mb-4 flex-1">
+        {p.desc}
+      </p>
+      <ul className="space-y-1.5 mb-4">
+        {p.features.map((f) => (
           <li
             key={f}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              fontSize: 12,
-              color: "#8892A4",
-            }}
+            className="flex items-start gap-2 text-[12px] text-slate-500"
           >
             <span
-              style={{
-                width: 4,
-                height: 4,
-                borderRadius: "50%",
-                background: product.color,
-                flexShrink: 0,
-              }}
+              className={`w-1.5 h-1.5 rounded-full shrink-0 mt-1.5 ${p.accentDot}`}
             />
             {f}
           </li>
         ))}
       </ul>
-
-      {/* Bottom divider + link */}
-      <div
-        style={{
-          marginTop: 24,
-          paddingTop: 16,
-          borderTop: "1px solid rgba(255,255,255,0.05)",
-        }}
-      >
+      <div className="pt-4 border-t border-slate-100 mt-auto">
         <a
           href="#contact"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-            fontSize: 12,
-            color: product.color,
-            textDecoration: "none",
-            transition: "gap 0.2s ease",
-            letterSpacing: "0.05em",
-          }}
+          className={`inline-flex items-center gap-1.5 text-[12px] font-semibold tracking-wide transition-colors ${p.accentBtn}`}
         >
-          Learn more <ChevronRight size={13} />
+          Learn more <ChevronRight size={12} />
         </a>
       </div>
     </div>
   );
 }
 
-function BundleCard({ bundle, index }) {
+function BundleCard({ b, i }) {
   const [ref, inView] = useInView();
-  const [hovered, setHovered] = useState(false);
-  const Icon = bundle.icon;
-
+  const Icon = b.icon;
   return (
     <div
       ref={ref}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        position: "relative",
-        padding: "32px 28px",
-        border: bundle.popular
-          ? `1px solid ${bundle.color}80`
-          : "1px solid rgba(255,255,255,0.07)",
-        background: bundle.popular
-          ? `${bundle.color}08`
-          : "rgba(255,255,255,0.02)",
-        transition: "all 0.4s ease",
-        opacity: inView ? 1 : 0,
-        transform: inView
-          ? bundle.popular
-            ? "scale(1.03)"
-            : "scale(1)"
-          : "translateY(24px)",
-        transitionDelay: `${index * 0.12}s`,
-        boxShadow: hovered
-          ? `0 0 50px ${bundle.color}25`
-          : bundle.popular
-            ? `0 0 30px ${bundle.color}15`
-            : "none",
-        flex: bundle.popular ? "1.1" : "1",
-        clipPath:
-          "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%)",
-      }}
+      style={{ transitionDelay: `${i * 0.1}s` }}
+      className={`relative w-full sm:flex-1 sm:min-w-[240px] sm:max-w-[340px] rounded-2xl border-2 p-6 sm:p-8 transition-all duration-500
+        ${b.border} ${b.bg}
+        ${b.popular ? "shadow-2xl shadow-red-100 sm:scale-[1.03]" : "shadow-sm hover:shadow-lg hover:-translate-y-1"}
+        ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}
+      `}
     >
-      {bundle.popular && (
-        <div
-          style={{
-            position: "absolute",
-            top: -1,
-            left: "50%",
-            transform: "translateX(-50%)",
-            background: bundle.color,
-            padding: "4px 20px",
-            fontFamily: "'Barlow Condensed', sans-serif",
-            fontSize: 11,
-            fontWeight: 900,
-            color: "#fff",
-            letterSpacing: "0.2em",
-            textTransform: "uppercase",
-            whiteSpace: "nowrap",
-          }}
-        >
+      {b.popular && (
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[10px] sm:text-[11px] font-bold tracking-widest uppercase px-4 sm:px-5 py-1.5 rounded-full whitespace-nowrap shadow-lg shadow-red-200">
           ★ Most Popular
         </div>
       )}
-
-      <div style={{ color: bundle.color, marginBottom: 20, opacity: 0.9 }}>
-        <Icon size={28} strokeWidth={1.5} />
-      </div>
-
       <div
-        style={{
-          fontFamily: "'Barlow Condensed', sans-serif",
-          fontSize: 26,
-          fontWeight: 900,
-          color: "#F0F4FF",
-          letterSpacing: "0.03em",
-          marginBottom: 6,
-        }}
+        className={`inline-flex items-center justify-center w-11 h-11 rounded-xl mb-4 sm:mb-5 ${b.iconBg}`}
       >
-        {bundle.name}
+        <Icon size={21} strokeWidth={1.75} className={b.iconColor} />
       </div>
-      <div style={{ fontSize: 13, color: "#8892A4", marginBottom: 24 }}>
-        {bundle.desc}
-      </div>
-
-      <ul
-        style={{
-          listStyle: "none",
-          padding: 0,
-          margin: "0 0 28px",
-          display: "flex",
-          flexDirection: "column",
-          gap: 10,
-        }}
-      >
-        {bundle.products.map((p) => (
+      <h3 className="font-['Barlow_Condensed'] text-[22px] sm:text-[24px] font-black text-slate-900 mb-1">
+        {b.name}
+      </h3>
+      <p className="text-slate-500 text-[13px] mb-5 sm:mb-6 leading-relaxed">
+        {b.desc}
+      </p>
+      <ul className="space-y-2.5 mb-6 sm:mb-8">
+        {b.products.map((prod) => (
           <li
-            key={p}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              fontSize: 13,
-              color: "#C8D0DC",
-            }}
+            key={prod}
+            className="flex items-center gap-3 text-[13px] text-slate-700"
           >
             <CheckCircle2
               size={14}
-              color={bundle.color}
               strokeWidth={2}
-              style={{ flexShrink: 0 }}
+              className={`shrink-0 ${b.checkColor}`}
             />
-            {p}
+            {prod}
           </li>
         ))}
       </ul>
-
       <a
         href="#contact"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 8,
-          padding: "13px 0",
-          textDecoration: "none",
-          background: bundle.popular ? bundle.color : "transparent",
-          border: `1px solid ${bundle.popular ? bundle.color : "rgba(255,255,255,0.12)"}`,
-          color: bundle.popular ? "#fff" : "#8892A4",
-          fontFamily: "'Barlow Condensed', sans-serif",
-          fontSize: 14,
-          fontWeight: 700,
-          letterSpacing: "0.15em",
-          textTransform: "uppercase",
-          transition: "all 0.3s ease",
-          clipPath:
-            "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))",
-        }}
+        className={`flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-[14px] tracking-wide transition-all duration-300 ${b.btnClass}`}
       >
         Request a Demo <ArrowRight size={14} />
       </a>
@@ -505,859 +439,470 @@ function BundleCard({ bundle, index }) {
   );
 }
 
-// ─── CANVAS PARTICLE BG ──────────────────────────────────────────────────────
-
-function ParticleCanvas() {
-  const canvasRef = useRef(null);
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    let animId;
-    const resize = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-    };
-    resize();
-    window.addEventListener("resize", resize);
-    const particles = Array.from({ length: 60 }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      r: Math.random() * 1.2 + 0.3,
-      dx: (Math.random() - 0.5) * 0.35,
-      dy: (Math.random() - 0.5) * 0.35,
-      alpha: Math.random() * 0.4 + 0.1,
-      red: Math.random() > 0.75,
-    }));
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach((p, i) => {
-        particles.slice(i + 1).forEach((p2) => {
-          const d = Math.hypot(p.x - p2.x, p.y - p2.y);
-          if (d < 110) {
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(26,39,68,${0.5 * (1 - d / 110)})`;
-            ctx.lineWidth = 0.5;
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.stroke();
-          }
-        });
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = p.red ? "#C8102E" : "#1A2744";
-        ctx.globalAlpha = p.alpha;
-        ctx.fill();
-        ctx.globalAlpha = 1;
-        p.x += p.dx;
-        p.y += p.dy;
-        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-      });
-      animId = requestAnimationFrame(draw);
-    };
-    draw();
-    return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener("resize", resize);
-    };
-  }, []);
-  return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: "absolute",
-        inset: 0,
-        width: "100%",
-        height: "100%",
-        opacity: 0.5,
-      }}
-    />
-  );
-}
-
-// ─── MAIN PAGE ────────────────────────────────────────────────────────────────
+// ─── PAGE ─────────────────────────────────────────────────────────────────────
 
 export default function HomePage() {
-  const [mounted, setMounted] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
   useEffect(() => {
-    setMounted(true);
+    const fn = () => setScrolled(window.scrollY > 32);
+    window.addEventListener("scroll", fn);
+    return () => window.removeEventListener("scroll", fn);
   }, []);
 
-  const heroVisible = mounted;
+  // Close menu on resize to desktop
+  useEffect(() => {
+    const fn = () => {
+      if (window.innerWidth >= 768) setMenuOpen(false);
+    };
+    window.addEventListener("resize", fn);
+    return () => window.removeEventListener("resize", fn);
+  }, []);
 
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
         html { scroll-behavior: smooth; }
-        body { background: #060910; color: #F0F4FF; font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: #0A0E1A; }
-        ::-webkit-scrollbar-thumb { background: #C8102E; border-radius: 3px; }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes shieldFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
-        @keyframes shieldPulse {
-          0%,100% { filter: drop-shadow(0 0 18px rgba(200,16,46,0.45)); }
-          50% { filter: drop-shadow(0 0 45px rgba(200,16,46,0.75)) drop-shadow(0 0 90px rgba(200,16,46,0.2)); }
+        body { background:#fff; font-family:'DM Sans',sans-serif; overflow-x:hidden; }
+        ::-webkit-scrollbar { width:5px; }
+        ::-webkit-scrollbar-track { background:#f1f5f9; }
+        ::-webkit-scrollbar-thumb { background:#dc2626; border-radius:3px; }
+        @keyframes fadeUp   { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes floatY   { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-11px)} }
+        @keyframes spinRing { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+        @keyframes ticker   { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+        .fu1{animation:fadeUp .6s ease forwards .08s;opacity:0}
+        .fu2{animation:fadeUp .6s ease forwards .20s;opacity:0}
+        .fu3{animation:fadeUp .6s ease forwards .33s;opacity:0}
+        .fu4{animation:fadeUp .6s ease forwards .46s;opacity:0}
+        .fu5{animation:fadeUp .6s ease forwards .60s;opacity:0}
+        .shield-float{animation:floatY 4.5s ease-in-out infinite}
+        .spin-cw {animation:spinRing 24s linear infinite}
+        .spin-ccw{animation:spinRing 18s linear infinite reverse}
+        .ticker  {animation:ticker 40s linear infinite}
+        .dot-grid{
+          background-image:radial-gradient(circle,#e2e8f0 1.5px,transparent 1.5px);
+          background-size:26px 26px;
         }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        @keyframes pulseDot { 0%,100% { opacity:1; transform: scale(1); } 50% { opacity:0; transform: scale(2.5); } }
-        .hero-fade-1 { animation: fadeUp 0.7s ease forwards; animation-delay: 0.1s; opacity: 0; }
-        .hero-fade-2 { animation: fadeUp 0.7s ease forwards; animation-delay: 0.28s; opacity: 0; }
-        .hero-fade-3 { animation: fadeUp 0.7s ease forwards; animation-delay: 0.44s; opacity: 0; }
-        .hero-fade-4 { animation: fadeUp 0.7s ease forwards; animation-delay: 0.6s; opacity: 0; }
-        .hero-fade-5 { animation: fadeUp 0.7s ease forwards; animation-delay: 0.76s; opacity: 0; }
-        .shield-anim { animation: shieldFloat 5s ease-in-out infinite, shieldPulse 3s ease-in-out infinite; }
-        .ring-spin-slow { animation: spin 22s linear infinite; }
-        .ring-spin-rev { animation: spin 16s linear infinite reverse; }
-        .ticker-track { animation: ticker 38s linear infinite; }
-        .grid-bg {
-          background-image: linear-gradient(rgba(200,16,46,0.04) 1px, transparent 1px),
-                            linear-gradient(90deg, rgba(200,16,46,0.04) 1px, transparent 1px);
-          background-size: 56px 56px;
+        .sub-grid{
+          background-image:
+            linear-gradient(rgba(220,38,38,.05) 1px,transparent 1px),
+            linear-gradient(90deg,rgba(220,38,38,.05) 1px,transparent 1px);
+          background-size:48px 48px;
         }
       `}</style>
 
-      <main style={{ background: "#060910", minHeight: "100vh" }}>
-        {/* ── HERO ─────────────────────────────────────────────────── */}
-        <section
-          style={{
-            position: "relative",
-            minHeight: "100vh",
-            display: "flex",
-            alignItems: "center",
-            overflow: "hidden",
-          }}
+      <main className="bg-white text-slate-900 min-h-screen">
+        {/* ── STICKY NAV ─────────────────────────────────────────────────── */}
+        <header
+          className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${scrolled ? "bg-white/95 backdrop-blur-sm shadow-sm border-b border-slate-100" : "bg-transparent"}`}
         >
-          <ParticleCanvas />
-          <div
-            className="grid-bg"
-            style={{ position: "absolute", inset: 0, opacity: 0.35 }}
-          />
-          {/* Red glow */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background:
-                "radial-gradient(ellipse 75% 45% at 50% -10%, rgba(200,16,46,0.14) 0%, transparent 70%)",
-            }}
-          />
-          {/* Left accent */}
-          <div
-            style={{
-              position: "absolute",
-              left: 0,
-              top: 0,
-              bottom: 0,
-              width: 1,
-              background:
-                "linear-gradient(to bottom, transparent, rgba(200,16,46,0.5), transparent)",
-            }}
-          />
-
-          <div
-            style={{
-              position: "relative",
-              zIndex: 10,
-              maxWidth: 1280,
-              margin: "0 auto",
-              padding: "120px 40px 80px",
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: 64,
-              alignItems: "center",
-              width: "100%",
-            }}
-          >
-            {/* Left */}
-            <div>
-              <div className="hero-fade-1" style={{ marginBottom: 28 }}>
-                <span
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 8,
-                    padding: "4px 14px",
-                    border: "1px solid rgba(200,16,46,0.35)",
-                    fontSize: 10,
-                    color: "#C8102E",
-                    fontFamily: "'JetBrains Mono', monospace",
-                    letterSpacing: "0.22em",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  <span
-                    style={{
-                      width: 6,
-                      height: 6,
-                      borderRadius: "50%",
-                      background: "#C8102E",
-                      display: "inline-block",
-                      animation: "pulseDot 2s ease-in-out infinite",
-                    }}
-                  />
-                  Enterprise Cybersecurity Platform
-                </span>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 h-16 flex items-center justify-between gap-4">
+            {/* Logo */}
+            <a href="#" className="flex items-center gap-2.5 shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center shadow-sm">
+                <ShieldCheck size={17} className="text-white" strokeWidth={2} />
               </div>
+              <span className="font-['Barlow_Condensed'] text-[20px] font-black text-slate-900 tracking-wide leading-none">
+                BITSS
+              </span>
+            </a>
 
-              <h1
-                className="hero-fade-2"
-                style={{
-                  fontFamily: "'Barlow Condensed', sans-serif",
-                  fontWeight: 900,
-                  fontSize: "clamp(52px, 7vw, 88px)",
-                  lineHeight: 0.92,
-                  letterSpacing: "-0.01em",
-                  marginBottom: 24,
-                }}
-              >
-                <span style={{ display: "block", color: "#F0F4FF" }}>
-                  DEFEND
-                </span>
-                <span
-                  style={{
-                    display: "block",
-                    background: "linear-gradient(90deg, #C8102E, #F5A623)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                  }}
-                >
-                  EVERY
-                </span>
-                <span style={{ display: "block", color: "#F0F4FF" }}>
-                  ENTRY POINT.
-                </span>
-              </h1>
-
-              <p
-                className="hero-fade-3"
-                style={{
-                  fontSize: 17,
-                  color: "#8892A4",
-                  lineHeight: 1.7,
-                  maxWidth: 440,
-                  marginBottom: 36,
-                }}
-              >
-                Bitss secures your business across every attack surface —
-                website login, admin layer, contact forms, Windows devices, and
-                USB storage.{" "}
-                <strong style={{ color: "#C0C8D8", fontWeight: 500 }}>
-                  One ecosystem. Full chain protection.
-                </strong>
-              </p>
-
-              <div
-                className="hero-fade-4"
-                style={{
-                  display: "flex",
-                  gap: 14,
-                  flexWrap: "wrap",
-                  marginBottom: 52,
-                }}
-              >
+            {/* Desktop nav */}
+            <nav className="hidden md:flex items-center gap-1">
+              {NAV_LINKS.map((l) => (
                 <a
-                  href="#bundles"
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 8,
-                    padding: "14px 32px",
-                    background: "#C8102E",
-                    color: "#fff",
-                    textDecoration: "none",
-                    fontFamily: "'Barlow Condensed', sans-serif",
-                    fontSize: 15,
-                    fontWeight: 700,
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    clipPath:
-                      "polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px))",
-                    boxShadow: "0 0 24px rgba(200,16,46,0.35)",
-                    transition: "box-shadow 0.3s",
-                  }}
+                  key={l.label}
+                  href={l.href}
+                  className="px-4 py-2 text-[14px] text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors font-medium"
                 >
-                  <ShieldCheck size={16} /> Get Protected Now
+                  {l.label}
                 </a>
-                <a
-                  href="#products"
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 8,
-                    padding: "14px 32px",
-                    border: "1px solid rgba(255,255,255,0.12)",
-                    color: "#8892A4",
-                    textDecoration: "none",
-                    fontFamily: "'Barlow Condensed', sans-serif",
-                    fontSize: 15,
-                    fontWeight: 700,
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    clipPath:
-                      "polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px))",
-                    transition: "color 0.3s, border-color 0.3s",
-                  }}
-                >
-                  Explore Products <ArrowRight size={14} />
-                </a>
-              </div>
+              ))}
+            </nav>
 
-              {/* Stats */}
-              <div
-                className="hero-fade-5"
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(3, 1fr)",
-                  gap: 24,
-                }}
+            {/* Desktop CTA */}
+            <div className="hidden md:flex items-center gap-3">
+              <a
+                href="#contact"
+                className="text-[14px] text-slate-600 hover:text-slate-900 font-medium transition-colors"
               >
-                {[
-                  { v: "5", l: "Security Layers" },
-                  { v: "99.9%", l: "Detection Rate" },
-                  { v: "24/7", l: "Active Defense" },
-                ].map((s) => (
-                  <div
-                    key={s.l}
-                    style={{
-                      paddingBottom: 12,
-                      borderBottom: "2px solid #C8102E",
-                      borderImage:
-                        "linear-gradient(90deg, #C8102E, transparent) 1",
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontFamily: "'Barlow Condensed', sans-serif",
-                        fontSize: 32,
-                        fontWeight: 900,
-                        color: "#F0F4FF",
-                        lineHeight: 1,
-                      }}
-                    >
-                      {s.v}
-                    </div>
-                    <div
-                      style={{ fontSize: 11, color: "#8892A4", marginTop: 4 }}
-                    >
-                      {s.l}
-                    </div>
-                  </div>
-                ))}
-              </div>
+                Sign in
+              </a>
+              <a
+                href="#contact"
+                className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-[14px] font-semibold transition-all duration-200 shadow-sm shadow-red-200 hover:shadow-red-300"
+              >
+                Get Protected
+              </a>
             </div>
 
-            {/* Right — Shield visual */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                position: "relative",
-                height: 480,
-              }}
+            {/* Mobile hamburger */}
+            <button
+              className="md:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors text-slate-700"
+              onClick={() => setMenuOpen((o) => !o)}
+              aria-label="Toggle menu"
             >
-              {/* Rings */}
-              <div
-                className="ring-spin-slow"
-                style={{
-                  position: "absolute",
-                  width: 380,
-                  height: 380,
-                  borderRadius: "50%",
-                  border: "1px solid rgba(200,16,46,0.2)",
-                }}
-              />
-              <div
-                className="ring-spin-rev"
-                style={{
-                  position: "absolute",
-                  width: 300,
-                  height: 300,
-                  borderRadius: "50%",
-                  border: "1px dashed rgba(200,16,46,0.15)",
-                }}
-              />
-              <div
-                style={{
-                  position: "absolute",
-                  width: 440,
-                  height: 440,
-                  borderRadius: "50%",
-                  border: "1px solid rgba(26,39,68,0.6)",
-                }}
-              />
+              {menuOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
 
-              {/* Central shield icon */}
-              <div
-                className="shield-anim"
-                style={{ position: "relative", zIndex: 2 }}
-              >
-                <ShieldCheck
-                  size={120}
-                  color="#C8102E"
-                  strokeWidth={1}
-                  style={{
-                    filter: "drop-shadow(0 0 30px rgba(200,16,46,0.6))",
-                  }}
-                />
+          {/* Mobile menu drawer */}
+          <div
+            className={`md:hidden overflow-hidden transition-all duration-300 ${menuOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0"}`}
+          >
+            <div className="bg-white border-t border-slate-100 px-4 pb-5 pt-3 flex flex-col gap-1">
+              {NAV_LINKS.map((l) => (
+                <a
+                  key={l.label}
+                  href={l.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="px-3 py-2.5 text-[15px] text-slate-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium"
+                >
+                  {l.label}
+                </a>
+              ))}
+              <div className="pt-3 mt-1 border-t border-slate-100 flex flex-col gap-2">
+                <a
+                  href="#contact"
+                  onClick={() => setMenuOpen(false)}
+                  className="w-full py-3 rounded-xl bg-red-600 text-white text-center text-[15px] font-semibold"
+                >
+                  Get Protected
+                </a>
               </div>
+            </div>
+          </div>
+        </header>
 
-              {/* Orbiting product icons */}
-              {PRODUCTS.map((p, i) => {
-                const angle = (i / PRODUCTS.length) * 360;
-                const rad = (angle * Math.PI) / 180;
-                const r = 180;
-                const x = Math.cos(rad) * r;
-                const y = Math.sin(rad) * r;
-                const PIcon = p.icon;
-                return (
-                  <div
-                    key={p.id}
-                    style={{
-                      position: "absolute",
-                      left: "50%",
-                      top: "50%",
-                      transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      gap: 4,
-                      zIndex: 3,
-                    }}
+        {/* ── HERO ───────────────────────────────────────────────────────── */}
+        <section className="relative overflow-hidden bg-white pt-16">
+          <div className="dot-grid absolute inset-0 opacity-60" />
+          <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-red-600 via-red-500 to-amber-500" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_65%_30%,rgba(254,242,242,0.9)_0%,transparent_70%)]" />
+
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-12 sm:py-16 lg:py-20 min-h-[calc(100vh-64px)] flex items-center">
+            <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center w-full">
+              {/* LEFT */}
+              <div className="order-2 lg:order-1">
+                <div className="fu1 mb-5 sm:mb-6">
+                  <Tag>Enterprise Cybersecurity Platform</Tag>
+                </div>
+
+                <h1
+                  className="fu2 font-['Barlow_Condensed'] font-black leading-[0.88] tracking-tight mb-5 sm:mb-6"
+                  style={{ fontSize: "clamp(44px,8vw,88px)" }}
+                >
+                  <span className="block text-slate-900">DEFEND</span>
+                  <span className="block text-red-600">EVERY</span>
+                  <span className="block text-slate-900">ENTRY POINT.</span>
+                </h1>
+
+                <p className="fu3 text-slate-500 text-[15px] sm:text-[17px] leading-relaxed max-w-[480px] mb-8 sm:mb-10">
+                  Bitss secures your business across every attack surface —
+                  website login, admin layer, contact forms, Windows devices,
+                  and USB storage.{" "}
+                  <strong className="text-slate-700 font-semibold">
+                    One ecosystem. Full chain.
+                  </strong>
+                </p>
+
+                <div className="fu4 flex flex-col xs:flex-row flex-wrap gap-3 mb-10 sm:mb-14">
+                  <a
+                    href="#bundles"
+                    className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-[15px] transition-all duration-300 shadow-lg shadow-red-200 hover:shadow-red-300 hover:-translate-y-0.5 w-full xs:w-auto"
                   >
-                    <div
-                      style={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: "50%",
-                        background: `${p.color}15`,
-                        border: `1px solid ${p.color}50`,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        boxShadow: `0 0 14px ${p.glow}`,
-                      }}
-                    >
-                      <PIcon size={18} color={p.color} strokeWidth={1.5} />
-                    </div>
-                    <span
-                      style={{
-                        fontSize: 8,
-                        color: p.color,
-                        fontFamily: "'JetBrains Mono', monospace",
-                        letterSpacing: "0.1em",
-                        whiteSpace: "nowrap",
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      {p.short.split(" ").slice(-1)[0]}
-                    </span>
-                  </div>
-                );
-              })}
-
-              {/* Status card */}
-              <div
-                style={{
-                  position: "absolute",
-                  right: -20,
-                  top: 80,
-                  padding: "10px 14px",
-                  border: "1px solid rgba(255,255,255,0.07)",
-                  background: "rgba(6,9,16,0.85)",
-                  backdropFilter: "blur(8px)",
-                  fontFamily: "'JetBrains Mono', monospace",
-                }}
-              >
-                <div
-                  style={{ fontSize: 10, color: "#22C55E", fontWeight: 700 }}
-                >
-                  ⬤ ALL LAYERS ACTIVE
+                    <ShieldCheck size={17} /> Get Protected
+                  </a>
+                  <a
+                    href="#products"
+                    className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 rounded-xl border border-slate-200 hover:border-slate-300 text-slate-600 hover:text-slate-900 font-semibold text-[15px] transition-all duration-300 hover:bg-slate-50 w-full xs:w-auto"
+                  >
+                    Explore Products <ArrowRight size={15} />
+                  </a>
                 </div>
-                <div style={{ fontSize: 9, color: "#8892A4", marginTop: 3 }}>
-                  5/5 shields online
+
+                {/* Stats */}
+                <div className="fu5 grid grid-cols-2 sm:grid-cols-4 gap-px bg-slate-100 rounded-2xl overflow-hidden border border-slate-100 shadow-sm">
+                  {STATS.map((s) => (
+                    <div
+                      key={s.l}
+                      className="bg-white px-3 sm:px-4 py-3 sm:py-4 text-center"
+                    >
+                      <div className="font-['Barlow_Condensed'] text-[20px] sm:text-[22px] font-black text-slate-900 leading-none">
+                        {s.v}
+                      </div>
+                      <div className="text-[10px] text-slate-400 mt-1 leading-tight">
+                        {s.l}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              <div
-                style={{
-                  position: "absolute",
-                  left: -20,
-                  bottom: 100,
-                  padding: "10px 14px",
-                  border: "1px solid rgba(255,255,255,0.07)",
-                  background: "rgba(6,9,16,0.85)",
-                  backdropFilter: "blur(8px)",
-                  fontFamily: "'JetBrains Mono', monospace",
-                }}
-              >
-                <div
-                  style={{ fontSize: 10, color: "#C8102E", fontWeight: 700 }}
-                >
-                  ⬤ 0 THREATS
+              {/* RIGHT — orbital visual, hidden on mobile, shown md+ */}
+              <div className="order-1 lg:order-2 flex items-center justify-center">
+                {/* Mobile: simple product icon grid instead of orbital */}
+                <div className="lg:hidden w-full">
+                  <div className="flex items-center justify-center mb-6">
+                    <div className="w-20 h-20 rounded-3xl bg-white shadow-2xl shadow-red-100 border border-red-100 flex items-center justify-center">
+                      <ShieldCheck
+                        size={42}
+                        strokeWidth={1.25}
+                        className="text-red-600"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-5 gap-2 max-w-xs mx-auto">
+                    {PRODUCTS.map((p) => {
+                      const Icon = p.icon;
+                      return (
+                        <div
+                          key={p.id}
+                          className="flex flex-col items-center gap-1"
+                        >
+                          <div
+                            className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-sm ${p.iconBg}`}
+                          >
+                            <Icon
+                              size={17}
+                              strokeWidth={1.75}
+                              style={{ color: p.accent }}
+                            />
+                          </div>
+                          <span className="text-[8px] text-slate-400 text-center leading-tight font-medium">
+                            {p.short.split(" ")[0]}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {/* Status badges row on mobile */}
+                  <div className="flex gap-3 justify-center mt-5">
+                    <div className="bg-white rounded-xl px-3 py-2 shadow-md border border-slate-100 flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="text-[11px] font-semibold text-emerald-600">
+                        All shields active
+                      </span>
+                    </div>
+                    <div className="bg-white rounded-xl px-3 py-2 shadow-md border border-slate-100 flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                      <span className="text-[11px] font-semibold text-red-600">
+                        0 threats
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div style={{ fontSize: 9, color: "#8892A4", marginTop: 3 }}>
-                  Last scan: just now
+
+                {/* Desktop orbital */}
+                <div className="hidden lg:flex relative items-center justify-center h-[460px] w-full">
+                  <div className="spin-cw  absolute w-[360px] h-[360px] rounded-full border border-dashed border-red-200" />
+                  <div className="spin-ccw absolute w-[288px] h-[288px] rounded-full border border-slate-200" />
+                  <div className="absolute w-[420px] h-[420px] rounded-full border border-red-50" />
+                  <div className="absolute w-36 h-36 rounded-full bg-red-50/60 blur-3xl" />
+
+                  <div className="shield-float relative z-10 flex items-center justify-center w-24 h-24 rounded-3xl bg-white shadow-2xl shadow-red-100 border border-red-100">
+                    <ShieldCheck
+                      size={50}
+                      strokeWidth={1.25}
+                      className="text-red-600"
+                    />
+                  </div>
+
+                  {PRODUCTS.map((p, i) => {
+                    const angle = (i / PRODUCTS.length) * 360 - 90;
+                    const rad = (angle * Math.PI) / 180;
+                    const r = 162;
+                    const Icon = p.icon;
+                    return (
+                      <div
+                        key={p.id}
+                        className="absolute z-10"
+                        style={{
+                          left: "50%",
+                          top: "50%",
+                          transform: `translate(calc(-50% + ${Math.cos(rad) * r}px),calc(-50% + ${Math.sin(rad) * r}px))`,
+                        }}
+                      >
+                        <div className="flex flex-col items-center gap-1.5">
+                          <div
+                            className={`w-11 h-11 rounded-xl flex items-center justify-center shadow-sm border border-white ${p.iconBg}`}
+                          >
+                            <Icon
+                              size={19}
+                              strokeWidth={1.75}
+                              style={{ color: p.accent }}
+                            />
+                          </div>
+                          <span className="text-[9px] font-semibold text-slate-400 whitespace-nowrap">
+                            {p.short}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  <div className="absolute -right-2 top-14 bg-white rounded-xl px-4 py-2.5 shadow-xl shadow-slate-200/80 border border-slate-100">
+                    <div className="flex items-center gap-2 text-[12px] font-semibold text-emerald-600">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />{" "}
+                      All shields active
+                    </div>
+                    <div className="text-[10px] text-slate-400 mt-0.5 font-mono">
+                      5/5 layers online
+                    </div>
+                  </div>
+                  <div className="absolute -left-2 bottom-20 bg-white rounded-xl px-4 py-2.5 shadow-xl shadow-slate-200/80 border border-slate-100">
+                    <div className="flex items-center gap-2 text-[12px] font-semibold text-red-600">
+                      <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />{" "}
+                      0 threats detected
+                    </div>
+                    <div className="text-[10px] text-slate-400 mt-0.5 font-mono">
+                      Last scan: just now
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Bottom fade */}
-          <div
-            style={{
-              position: "absolute",
-              bottom: 0,
-              left: 0,
-              right: 0,
-              height: 120,
-              background: "linear-gradient(to top, #060910, transparent)",
-            }}
-          />
         </section>
 
-        {/* ── THREAT TICKER ─────────────────────────────────────────── */}
-        <div
-          style={{
-            position: "relative",
-            background: "#0A0E1A",
-            borderTop: "1px solid rgba(255,255,255,0.05)",
-            borderBottom: "1px solid rgba(255,255,255,0.05)",
-            padding: "10px 0",
-            overflow: "hidden",
-          }}
-        >
-          <div
-            style={{
-              position: "absolute",
-              left: 0,
-              top: 0,
-              bottom: 0,
-              zIndex: 10,
-              display: "flex",
-              alignItems: "center",
-              padding: "0 16px",
-              background: "#C8102E",
-            }}
-          >
-            <span
-              style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontSize: 10,
-                fontWeight: 900,
-                letterSpacing: "0.25em",
-                color: "#fff",
-                textTransform: "uppercase",
-                whiteSpace: "nowrap",
-              }}
-            >
+        {/* ── THREAT TICKER ──────────────────────────────────────────────── */}
+        <div className="relative bg-slate-900 py-2.5 sm:py-3 overflow-hidden">
+          <div className="absolute left-0 inset-y-0 z-10 flex items-center px-4 sm:px-5 bg-red-600">
+            <span className="font-['Barlow_Condensed'] text-[9px] sm:text-[10px] font-black tracking-[0.22em] text-white uppercase whitespace-nowrap">
               LIVE SHIELD
             </span>
           </div>
-          <div style={{ marginLeft: 110, overflow: "hidden" }}>
-            <div
-              className="ticker-track"
-              style={{ display: "flex", gap: 48, whiteSpace: "nowrap" }}
-            >
-              {[...Array(2)]
-                .flatMap(() => [
-                  {
-                    t: "BLOCKED",
-                    m: "Malware payload in contact form submission",
-                    c: "#22C55E",
-                  },
-                  {
-                    t: "BLOCKED",
-                    m: "Brute-force login attempt — admin panel",
-                    c: "#22C55E",
-                  },
-                  {
-                    t: "ALERT",
-                    m: "Suspicious USB drive detected — WKSTN-07",
-                    c: "#F5A623",
-                  },
-                  {
-                    t: "BLOCKED",
-                    m: "SQL injection via contact form — neutralized",
-                    c: "#22C55E",
-                  },
-                  {
-                    t: "BLOCKED",
-                    m: "Ransomware signature on Windows endpoint",
-                    c: "#22C55E",
-                  },
-                  {
-                    t: "INFO",
-                    m: "Threat intelligence updated — 3,841 new IOCs",
-                    c: "#0EA5E9",
-                  },
-                ])
-                .map((e, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: 12,
-                      flexShrink: 0,
-                    }}
+          <div className="ml-24 sm:ml-32 overflow-hidden">
+            <div className="ticker flex gap-8 sm:gap-10 whitespace-nowrap">
+              {[...TICKER, ...TICKER].map((t, i) => (
+                <div
+                  key={i}
+                  className="inline-flex items-center gap-2 sm:gap-3 shrink-0"
+                >
+                  <span
+                    className={`font-mono text-[8px] sm:text-[9px] font-bold tracking-[0.18em] ${t.color}`}
                   >
-                    <span
-                      style={{
-                        fontFamily: "'JetBrains Mono', monospace",
-                        fontSize: 9,
-                        fontWeight: 700,
-                        color: e.c,
-                        letterSpacing: "0.2em",
-                      }}
-                    >
-                      [{e.t}]
-                    </span>
-                    <span
-                      style={{
-                        fontFamily: "'JetBrains Mono', monospace",
-                        fontSize: 11,
-                        color: "#8892A4",
-                      }}
-                    >
-                      {e.m}
-                    </span>
-                    <span style={{ color: "#1A2744" }}>|</span>
-                  </div>
-                ))}
+                    [{t.type}]
+                  </span>
+                  <span className="font-mono text-[10px] sm:text-[11px] text-slate-400">
+                    {t.msg}
+                  </span>
+                  <span className="text-slate-700">·</span>
+                </div>
+              ))}
             </div>
           </div>
-          <div
-            style={{
-              position: "absolute",
-              right: 0,
-              top: 0,
-              bottom: 0,
-              width: 80,
-              background: "linear-gradient(to left, #0A0E1A, transparent)",
-              pointerEvents: "none",
-            }}
-          />
+          <div className="absolute right-0 inset-y-0 w-12 sm:w-16 bg-gradient-to-l from-slate-900 to-transparent pointer-events-none" />
         </div>
 
-        {/* ── PITCH / ECOSYSTEM ─────────────────────────────────────── */}
+        {/* ── ECOSYSTEM ──────────────────────────────────────────────────── */}
         <section
-          style={{
-            padding: "100px 40px",
-            background: "#0A0E1A",
-            position: "relative",
-            overflow: "hidden",
-          }}
+          id="ecosystem"
+          className="relative py-16 sm:py-20 lg:py-24 bg-slate-50 overflow-hidden"
         >
-          <div
-            className="grid-bg"
-            style={{ position: "absolute", inset: 0, opacity: 0.2 }}
-          />
-          <div
-            style={{ maxWidth: 1280, margin: "0 auto", position: "relative" }}
-          >
-            <div style={{ textAlign: "center", marginBottom: 72 }}>
-              <SectionTag>The Bitss Ecosystem</SectionTag>
+          <div className="sub-grid absolute inset-0" />
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+            <div className="text-center mb-12 sm:mb-16">
+              <Tag>The Bitss Ecosystem</Tag>
               <h2
-                style={{
-                  fontFamily: "'Barlow Condensed', sans-serif",
-                  fontWeight: 900,
-                  fontSize: "clamp(40px, 5vw, 64px)",
-                  color: "#F0F4FF",
-                  marginTop: 20,
-                  marginBottom: 16,
-                  letterSpacing: "-0.01em",
-                  lineHeight: 1,
-                }}
+                className="font-['Barlow_Condensed'] font-black text-slate-900 mt-4 sm:mt-5 mb-3 sm:mb-4 leading-none"
+                style={{ fontSize: "clamp(30px,5vw,58px)" }}
               >
-                ONE ECOSYSTEM.{" "}
-                <span
-                  style={{
-                    background: "linear-gradient(90deg, #C8102E, #F5A623)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                  }}
-                >
-                  FULL CHAIN.
-                </span>
+                ONE ECOSYSTEM. <span className="text-red-600">FULL CHAIN.</span>
               </h2>
-              <p
-                style={{
-                  fontSize: 16,
-                  color: "#8892A4",
-                  maxWidth: 560,
-                  margin: "0 auto",
-                  lineHeight: 1.7,
-                }}
-              >
+              <p className="text-slate-500 text-[14px] sm:text-[15px] max-w-lg mx-auto leading-relaxed px-4">
                 Bitss covers every entry point attackers exploit — from your
                 website login to the USB stick an employee just plugged in.
               </p>
             </div>
 
-            {/* Chain diagram */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 0,
-                flexWrap: "wrap",
-                rowGap: 16,
-              }}
-            >
-              {PRODUCTS.map((p, i) => {
-                const Icon = p.icon;
-                return (
-                  <div
-                    key={p.id}
-                    style={{ display: "flex", alignItems: "center" }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        gap: 10,
-                        padding: "20px 16px",
-                        minWidth: 110,
-                        textAlign: "center",
-                        border: `1px solid ${p.color}30`,
-                        background: `${p.color}08`,
-                        clipPath:
-                          "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))",
-                      }}
-                    >
+            {/* Chain — scrollable on mobile */}
+            <div className="mb-12 sm:mb-16 -mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto">
+              <div className="flex items-center min-w-max sm:min-w-0 sm:flex-wrap sm:justify-center gap-y-4 mx-auto pb-2 sm:pb-0">
+                {PRODUCTS.map((p, i) => {
+                  const Icon = p.icon;
+                  return (
+                    <div key={p.id} className="flex items-center">
                       <div
-                        style={{
-                          color: p.color,
-                          filter: `drop-shadow(0 0 6px ${p.color})`,
-                        }}
+                        className={`flex flex-col items-center gap-2 px-4 sm:px-5 py-4 sm:py-5 w-[100px] sm:min-w-[112px] text-center bg-white rounded-2xl border border-slate-100 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md`}
                       >
-                        <Icon size={26} strokeWidth={1.5} />
+                        <div
+                          className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center ${p.iconBg}`}
+                        >
+                          <Icon
+                            size={18}
+                            strokeWidth={1.75}
+                            style={{ color: p.accent }}
+                          />
+                        </div>
+                        <span className="font-['Barlow_Condensed'] text-[12px] sm:text-[13px] font-bold text-slate-800 leading-tight">
+                          {p.short}
+                        </span>
+                        <span
+                          className={`text-[8px] sm:text-[9px] font-semibold tracking-widest uppercase ${p.accentText}`}
+                        >
+                          {p.layer}
+                        </span>
                       </div>
-                      <div
-                        style={{
-                          fontFamily: "'Barlow Condensed', sans-serif",
-                          fontSize: 13,
-                          fontWeight: 700,
-                          color: "#F0F4FF",
-                          letterSpacing: "0.05em",
-                          lineHeight: 1.2,
-                        }}
-                      >
-                        {p.short}
-                      </div>
-                      <div
-                        style={{
-                          fontSize: 9,
-                          color: p.color,
-                          fontFamily: "'JetBrains Mono', monospace",
-                          letterSpacing: "0.1em",
-                          textTransform: "uppercase",
-                        }}
-                      >
-                        {p.layer}
-                      </div>
+                      {i < PRODUCTS.length - 1 && (
+                        <div className="flex items-center px-1.5 sm:px-2">
+                          <div className="w-6 sm:w-8 h-px bg-gradient-to-r from-red-300 to-slate-200" />
+                          <div className="w-1.5 h-1.5 border-t-2 border-r-2 border-red-300 rotate-45 -ml-1" />
+                        </div>
+                      )}
                     </div>
-                    {i < PRODUCTS.length - 1 && (
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          padding: "0 8px",
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: 28,
-                            height: 1,
-                            background:
-                              "linear-gradient(90deg, rgba(200,16,46,0.6), rgba(245,166,35,0.4))",
-                          }}
-                        />
-                        <div
-                          style={{
-                            width: 5,
-                            height: 5,
-                            borderTop: "1px solid rgba(200,16,46,0.6)",
-                            borderRight: "1px solid rgba(200,16,46,0.6)",
-                            transform: "rotate(45deg)",
-                            marginLeft: -3,
-                          }}
-                        />
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
 
-            {/* Sub-pitch */}
-            <div
-              style={{
-                marginTop: 56,
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: 1,
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(255,255,255,0.06)",
-              }}
-            >
+            {/* 3 pillars */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
               {[
                 {
                   icon: Globe,
                   label: "Web-to-Server",
                   desc: "Full coverage from public-facing login pages down to the database layer.",
+                  bg: "bg-red-50",
+                  color: "text-red-600",
                 },
                 {
                   icon: Zap,
                   label: "Real-Time Response",
-                  desc: "Every product detects and blocks threats the moment they appear — no delays.",
+                  desc: "Every product detects and blocks threats the moment they appear — zero delays.",
+                  bg: "bg-amber-50",
+                  color: "text-amber-600",
                 },
                 {
                   icon: ShieldCheck,
                   label: "Endpoint-to-Media",
                   desc: "Windows devices and USB drives covered so no offline vector goes unguarded.",
+                  bg: "bg-sky-50",
+                  color: "text-sky-600",
                 },
               ].map((item) => {
                 const IIcon = item.icon;
                 return (
                   <div
                     key={item.label}
-                    style={{ padding: "28px 24px", background: "#0A0E1A" }}
+                    className="bg-white rounded-2xl p-5 sm:p-7 border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
                   >
-                    <IIcon
-                      size={22}
-                      color="#C8102E"
-                      strokeWidth={1.5}
-                      style={{ marginBottom: 14 }}
-                    />
                     <div
-                      style={{
-                        fontFamily: "'Barlow Condensed', sans-serif",
-                        fontSize: 18,
-                        fontWeight: 800,
-                        color: "#F0F4FF",
-                        marginBottom: 8,
-                        letterSpacing: "0.04em",
-                      }}
+                      className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center mb-4 sm:mb-5 ${item.bg}`}
                     >
-                      {item.label}
+                      <IIcon
+                        size={20}
+                        strokeWidth={1.75}
+                        className={item.color}
+                      />
                     </div>
-                    <p
-                      style={{
-                        fontSize: 13,
-                        color: "#8892A4",
-                        lineHeight: 1.65,
-                      }}
-                    >
+                    <h4 className="font-['Barlow_Condensed'] text-[17px] sm:text-[19px] font-black text-slate-900 mb-2">
+                      {item.label}
+                    </h4>
+                    <p className="text-slate-500 text-[13px] leading-relaxed">
                       {item.desc}
                     </p>
                   </div>
@@ -1367,348 +912,205 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ── PRODUCTS ──────────────────────────────────────────────── */}
+        {/* ── PRODUCTS ───────────────────────────────────────────────────── */}
         <section
           id="products"
-          style={{
-            padding: "100px 40px",
-            background: "#060910",
-            position: "relative",
-            overflow: "hidden",
-          }}
+          className="relative py-16 sm:py-20 lg:py-24 bg-white overflow-hidden"
         >
-          <div
-            style={{
-              position: "absolute",
-              right: 0,
-              top: 0,
-              bottom: 0,
-              width: 1,
-              background:
-                "linear-gradient(to bottom, transparent, rgba(200,16,46,0.3), transparent)",
-            }}
-          />
-
-          <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-            <div style={{ marginBottom: 60 }}>
-              <SectionTag>5 Products</SectionTag>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 12,
-                  marginTop: 20,
-                }}
-              >
+          <div className="dot-grid absolute inset-0 opacity-40" />
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 mb-10 sm:mb-14">
+              <div>
+                <Tag>5 Products</Tag>
                 <h2
-                  style={{
-                    fontFamily: "'Barlow Condensed', sans-serif",
-                    fontWeight: 900,
-                    fontSize: "clamp(38px, 5vw, 60px)",
-                    color: "#F0F4FF",
-                    lineHeight: 1,
-                    letterSpacing: "-0.01em",
-                  }}
+                  className="font-['Barlow_Condensed'] font-black text-slate-900 mt-4 leading-none"
+                  style={{ fontSize: "clamp(28px,5vw,54px)" }}
                 >
-                  THE COMPLETE
-                  <span
-                    style={{
-                      background: "linear-gradient(90deg, #C8102E, #F5A623)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                    }}
-                  >
-                    {" "}
-                    SECURITY SUITE
-                  </span>
+                  THE COMPLETE{" "}
+                  <span className="text-red-600">SECURITY SUITE</span>
                 </h2>
-                <p style={{ fontSize: 15, color: "#8892A4", maxWidth: 480 }}>
-                  Every product is purpose-built for a specific attack layer —
-                  no overlap, no gaps.
-                </p>
               </div>
+              <p className="text-slate-500 text-[14px] max-w-xs sm:max-w-sm leading-relaxed">
+                Every product purpose-built for a specific attack layer — no
+                overlap, no gaps.
+              </p>
             </div>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-                gap: 16,
-              }}
-            >
+            {/* Products grid — 1 col mobile, 2 col sm, 3 col lg, 5 col xl */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-5">
               {PRODUCTS.map((p, i) => (
-                <ProductCard key={p.id} product={p} index={i} />
+                <ProductCard key={p.id} p={p} i={i} />
               ))}
             </div>
           </div>
         </section>
 
-        {/* ── BUNDLES / PRICING ─────────────────────────────────────── */}
+        {/* ── WHY BITSS STRIP ────────────────────────────────────────────── */}
+        <div className="bg-slate-900 py-12 sm:py-14 lg:py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-slate-700/30">
+              {WHY.map((item) => {
+                const IIcon = item.icon;
+                return (
+                  <div
+                    key={item.label}
+                    className="bg-slate-900 p-6 sm:p-7 lg:p-8 hover:bg-slate-800 transition-colors"
+                  >
+                    <IIcon
+                      size={20}
+                      strokeWidth={1.5}
+                      className="text-red-500 mb-3 sm:mb-4"
+                    />
+                    <h4 className="font-['Barlow_Condensed'] text-[16px] sm:text-[17px] font-black text-white mb-1.5 sm:mb-2 tracking-wide">
+                      {item.label}
+                    </h4>
+                    <p className="text-slate-400 text-[13px] leading-relaxed">
+                      {item.desc}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* ── BUNDLES ────────────────────────────────────────────────────── */}
         <section
           id="bundles"
-          style={{
-            padding: "100px 40px",
-            background: "#0A0E1A",
-            position: "relative",
-            overflow: "hidden",
-          }}
+          className="relative py-16 sm:py-20 lg:py-24 bg-slate-50 overflow-hidden"
         >
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background:
-                "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(200,16,46,0.06) 0%, transparent 70%)",
-            }}
-          />
-
-          <div
-            style={{ maxWidth: 1100, margin: "0 auto", position: "relative" }}
-          >
-            <div style={{ textAlign: "center", marginBottom: 72 }}>
-              <SectionTag>Bundle Offers</SectionTag>
+          <div className="sub-grid absolute inset-0" />
+          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-10">
+            <div className="text-center mb-12 sm:mb-16">
+              <Tag>Bundle Offers</Tag>
               <h2
-                style={{
-                  fontFamily: "'Barlow Condensed', sans-serif",
-                  fontWeight: 900,
-                  fontSize: "clamp(38px, 5vw, 60px)",
-                  color: "#F0F4FF",
-                  marginTop: 20,
-                  marginBottom: 16,
-                  lineHeight: 1,
-                }}
+                className="font-['Barlow_Condensed'] font-black text-slate-900 mt-4 sm:mt-5 mb-3 sm:mb-4 leading-none"
+                style={{ fontSize: "clamp(28px,5vw,54px)" }}
               >
-                CHOOSE YOUR{" "}
-                <span
-                  style={{
-                    background: "linear-gradient(90deg, #C8102E, #F5A623)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                  }}
-                >
-                  COVERAGE
-                </span>
+                CHOOSE YOUR <span className="text-red-600">COVERAGE</span>
               </h2>
-              <p
-                style={{
-                  fontSize: 15,
-                  color: "#8892A4",
-                  maxWidth: 420,
-                  margin: "0 auto",
-                  lineHeight: 1.7,
-                }}
-              >
-                Bundle packages save you more than buying separately — and
-                ensure nothing falls through the cracks.
+              <p className="text-slate-500 text-[14px] sm:text-[15px] max-w-sm mx-auto leading-relaxed">
+                Bundle packages ensure nothing falls through the cracks — at
+                better value than buying separately.
               </p>
             </div>
 
-            <div
-              style={{
-                display: "flex",
-                gap: 20,
-                alignItems: "stretch",
-                flexWrap: "wrap",
-                justifyContent: "center",
-              }}
-            >
+            <div className="flex flex-col sm:flex-row flex-wrap gap-5 sm:gap-6 items-stretch justify-center">
               {BUNDLES.map((b, i) => (
-                <BundleCard key={b.name} bundle={b} index={i} />
+                <BundleCard key={b.name} b={b} i={i} />
               ))}
             </div>
 
-            <p
-              style={{
-                textAlign: "center",
-                marginTop: 32,
-                fontSize: 12,
-                color: "#8892A4",
-                fontFamily: "'JetBrains Mono', monospace",
-              }}
-            >
-              Bundle pricing available on request. Custom enterprise plans
-              supported.
+            <p className="text-center mt-6 sm:mt-8 text-[12px] text-slate-400">
+              Bundle pricing available on request · Custom enterprise plans
+              supported
             </p>
           </div>
         </section>
 
-        {/* ── CTA ───────────────────────────────────────────────────── */}
+        {/* ── TESTIMONIALS ───────────────────────────────────────────────── */}
+        <section className="py-16 sm:py-20 lg:py-24 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+            <div className="text-center mb-10 sm:mb-14">
+              <Tag>Customer Stories</Tag>
+              <h2
+                className="font-['Barlow_Condensed'] font-black text-slate-900 mt-4 leading-none"
+                style={{ fontSize: "clamp(26px,4vw,50px)" }}
+              >
+                TRUSTED BY <span className="text-red-600">BUSINESSES</span>
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {TESTIMONIALS.map((t, i) => (
+                <div
+                  key={i}
+                  className="bg-slate-50 rounded-2xl p-5 sm:p-7 border border-slate-100 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                >
+                  <div className="font-['Barlow_Condensed'] text-5xl sm:text-6xl text-red-100 font-black leading-none mb-2 sm:mb-3">
+                    "
+                  </div>
+                  <p className="text-slate-600 text-[13px] sm:text-[14px] leading-relaxed mb-5 sm:mb-6 italic">
+                    "{t.q}"
+                  </p>
+                  <div className="flex items-center gap-3 pt-3 sm:pt-4 border-t border-slate-200">
+                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-black text-[10px] sm:text-[11px] font-['Barlow_Condensed'] shrink-0">
+                      {t.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")
+                        .slice(0, 2)}
+                    </div>
+                    <div>
+                      <div className="text-slate-800 text-[13px] font-semibold">
+                        {t.name}
+                      </div>
+                      <div className="text-slate-400 text-[11px]">{t.role}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── CTA ────────────────────────────────────────────────────────── */}
         <section
           id="contact"
-          style={{
-            padding: "100px 40px",
-            background: "#060910",
-            position: "relative",
-            overflow: "hidden",
-          }}
+          className="relative py-20 sm:py-24 lg:py-28 bg-slate-900 overflow-hidden"
         >
-          <div
-            className="grid-bg"
-            style={{ position: "absolute", inset: 0, opacity: 0.2 }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background:
-                "radial-gradient(ellipse 65% 55% at 50% 50%, rgba(200,16,46,0.08) 0%, transparent 70%)",
-            }}
-          />
+          <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-red-600 via-red-500 to-amber-500" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(220,38,38,0.15)_0%,transparent_70%)]" />
 
-          {/* Corner accents */}
-          <div
-            style={{
-              position: "absolute",
-              top: 32,
-              left: 32,
-              width: 48,
-              height: 48,
-              borderLeft: "2px solid rgba(200,16,46,0.4)",
-              borderTop: "2px solid rgba(200,16,46,0.4)",
-            }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              bottom: 32,
-              right: 32,
-              width: 48,
-              height: 48,
-              borderRight: "2px solid rgba(200,16,46,0.4)",
-              borderBottom: "2px solid rgba(200,16,46,0.4)",
-            }}
-          />
+          <div className="relative max-w-2xl mx-auto px-4 sm:px-6 text-center">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase mb-6 sm:mb-8">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+              Start Today
+            </span>
 
-          <div
-            style={{
-              maxWidth: 700,
-              margin: "0 auto",
-              textAlign: "center",
-              position: "relative",
-            }}
-          >
-            <SectionTag>Start Today</SectionTag>
             <h2
-              style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontWeight: 900,
-                fontSize: "clamp(52px, 8vw, 96px)",
-                color: "#F0F4FF",
-                lineHeight: 0.9,
-                letterSpacing: "-0.01em",
-                margin: "24px 0 20px",
-              }}
+              className="font-['Barlow_Condensed'] font-black text-white leading-[0.9] mb-5 sm:mb-6"
+              style={{ fontSize: "clamp(44px,8vw,96px)" }}
             >
               READY TO
               <br />
-              <span
-                style={{
-                  background: "linear-gradient(90deg, #C8102E, #F5A623)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }}
-              >
-                FIGHT BACK?
-              </span>
+              <span className="text-red-500">FIGHT BACK?</span>
             </h2>
-            <p
-              style={{
-                fontSize: 16,
-                color: "#8892A4",
-                marginBottom: 44,
-                lineHeight: 1.7,
-              }}
-            >
+
+            <p className="text-slate-400 text-[14px] sm:text-[16px] leading-relaxed mb-10 sm:mb-12 px-2 sm:px-0">
               Request a free demo and see Bitss in action across all five
               security layers — or get a custom quote for your organization.
             </p>
 
-            <div
-              style={{
-                display: "flex",
-                gap: 16,
-                justifyContent: "center",
-                flexWrap: "wrap",
-                marginBottom: 60,
-              }}
-            >
+            <div className="flex flex-col xs:flex-row flex-wrap gap-3 sm:gap-4 justify-center mb-10 sm:mb-14">
               <a
                 href="mailto:security@bitss.com.bd"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 10,
-                  padding: "16px 40px",
-                  background: "#C8102E",
-                  color: "#fff",
-                  textDecoration: "none",
-                  fontFamily: "'Barlow Condensed', sans-serif",
-                  fontSize: 16,
-                  fontWeight: 700,
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  clipPath:
-                    "polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px))",
-                  boxShadow: "0 0 30px rgba(200,16,46,0.4)",
-                }}
+                className="inline-flex items-center justify-center gap-2.5 px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-[14px] sm:text-[15px] transition-all duration-300 shadow-lg shadow-red-900/40 hover:-translate-y-0.5 w-full xs:w-auto"
               >
                 <Zap size={16} /> Request a Demo
               </a>
               <a
                 href="tel:+8801000000000"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 10,
-                  padding: "16px 40px",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  color: "#8892A4",
-                  textDecoration: "none",
-                  fontFamily: "'Barlow Condensed', sans-serif",
-                  fontSize: 16,
-                  fontWeight: 700,
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  clipPath:
-                    "polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px))",
-                }}
+                className="inline-flex items-center justify-center gap-2.5 px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white font-semibold text-[14px] sm:text-[15px] transition-all duration-300 hover:bg-slate-800 w-full xs:w-auto"
               >
                 Talk to an Expert
               </a>
             </div>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: 24,
-                paddingTop: 40,
-                borderTop: "1px solid rgba(255,255,255,0.05)",
-              }}
-            >
+            <div className="grid grid-cols-3 gap-4 sm:gap-6 pt-8 sm:pt-10 border-t border-slate-800">
               {[
-                { icon: "📧", label: "Email", value: "security@bitss.com.bd" },
-                { icon: "📞", label: "Hotline", value: "+880 1XXX-XXXXXX" },
-                { icon: "🕐", label: "Support", value: "24/7 · 365 days" },
-              ].map((c) => (
-                <div key={c.label} style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: 22, marginBottom: 8 }}>{c.icon}</div>
-                  <div
-                    style={{
-                      fontFamily: "'JetBrains Mono', monospace",
-                      fontSize: 9,
-                      color: "#8892A4",
-                      letterSpacing: "0.2em",
-                      textTransform: "uppercase",
-                      marginBottom: 6,
-                    }}
-                  >
-                    {c.label}
+                ["📧", "Email", "security@bitss.com.bd"],
+                ["📞", "Hotline", "+880 1XXX-XXXXXX"],
+                ["🕐", "Support", "24/7 · 365 days"],
+              ].map(([icon, label, value]) => (
+                <div key={label} className="text-center">
+                  <div className="text-lg sm:text-xl mb-1.5 sm:mb-2">
+                    {icon}
                   </div>
-                  <div
-                    style={{ fontSize: 13, color: "#C8D0DC", fontWeight: 500 }}
-                  >
-                    {c.value}
+                  <div className="font-mono text-[8px] sm:text-[10px] text-slate-500 tracking-widest uppercase mb-1 sm:mb-1.5">
+                    {label}
+                  </div>
+                  <div className="text-[11px] sm:text-[13px] text-slate-300 font-medium break-all">
+                    {value}
                   </div>
                 </div>
               ))}
