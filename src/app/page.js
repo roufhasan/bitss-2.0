@@ -15,9 +15,8 @@ import {
   Server,
   ChevronRight,
   Shield,
-  Menu,
-  X,
 } from "lucide-react";
+import Navbar from "@/components/shared/Navbar";
 
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 
@@ -270,13 +269,6 @@ const TESTIMONIALS = [
   },
 ];
 
-const NAV_LINKS = [
-  { label: "Products", href: "#products" },
-  { label: "Solutions", href: "#ecosystem" },
-  { label: "Pricing", href: "#bundles" },
-  { label: "About", href: "#about" },
-];
-
 // ─── HOOKS ────────────────────────────────────────────────────────────────────
 
 function useInView(threshold = 0.08) {
@@ -442,24 +434,6 @@ function BundleCard({ b, i }) {
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 
 export default function HomePage() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 32);
-    window.addEventListener("scroll", fn);
-    return () => window.removeEventListener("scroll", fn);
-  }, []);
-
-  // Close menu on resize to desktop
-  useEffect(() => {
-    const fn = () => {
-      if (window.innerWidth >= 768) setMenuOpen(false);
-    };
-    window.addEventListener("resize", fn);
-    return () => window.removeEventListener("resize", fn);
-  }, []);
-
   return (
     <>
       <style>{`
@@ -494,630 +468,544 @@ export default function HomePage() {
         }
       `}</style>
 
-      <main className="bg-white text-slate-900 min-h-screen">
-        {/* ── STICKY NAV ─────────────────────────────────────────────────── */}
-        <header
-          className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${scrolled ? "bg-white/95 backdrop-blur-sm shadow-sm border-b border-slate-100" : "bg-transparent"}`}
-        >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 h-16 flex items-center justify-between gap-4">
-            {/* Logo */}
-            <a href="#" className="flex items-center gap-2.5 shrink-0">
-              <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center shadow-sm">
-                <ShieldCheck size={17} className="text-white" strokeWidth={2} />
+      {/* ── HERO ───────────────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden bg-white pt-16">
+        <div className="dot-grid absolute inset-0 opacity-60" />
+        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-red-600 via-red-500 to-amber-500" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_65%_30%,rgba(254,242,242,0.9)_0%,transparent_70%)]" />
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-12 sm:py-16 lg:py-20 min-h-[calc(100vh-64px)] flex items-center">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center w-full">
+            {/* LEFT */}
+            <div className="order-2 lg:order-1">
+              <div className="fu1 mb-5 sm:mb-6">
+                <Tag>Enterprise Cybersecurity Platform</Tag>
               </div>
-              <span className="font-['Barlow_Condensed'] text-[20px] font-black text-slate-900 tracking-wide leading-none">
-                BITSS
-              </span>
-            </a>
 
-            {/* Desktop nav */}
-            <nav className="hidden md:flex items-center gap-1">
-              {NAV_LINKS.map((l) => (
+              <h1
+                className="fu2 font-['Barlow_Condensed'] font-black leading-[0.88] tracking-tight mb-5 sm:mb-6"
+                style={{ fontSize: "clamp(44px,8vw,88px)" }}
+              >
+                <span className="block text-slate-900">DEFEND</span>
+                <span className="block text-red-600">EVERY</span>
+                <span className="block text-slate-900">ENTRY POINT.</span>
+              </h1>
+
+              <p className="fu3 text-slate-500 text-[15px] sm:text-[17px] leading-relaxed max-w-[480px] mb-8 sm:mb-10">
+                Bitss secures your business across every attack surface —
+                website login, admin layer, contact forms, Windows devices, and
+                USB storage.{" "}
+                <strong className="text-slate-700 font-semibold">
+                  One ecosystem. Full chain.
+                </strong>
+              </p>
+
+              <div className="fu4 flex flex-col xs:flex-row flex-wrap gap-3 mb-10 sm:mb-14">
                 <a
-                  key={l.label}
-                  href={l.href}
-                  className="px-4 py-2 text-[14px] text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors font-medium"
+                  href="#bundles"
+                  className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-[15px] transition-all duration-300 shadow-lg shadow-red-200 hover:shadow-red-300 hover:-translate-y-0.5 w-full xs:w-auto"
                 >
-                  {l.label}
+                  <ShieldCheck size={17} /> Get Protected
                 </a>
-              ))}
-            </nav>
+                <a
+                  href="#products"
+                  className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 rounded-xl border border-slate-200 hover:border-slate-300 text-slate-600 hover:text-slate-900 font-semibold text-[15px] transition-all duration-300 hover:bg-slate-50 w-full xs:w-auto"
+                >
+                  Explore Products <ArrowRight size={15} />
+                </a>
+              </div>
 
-            {/* Desktop CTA */}
-            <div className="hidden md:flex items-center gap-3">
-              <a
-                href="#contact"
-                className="text-[14px] text-slate-600 hover:text-slate-900 font-medium transition-colors"
-              >
-                Sign in
-              </a>
-              <a
-                href="#contact"
-                className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-[14px] font-semibold transition-all duration-200 shadow-sm shadow-red-200 hover:shadow-red-300"
-              >
-                Get Protected
-              </a>
+              {/* Stats */}
+              <div className="fu5 grid grid-cols-2 sm:grid-cols-4 gap-px bg-slate-100 rounded-2xl overflow-hidden border border-slate-100 shadow-sm">
+                {STATS.map((s) => (
+                  <div
+                    key={s.l}
+                    className="bg-white px-3 sm:px-4 py-3 sm:py-4 text-center"
+                  >
+                    <div className="font-['Barlow_Condensed'] text-[20px] sm:text-[22px] font-black text-slate-900 leading-none">
+                      {s.v}
+                    </div>
+                    <div className="text-[10px] text-slate-400 mt-1 leading-tight">
+                      {s.l}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Mobile hamburger */}
-            <button
-              className="md:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors text-slate-700"
-              onClick={() => setMenuOpen((o) => !o)}
-              aria-label="Toggle menu"
-            >
-              {menuOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
-          </div>
-
-          {/* Mobile menu drawer */}
-          <div
-            className={`md:hidden overflow-hidden transition-all duration-300 ${menuOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0"}`}
-          >
-            <div className="bg-white border-t border-slate-100 px-4 pb-5 pt-3 flex flex-col gap-1">
-              {NAV_LINKS.map((l) => (
-                <a
-                  key={l.label}
-                  href={l.href}
-                  onClick={() => setMenuOpen(false)}
-                  className="px-3 py-2.5 text-[15px] text-slate-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium"
-                >
-                  {l.label}
-                </a>
-              ))}
-              <div className="pt-3 mt-1 border-t border-slate-100 flex flex-col gap-2">
-                <a
-                  href="#contact"
-                  onClick={() => setMenuOpen(false)}
-                  className="w-full py-3 rounded-xl bg-red-600 text-white text-center text-[15px] font-semibold"
-                >
-                  Get Protected
-                </a>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* ── HERO ───────────────────────────────────────────────────────── */}
-        <section className="relative overflow-hidden bg-white pt-16">
-          <div className="dot-grid absolute inset-0 opacity-60" />
-          <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-red-600 via-red-500 to-amber-500" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_65%_30%,rgba(254,242,242,0.9)_0%,transparent_70%)]" />
-
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-12 sm:py-16 lg:py-20 min-h-[calc(100vh-64px)] flex items-center">
-            <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center w-full">
-              {/* LEFT */}
-              <div className="order-2 lg:order-1">
-                <div className="fu1 mb-5 sm:mb-6">
-                  <Tag>Enterprise Cybersecurity Platform</Tag>
-                </div>
-
-                <h1
-                  className="fu2 font-['Barlow_Condensed'] font-black leading-[0.88] tracking-tight mb-5 sm:mb-6"
-                  style={{ fontSize: "clamp(44px,8vw,88px)" }}
-                >
-                  <span className="block text-slate-900">DEFEND</span>
-                  <span className="block text-red-600">EVERY</span>
-                  <span className="block text-slate-900">ENTRY POINT.</span>
-                </h1>
-
-                <p className="fu3 text-slate-500 text-[15px] sm:text-[17px] leading-relaxed max-w-[480px] mb-8 sm:mb-10">
-                  Bitss secures your business across every attack surface —
-                  website login, admin layer, contact forms, Windows devices,
-                  and USB storage.{" "}
-                  <strong className="text-slate-700 font-semibold">
-                    One ecosystem. Full chain.
-                  </strong>
-                </p>
-
-                <div className="fu4 flex flex-col xs:flex-row flex-wrap gap-3 mb-10 sm:mb-14">
-                  <a
-                    href="#bundles"
-                    className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-[15px] transition-all duration-300 shadow-lg shadow-red-200 hover:shadow-red-300 hover:-translate-y-0.5 w-full xs:w-auto"
-                  >
-                    <ShieldCheck size={17} /> Get Protected
-                  </a>
-                  <a
-                    href="#products"
-                    className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 rounded-xl border border-slate-200 hover:border-slate-300 text-slate-600 hover:text-slate-900 font-semibold text-[15px] transition-all duration-300 hover:bg-slate-50 w-full xs:w-auto"
-                  >
-                    Explore Products <ArrowRight size={15} />
-                  </a>
-                </div>
-
-                {/* Stats */}
-                <div className="fu5 grid grid-cols-2 sm:grid-cols-4 gap-px bg-slate-100 rounded-2xl overflow-hidden border border-slate-100 shadow-sm">
-                  {STATS.map((s) => (
-                    <div
-                      key={s.l}
-                      className="bg-white px-3 sm:px-4 py-3 sm:py-4 text-center"
-                    >
-                      <div className="font-['Barlow_Condensed'] text-[20px] sm:text-[22px] font-black text-slate-900 leading-none">
-                        {s.v}
-                      </div>
-                      <div className="text-[10px] text-slate-400 mt-1 leading-tight">
-                        {s.l}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* RIGHT — orbital visual, hidden on mobile, shown md+ */}
-              <div className="order-1 lg:order-2 flex items-center justify-center">
-                {/* Mobile: simple product icon grid instead of orbital */}
-                <div className="lg:hidden w-full">
-                  <div className="flex items-center justify-center mb-6">
-                    <div className="w-20 h-20 rounded-3xl bg-white shadow-2xl shadow-red-100 border border-red-100 flex items-center justify-center">
-                      <ShieldCheck
-                        size={42}
-                        strokeWidth={1.25}
-                        className="text-red-600"
-                      />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-5 gap-2 max-w-xs mx-auto">
-                    {PRODUCTS.map((p) => {
-                      const Icon = p.icon;
-                      return (
-                        <div
-                          key={p.id}
-                          className="flex flex-col items-center gap-1"
-                        >
-                          <div
-                            className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-sm ${p.iconBg}`}
-                          >
-                            <Icon
-                              size={17}
-                              strokeWidth={1.75}
-                              style={{ color: p.accent }}
-                            />
-                          </div>
-                          <span className="text-[8px] text-slate-400 text-center leading-tight font-medium">
-                            {p.short.split(" ")[0]}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  {/* Status badges row on mobile */}
-                  <div className="flex gap-3 justify-center mt-5">
-                    <div className="bg-white rounded-xl px-3 py-2 shadow-md border border-slate-100 flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                      <span className="text-[11px] font-semibold text-emerald-600">
-                        All shields active
-                      </span>
-                    </div>
-                    <div className="bg-white rounded-xl px-3 py-2 shadow-md border border-slate-100 flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                      <span className="text-[11px] font-semibold text-red-600">
-                        0 threats
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Desktop orbital */}
-                <div className="hidden lg:flex relative items-center justify-center h-[460px] w-full">
-                  <div className="spin-cw  absolute w-[360px] h-[360px] rounded-full border border-dashed border-red-200" />
-                  <div className="spin-ccw absolute w-[288px] h-[288px] rounded-full border border-slate-200" />
-                  <div className="absolute w-[420px] h-[420px] rounded-full border border-red-50" />
-                  <div className="absolute w-36 h-36 rounded-full bg-red-50/60 blur-3xl" />
-
-                  <div className="shield-float relative z-10 flex items-center justify-center w-24 h-24 rounded-3xl bg-white shadow-2xl shadow-red-100 border border-red-100">
+            {/* RIGHT — orbital visual, hidden on mobile, shown md+ */}
+            <div className="order-1 lg:order-2 flex items-center justify-center">
+              {/* Mobile: simple product icon grid instead of orbital */}
+              <div className="lg:hidden w-full">
+                <div className="flex items-center justify-center mb-6">
+                  <div className="w-20 h-20 rounded-3xl bg-white shadow-2xl shadow-red-100 border border-red-100 flex items-center justify-center">
                     <ShieldCheck
-                      size={50}
+                      size={42}
                       strokeWidth={1.25}
                       className="text-red-600"
                     />
                   </div>
-
-                  {PRODUCTS.map((p, i) => {
-                    const angle = (i / PRODUCTS.length) * 360 - 90;
-                    const rad = (angle * Math.PI) / 180;
-                    const r = 162;
+                </div>
+                <div className="grid grid-cols-5 gap-2 max-w-xs mx-auto">
+                  {PRODUCTS.map((p) => {
                     const Icon = p.icon;
                     return (
                       <div
                         key={p.id}
-                        className="absolute z-10"
-                        style={{
-                          left: "50%",
-                          top: "50%",
-                          transform: `translate(calc(-50% + ${Math.cos(rad) * r}px),calc(-50% + ${Math.sin(rad) * r}px))`,
-                        }}
-                      >
-                        <div className="flex flex-col items-center gap-1.5">
-                          <div
-                            className={`w-11 h-11 rounded-xl flex items-center justify-center shadow-sm border border-white ${p.iconBg}`}
-                          >
-                            <Icon
-                              size={19}
-                              strokeWidth={1.75}
-                              style={{ color: p.accent }}
-                            />
-                          </div>
-                          <span className="text-[9px] font-semibold text-slate-400 whitespace-nowrap">
-                            {p.short}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                  <div className="absolute -right-2 top-14 bg-white rounded-xl px-4 py-2.5 shadow-xl shadow-slate-200/80 border border-slate-100">
-                    <div className="flex items-center gap-2 text-[12px] font-semibold text-emerald-600">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />{" "}
-                      All shields active
-                    </div>
-                    <div className="text-[10px] text-slate-400 mt-0.5 font-mono">
-                      5/5 layers online
-                    </div>
-                  </div>
-                  <div className="absolute -left-2 bottom-20 bg-white rounded-xl px-4 py-2.5 shadow-xl shadow-slate-200/80 border border-slate-100">
-                    <div className="flex items-center gap-2 text-[12px] font-semibold text-red-600">
-                      <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />{" "}
-                      0 threats detected
-                    </div>
-                    <div className="text-[10px] text-slate-400 mt-0.5 font-mono">
-                      Last scan: just now
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ── THREAT TICKER ──────────────────────────────────────────────── */}
-        <div className="relative bg-slate-900 py-2.5 sm:py-3 overflow-hidden">
-          <div className="absolute left-0 inset-y-0 z-10 flex items-center px-4 sm:px-5 bg-red-600">
-            <span className="font-['Barlow_Condensed'] text-[9px] sm:text-[10px] font-black tracking-[0.22em] text-white uppercase whitespace-nowrap">
-              LIVE SHIELD
-            </span>
-          </div>
-          <div className="ml-24 sm:ml-32 overflow-hidden">
-            <div className="ticker flex gap-8 sm:gap-10 whitespace-nowrap">
-              {[...TICKER, ...TICKER].map((t, i) => (
-                <div
-                  key={i}
-                  className="inline-flex items-center gap-2 sm:gap-3 shrink-0"
-                >
-                  <span
-                    className={`font-mono text-[8px] sm:text-[9px] font-bold tracking-[0.18em] ${t.color}`}
-                  >
-                    [{t.type}]
-                  </span>
-                  <span className="font-mono text-[10px] sm:text-[11px] text-slate-400">
-                    {t.msg}
-                  </span>
-                  <span className="text-slate-700">·</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="absolute right-0 inset-y-0 w-12 sm:w-16 bg-gradient-to-l from-slate-900 to-transparent pointer-events-none" />
-        </div>
-
-        {/* ── ECOSYSTEM ──────────────────────────────────────────────────── */}
-        <section
-          id="ecosystem"
-          className="relative py-16 sm:py-20 lg:py-24 bg-slate-50 overflow-hidden"
-        >
-          <div className="sub-grid absolute inset-0" />
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
-            <div className="text-center mb-12 sm:mb-16">
-              <Tag>The Bitss Ecosystem</Tag>
-              <h2
-                className="font-['Barlow_Condensed'] font-black text-slate-900 mt-4 sm:mt-5 mb-3 sm:mb-4 leading-none"
-                style={{ fontSize: "clamp(30px,5vw,58px)" }}
-              >
-                ONE ECOSYSTEM. <span className="text-red-600">FULL CHAIN.</span>
-              </h2>
-              <p className="text-slate-500 text-[14px] sm:text-[15px] max-w-lg mx-auto leading-relaxed px-4">
-                Bitss covers every entry point attackers exploit — from your
-                website login to the USB stick an employee just plugged in.
-              </p>
-            </div>
-
-            {/* Chain — scrollable on mobile */}
-            <div className="mb-12 sm:mb-16 -mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto">
-              <div className="flex items-center min-w-max sm:min-w-0 sm:flex-wrap sm:justify-center gap-y-4 mx-auto pb-2 sm:pb-0">
-                {PRODUCTS.map((p, i) => {
-                  const Icon = p.icon;
-                  return (
-                    <div key={p.id} className="flex items-center">
-                      <div
-                        className={`flex flex-col items-center gap-2 px-4 sm:px-5 py-4 sm:py-5 w-[100px] sm:min-w-[112px] text-center bg-white rounded-2xl border border-slate-100 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md`}
+                        className="flex flex-col items-center gap-1"
                       >
                         <div
-                          className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center ${p.iconBg}`}
+                          className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-sm ${p.iconBg}`}
                         >
                           <Icon
-                            size={18}
+                            size={17}
                             strokeWidth={1.75}
                             style={{ color: p.accent }}
                           />
                         </div>
-                        <span className="font-['Barlow_Condensed'] text-[12px] sm:text-[13px] font-bold text-slate-800 leading-tight">
-                          {p.short}
-                        </span>
-                        <span
-                          className={`text-[8px] sm:text-[9px] font-semibold tracking-widest uppercase ${p.accentText}`}
-                        >
-                          {p.layer}
+                        <span className="text-[8px] text-slate-400 text-center leading-tight font-medium">
+                          {p.short.split(" ")[0]}
                         </span>
                       </div>
-                      {i < PRODUCTS.length - 1 && (
-                        <div className="flex items-center px-1.5 sm:px-2">
-                          <div className="w-6 sm:w-8 h-px bg-gradient-to-r from-red-300 to-slate-200" />
-                          <div className="w-1.5 h-1.5 border-t-2 border-r-2 border-red-300 rotate-45 -ml-1" />
+                    );
+                  })}
+                </div>
+                {/* Status badges row on mobile */}
+                <div className="flex gap-3 justify-center mt-5">
+                  <div className="bg-white rounded-xl px-3 py-2 shadow-md border border-slate-100 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="text-[11px] font-semibold text-emerald-600">
+                      All shields active
+                    </span>
+                  </div>
+                  <div className="bg-white rounded-xl px-3 py-2 shadow-md border border-slate-100 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                    <span className="text-[11px] font-semibold text-red-600">
+                      0 threats
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Desktop orbital */}
+              <div className="hidden lg:flex relative items-center justify-center h-[460px] w-full">
+                <div className="spin-cw  absolute w-[360px] h-[360px] rounded-full border border-dashed border-red-200" />
+                <div className="spin-ccw absolute w-[288px] h-[288px] rounded-full border border-slate-200" />
+                <div className="absolute w-[420px] h-[420px] rounded-full border border-red-50" />
+                <div className="absolute w-36 h-36 rounded-full bg-red-50/60 blur-3xl" />
+
+                <div className="shield-float relative z-10 flex items-center justify-center w-24 h-24 rounded-3xl bg-white shadow-2xl shadow-red-100 border border-red-100">
+                  <ShieldCheck
+                    size={50}
+                    strokeWidth={1.25}
+                    className="text-red-600"
+                  />
+                </div>
+
+                {PRODUCTS.map((p, i) => {
+                  const angle = (i / PRODUCTS.length) * 360 - 90;
+                  const rad = (angle * Math.PI) / 180;
+                  const r = 162;
+                  const Icon = p.icon;
+                  return (
+                    <div
+                      key={p.id}
+                      className="absolute z-10"
+                      style={{
+                        left: "50%",
+                        top: "50%",
+                        transform: `translate(calc(-50% + ${Math.cos(rad) * r}px),calc(-50% + ${Math.sin(rad) * r}px))`,
+                      }}
+                    >
+                      <div className="flex flex-col items-center gap-1.5">
+                        <div
+                          className={`w-11 h-11 rounded-xl flex items-center justify-center shadow-sm border border-white ${p.iconBg}`}
+                        >
+                          <Icon
+                            size={19}
+                            strokeWidth={1.75}
+                            style={{ color: p.accent }}
+                          />
                         </div>
-                      )}
+                        <span className="text-[9px] font-semibold text-slate-400 whitespace-nowrap">
+                          {p.short}
+                        </span>
+                      </div>
                     </div>
                   );
                 })}
-              </div>
-            </div>
 
-            {/* 3 pillars */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-              {[
-                {
-                  icon: Globe,
-                  label: "Web-to-Server",
-                  desc: "Full coverage from public-facing login pages down to the database layer.",
-                  bg: "bg-red-50",
-                  color: "text-red-600",
-                },
-                {
-                  icon: Zap,
-                  label: "Real-Time Response",
-                  desc: "Every product detects and blocks threats the moment they appear — zero delays.",
-                  bg: "bg-amber-50",
-                  color: "text-amber-600",
-                },
-                {
-                  icon: ShieldCheck,
-                  label: "Endpoint-to-Media",
-                  desc: "Windows devices and USB drives covered so no offline vector goes unguarded.",
-                  bg: "bg-sky-50",
-                  color: "text-sky-600",
-                },
-              ].map((item) => {
-                const IIcon = item.icon;
-                return (
-                  <div
-                    key={item.label}
-                    className="bg-white rounded-2xl p-5 sm:p-7 border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
-                  >
-                    <div
-                      className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center mb-4 sm:mb-5 ${item.bg}`}
-                    >
-                      <IIcon
-                        size={20}
-                        strokeWidth={1.75}
-                        className={item.color}
-                      />
-                    </div>
-                    <h4 className="font-['Barlow_Condensed'] text-[17px] sm:text-[19px] font-black text-slate-900 mb-2">
-                      {item.label}
-                    </h4>
-                    <p className="text-slate-500 text-[13px] leading-relaxed">
-                      {item.desc}
-                    </p>
+                <div className="absolute -right-2 top-14 bg-white rounded-xl px-4 py-2.5 shadow-xl shadow-slate-200/80 border border-slate-100">
+                  <div className="flex items-center gap-2 text-[12px] font-semibold text-emerald-600">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />{" "}
+                    All shields active
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* ── PRODUCTS ───────────────────────────────────────────────────── */}
-        <section
-          id="products"
-          className="relative py-16 sm:py-20 lg:py-24 bg-white overflow-hidden"
-        >
-          <div className="dot-grid absolute inset-0 opacity-40" />
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 mb-10 sm:mb-14">
-              <div>
-                <Tag>5 Products</Tag>
-                <h2
-                  className="font-['Barlow_Condensed'] font-black text-slate-900 mt-4 leading-none"
-                  style={{ fontSize: "clamp(28px,5vw,54px)" }}
-                >
-                  THE COMPLETE{" "}
-                  <span className="text-red-600">SECURITY SUITE</span>
-                </h2>
-              </div>
-              <p className="text-slate-500 text-[14px] max-w-xs sm:max-w-sm leading-relaxed">
-                Every product purpose-built for a specific attack layer — no
-                overlap, no gaps.
-              </p>
-            </div>
-
-            {/* Products grid — 1 col mobile, 2 col sm, 3 col lg, 5 col xl */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-5">
-              {PRODUCTS.map((p, i) => (
-                <ProductCard key={p.id} p={p} i={i} />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── WHY BITSS STRIP ────────────────────────────────────────────── */}
-        <div className="bg-slate-900 py-12 sm:py-14 lg:py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-slate-700/30">
-              {WHY.map((item) => {
-                const IIcon = item.icon;
-                return (
-                  <div
-                    key={item.label}
-                    className="bg-slate-900 p-6 sm:p-7 lg:p-8 hover:bg-slate-800 transition-colors"
-                  >
-                    <IIcon
-                      size={20}
-                      strokeWidth={1.5}
-                      className="text-red-500 mb-3 sm:mb-4"
-                    />
-                    <h4 className="font-['Barlow_Condensed'] text-[16px] sm:text-[17px] font-black text-white mb-1.5 sm:mb-2 tracking-wide">
-                      {item.label}
-                    </h4>
-                    <p className="text-slate-400 text-[13px] leading-relaxed">
-                      {item.desc}
-                    </p>
+                  <div className="text-[10px] text-slate-400 mt-0.5 font-mono">
+                    5/5 layers online
                   </div>
-                );
-              })}
+                </div>
+                <div className="absolute -left-2 bottom-20 bg-white rounded-xl px-4 py-2.5 shadow-xl shadow-slate-200/80 border border-slate-100">
+                  <div className="flex items-center gap-2 text-[12px] font-semibold text-red-600">
+                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />{" "}
+                    0 threats detected
+                  </div>
+                  <div className="text-[10px] text-slate-400 mt-0.5 font-mono">
+                    Last scan: just now
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* ── BUNDLES ────────────────────────────────────────────────────── */}
-        <section
-          id="bundles"
-          className="relative py-16 sm:py-20 lg:py-24 bg-slate-50 overflow-hidden"
-        >
-          <div className="sub-grid absolute inset-0" />
-          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-10">
-            <div className="text-center mb-12 sm:mb-16">
-              <Tag>Bundle Offers</Tag>
-              <h2
-                className="font-['Barlow_Condensed'] font-black text-slate-900 mt-4 sm:mt-5 mb-3 sm:mb-4 leading-none"
-                style={{ fontSize: "clamp(28px,5vw,54px)" }}
+      {/* ── THREAT TICKER ──────────────────────────────────────────────── */}
+      <div className="relative bg-slate-900 py-2.5 sm:py-3 overflow-hidden">
+        <div className="absolute left-0 inset-y-0 z-10 flex items-center px-4 sm:px-5 bg-red-600">
+          <span className="font-['Barlow_Condensed'] text-[9px] sm:text-[10px] font-black tracking-[0.22em] text-white uppercase whitespace-nowrap">
+            LIVE SHIELD
+          </span>
+        </div>
+        <div className="ml-24 sm:ml-32 overflow-hidden">
+          <div className="ticker flex gap-8 sm:gap-10 whitespace-nowrap">
+            {[...TICKER, ...TICKER].map((t, i) => (
+              <div
+                key={i}
+                className="inline-flex items-center gap-2 sm:gap-3 shrink-0"
               >
-                CHOOSE YOUR <span className="text-red-600">COVERAGE</span>
-              </h2>
-              <p className="text-slate-500 text-[14px] sm:text-[15px] max-w-sm mx-auto leading-relaxed">
-                Bundle packages ensure nothing falls through the cracks — at
-                better value than buying separately.
-              </p>
-            </div>
+                <span
+                  className={`font-mono text-[8px] sm:text-[9px] font-bold tracking-[0.18em] ${t.color}`}
+                >
+                  [{t.type}]
+                </span>
+                <span className="font-mono text-[10px] sm:text-[11px] text-slate-400">
+                  {t.msg}
+                </span>
+                <span className="text-slate-700">·</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="absolute right-0 inset-y-0 w-12 sm:w-16 bg-gradient-to-l from-slate-900 to-transparent pointer-events-none" />
+      </div>
 
-            <div className="flex flex-col sm:flex-row flex-wrap gap-5 sm:gap-6 items-stretch justify-center">
-              {BUNDLES.map((b, i) => (
-                <BundleCard key={b.name} b={b} i={i} />
-              ))}
-            </div>
-
-            <p className="text-center mt-6 sm:mt-8 text-[12px] text-slate-400">
-              Bundle pricing available on request · Custom enterprise plans
-              supported
+      {/* ── ECOSYSTEM ──────────────────────────────────────────────────── */}
+      <section
+        id="ecosystem"
+        className="relative py-16 sm:py-20 lg:py-24 bg-slate-50 overflow-hidden"
+      >
+        <div className="sub-grid absolute inset-0" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+          <div className="text-center mb-12 sm:mb-16">
+            <Tag>The Bitss Ecosystem</Tag>
+            <h2
+              className="font-['Barlow_Condensed'] font-black text-slate-900 mt-4 sm:mt-5 mb-3 sm:mb-4 leading-none"
+              style={{ fontSize: "clamp(30px,5vw,58px)" }}
+            >
+              ONE ECOSYSTEM. <span className="text-red-600">FULL CHAIN.</span>
+            </h2>
+            <p className="text-slate-500 text-[14px] sm:text-[15px] max-w-lg mx-auto leading-relaxed px-4">
+              Bitss covers every entry point attackers exploit — from your
+              website login to the USB stick an employee just plugged in.
             </p>
           </div>
-        </section>
 
-        {/* ── TESTIMONIALS ───────────────────────────────────────────────── */}
-        <section className="py-16 sm:py-20 lg:py-24 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
-            <div className="text-center mb-10 sm:mb-14">
-              <Tag>Customer Stories</Tag>
+          {/* Chain — scrollable on mobile */}
+          <div className="mb-12 sm:mb-16 -mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto">
+            <div className="flex items-center min-w-max sm:min-w-0 sm:flex-wrap sm:justify-center gap-y-4 mx-auto pb-2 sm:pb-0">
+              {PRODUCTS.map((p, i) => {
+                const Icon = p.icon;
+                return (
+                  <div key={p.id} className="flex items-center">
+                    <div
+                      className={`flex flex-col items-center gap-2 px-4 sm:px-5 py-4 sm:py-5 w-[100px] sm:min-w-[112px] text-center bg-white rounded-2xl border border-slate-100 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md`}
+                    >
+                      <div
+                        className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center ${p.iconBg}`}
+                      >
+                        <Icon
+                          size={18}
+                          strokeWidth={1.75}
+                          style={{ color: p.accent }}
+                        />
+                      </div>
+                      <span className="font-['Barlow_Condensed'] text-[12px] sm:text-[13px] font-bold text-slate-800 leading-tight">
+                        {p.short}
+                      </span>
+                      <span
+                        className={`text-[8px] sm:text-[9px] font-semibold tracking-widest uppercase ${p.accentText}`}
+                      >
+                        {p.layer}
+                      </span>
+                    </div>
+                    {i < PRODUCTS.length - 1 && (
+                      <div className="flex items-center px-1.5 sm:px-2">
+                        <div className="w-6 sm:w-8 h-px bg-gradient-to-r from-red-300 to-slate-200" />
+                        <div className="w-1.5 h-1.5 border-t-2 border-r-2 border-red-300 rotate-45 -ml-1" />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 3 pillars */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+            {[
+              {
+                icon: Globe,
+                label: "Web-to-Server",
+                desc: "Full coverage from public-facing login pages down to the database layer.",
+                bg: "bg-red-50",
+                color: "text-red-600",
+              },
+              {
+                icon: Zap,
+                label: "Real-Time Response",
+                desc: "Every product detects and blocks threats the moment they appear — zero delays.",
+                bg: "bg-amber-50",
+                color: "text-amber-600",
+              },
+              {
+                icon: ShieldCheck,
+                label: "Endpoint-to-Media",
+                desc: "Windows devices and USB drives covered so no offline vector goes unguarded.",
+                bg: "bg-sky-50",
+                color: "text-sky-600",
+              },
+            ].map((item) => {
+              const IIcon = item.icon;
+              return (
+                <div
+                  key={item.label}
+                  className="bg-white rounded-2xl p-5 sm:p-7 border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+                >
+                  <div
+                    className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center mb-4 sm:mb-5 ${item.bg}`}
+                  >
+                    <IIcon
+                      size={20}
+                      strokeWidth={1.75}
+                      className={item.color}
+                    />
+                  </div>
+                  <h4 className="font-['Barlow_Condensed'] text-[17px] sm:text-[19px] font-black text-slate-900 mb-2">
+                    {item.label}
+                  </h4>
+                  <p className="text-slate-500 text-[13px] leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ── PRODUCTS ───────────────────────────────────────────────────── */}
+      <section
+        id="products"
+        className="relative py-16 sm:py-20 lg:py-24 bg-white overflow-hidden"
+      >
+        <div className="dot-grid absolute inset-0 opacity-40" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 mb-10 sm:mb-14">
+            <div>
+              <Tag>5 Products</Tag>
               <h2
                 className="font-['Barlow_Condensed'] font-black text-slate-900 mt-4 leading-none"
-                style={{ fontSize: "clamp(26px,4vw,50px)" }}
+                style={{ fontSize: "clamp(28px,5vw,54px)" }}
               >
-                TRUSTED BY <span className="text-red-600">BUSINESSES</span>
+                THE COMPLETE{" "}
+                <span className="text-red-600">SECURITY SUITE</span>
               </h2>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {TESTIMONIALS.map((t, i) => (
-                <div
-                  key={i}
-                  className="bg-slate-50 rounded-2xl p-5 sm:p-7 border border-slate-100 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
-                >
-                  <div className="font-['Barlow_Condensed'] text-5xl sm:text-6xl text-red-100 font-black leading-none mb-2 sm:mb-3">
-                    "
-                  </div>
-                  <p className="text-slate-600 text-[13px] sm:text-[14px] leading-relaxed mb-5 sm:mb-6 italic">
-                    "{t.q}"
-                  </p>
-                  <div className="flex items-center gap-3 pt-3 sm:pt-4 border-t border-slate-200">
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-black text-[10px] sm:text-[11px] font-['Barlow_Condensed'] shrink-0">
-                      {t.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")
-                        .slice(0, 2)}
-                    </div>
-                    <div>
-                      <div className="text-slate-800 text-[13px] font-semibold">
-                        {t.name}
-                      </div>
-                      <div className="text-slate-400 text-[11px]">{t.role}</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── CTA ────────────────────────────────────────────────────────── */}
-        <section
-          id="contact"
-          className="relative py-20 sm:py-24 lg:py-28 bg-slate-900 overflow-hidden"
-        >
-          <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-red-600 via-red-500 to-amber-500" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(220,38,38,0.15)_0%,transparent_70%)]" />
-
-          <div className="relative max-w-2xl mx-auto px-4 sm:px-6 text-center">
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase mb-6 sm:mb-8">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-              Start Today
-            </span>
-
-            <h2
-              className="font-['Barlow_Condensed'] font-black text-white leading-[0.9] mb-5 sm:mb-6"
-              style={{ fontSize: "clamp(44px,8vw,96px)" }}
-            >
-              READY TO
-              <br />
-              <span className="text-red-500">FIGHT BACK?</span>
-            </h2>
-
-            <p className="text-slate-400 text-[14px] sm:text-[16px] leading-relaxed mb-10 sm:mb-12 px-2 sm:px-0">
-              Request a free demo and see Bitss in action across all five
-              security layers — or get a custom quote for your organization.
+            <p className="text-slate-500 text-[14px] max-w-xs sm:max-w-sm leading-relaxed">
+              Every product purpose-built for a specific attack layer — no
+              overlap, no gaps.
             </p>
+          </div>
 
-            <div className="flex flex-col xs:flex-row flex-wrap gap-3 sm:gap-4 justify-center mb-10 sm:mb-14">
-              <a
-                href="mailto:security@bitss.com.bd"
-                className="inline-flex items-center justify-center gap-2.5 px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-[14px] sm:text-[15px] transition-all duration-300 shadow-lg shadow-red-900/40 hover:-translate-y-0.5 w-full xs:w-auto"
-              >
-                <Zap size={16} /> Request a Demo
-              </a>
-              <a
-                href="tel:+8801000000000"
-                className="inline-flex items-center justify-center gap-2.5 px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white font-semibold text-[14px] sm:text-[15px] transition-all duration-300 hover:bg-slate-800 w-full xs:w-auto"
-              >
-                Talk to an Expert
-              </a>
-            </div>
+          {/* Products grid — 1 col mobile, 2 col sm, 3 col lg, 5 col xl */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-5">
+            {PRODUCTS.map((p, i) => (
+              <ProductCard key={p.id} p={p} i={i} />
+            ))}
+          </div>
+        </div>
+      </section>
 
-            <div className="grid grid-cols-3 gap-4 sm:gap-6 pt-8 sm:pt-10 border-t border-slate-800">
-              {[
-                ["📧", "Email", "security@bitss.com.bd"],
-                ["📞", "Hotline", "+880 1XXX-XXXXXX"],
-                ["🕐", "Support", "24/7 · 365 days"],
-              ].map(([icon, label, value]) => (
-                <div key={label} className="text-center">
-                  <div className="text-lg sm:text-xl mb-1.5 sm:mb-2">
-                    {icon}
+      {/* ── WHY BITSS STRIP ────────────────────────────────────────────── */}
+      <div className="bg-slate-900 py-12 sm:py-14 lg:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-slate-700/30">
+            {WHY.map((item) => {
+              const IIcon = item.icon;
+              return (
+                <div
+                  key={item.label}
+                  className="bg-slate-900 p-6 sm:p-7 lg:p-8 hover:bg-slate-800 transition-colors"
+                >
+                  <IIcon
+                    size={20}
+                    strokeWidth={1.5}
+                    className="text-red-500 mb-3 sm:mb-4"
+                  />
+                  <h4 className="font-['Barlow_Condensed'] text-[16px] sm:text-[17px] font-black text-white mb-1.5 sm:mb-2 tracking-wide">
+                    {item.label}
+                  </h4>
+                  <p className="text-slate-400 text-[13px] leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* ── BUNDLES ────────────────────────────────────────────────────── */}
+      <section
+        id="bundles"
+        className="relative py-16 sm:py-20 lg:py-24 bg-slate-50 overflow-hidden"
+      >
+        <div className="sub-grid absolute inset-0" />
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-10">
+          <div className="text-center mb-12 sm:mb-16">
+            <Tag>Bundle Offers</Tag>
+            <h2
+              className="font-['Barlow_Condensed'] font-black text-slate-900 mt-4 sm:mt-5 mb-3 sm:mb-4 leading-none"
+              style={{ fontSize: "clamp(28px,5vw,54px)" }}
+            >
+              CHOOSE YOUR <span className="text-red-600">COVERAGE</span>
+            </h2>
+            <p className="text-slate-500 text-[14px] sm:text-[15px] max-w-sm mx-auto leading-relaxed">
+              Bundle packages ensure nothing falls through the cracks — at
+              better value than buying separately.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row flex-wrap gap-5 sm:gap-6 items-stretch justify-center">
+            {BUNDLES.map((b, i) => (
+              <BundleCard key={b.name} b={b} i={i} />
+            ))}
+          </div>
+
+          <p className="text-center mt-6 sm:mt-8 text-[12px] text-slate-400">
+            Bundle pricing available on request · Custom enterprise plans
+            supported
+          </p>
+        </div>
+      </section>
+
+      {/* ── TESTIMONIALS ───────────────────────────────────────────────── */}
+      <section className="py-16 sm:py-20 lg:py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+          <div className="text-center mb-10 sm:mb-14">
+            <Tag>Customer Stories</Tag>
+            <h2
+              className="font-['Barlow_Condensed'] font-black text-slate-900 mt-4 leading-none"
+              style={{ fontSize: "clamp(26px,4vw,50px)" }}
+            >
+              TRUSTED BY <span className="text-red-600">BUSINESSES</span>
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {TESTIMONIALS.map((t, i) => (
+              <div
+                key={i}
+                className="bg-slate-50 rounded-2xl p-5 sm:p-7 border border-slate-100 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+              >
+                <div className="font-['Barlow_Condensed'] text-5xl sm:text-6xl text-red-100 font-black leading-none mb-2 sm:mb-3">
+                  "
+                </div>
+                <p className="text-slate-600 text-[13px] sm:text-[14px] leading-relaxed mb-5 sm:mb-6 italic">
+                  "{t.q}"
+                </p>
+                <div className="flex items-center gap-3 pt-3 sm:pt-4 border-t border-slate-200">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-black text-[10px] sm:text-[11px] font-['Barlow_Condensed'] shrink-0">
+                    {t.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .slice(0, 2)}
                   </div>
-                  <div className="font-mono text-[8px] sm:text-[10px] text-slate-500 tracking-widest uppercase mb-1 sm:mb-1.5">
-                    {label}
-                  </div>
-                  <div className="text-[11px] sm:text-[13px] text-slate-300 font-medium break-all">
-                    {value}
+                  <div>
+                    <div className="text-slate-800 text-[13px] font-semibold">
+                      {t.name}
+                    </div>
+                    <div className="text-slate-400 text-[11px]">{t.role}</div>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
+
+      {/* ── CTA ────────────────────────────────────────────────────────── */}
+      <section
+        id="contact"
+        className="relative py-20 sm:py-24 lg:py-28 bg-slate-900 overflow-hidden"
+      >
+        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-red-600 via-red-500 to-amber-500" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(220,38,38,0.15)_0%,transparent_70%)]" />
+
+        <div className="relative max-w-2xl mx-auto px-4 sm:px-6 text-center">
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase mb-6 sm:mb-8">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+            Start Today
+          </span>
+
+          <h2
+            className="font-['Barlow_Condensed'] font-black text-white leading-[0.9] mb-5 sm:mb-6"
+            style={{ fontSize: "clamp(44px,8vw,96px)" }}
+          >
+            READY TO
+            <br />
+            <span className="text-red-500">FIGHT BACK?</span>
+          </h2>
+
+          <p className="text-slate-400 text-[14px] sm:text-[16px] leading-relaxed mb-10 sm:mb-12 px-2 sm:px-0">
+            Request a free demo and see Bitss in action across all five security
+            layers — or get a custom quote for your organization.
+          </p>
+
+          <div className="flex flex-col xs:flex-row flex-wrap gap-3 sm:gap-4 justify-center mb-10 sm:mb-14">
+            <a
+              href="mailto:security@bitss.com.bd"
+              className="inline-flex items-center justify-center gap-2.5 px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-[14px] sm:text-[15px] transition-all duration-300 shadow-lg shadow-red-900/40 hover:-translate-y-0.5 w-full xs:w-auto"
+            >
+              <Zap size={16} /> Request a Demo
+            </a>
+            <a
+              href="tel:+8801000000000"
+              className="inline-flex items-center justify-center gap-2.5 px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white font-semibold text-[14px] sm:text-[15px] transition-all duration-300 hover:bg-slate-800 w-full xs:w-auto"
+            >
+              Talk to an Expert
+            </a>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4 sm:gap-6 pt-8 sm:pt-10 border-t border-slate-800">
+            {[
+              ["📧", "Email", "security@bitss.com.bd"],
+              ["📞", "Hotline", "+880 1XXX-XXXXXX"],
+              ["🕐", "Support", "24/7 · 365 days"],
+            ].map(([icon, label, value]) => (
+              <div key={label} className="text-center">
+                <div className="text-lg sm:text-xl mb-1.5 sm:mb-2">{icon}</div>
+                <div className="font-mono text-[8px] sm:text-[10px] text-slate-500 tracking-widest uppercase mb-1 sm:mb-1.5">
+                  {label}
+                </div>
+                <div className="text-[11px] sm:text-[13px] text-slate-300 font-medium break-all">
+                  {value}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </>
   );
 }
