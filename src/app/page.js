@@ -17,9 +17,10 @@ import {
   Shield,
 } from "lucide-react";
 import Navbar from "@/components/shared/Navbar";
+import Products from "@/components/pages/home/Products";
+import Link from "next/link";
 
 // ─── DATA ─────────────────────────────────────────────────────────────────────
-
 const PRODUCTS = [
   {
     id: "wap",
@@ -298,85 +299,6 @@ function Tag({ children }) {
   );
 }
 
-function ProductCard({ p, i }) {
-  const [ref, inView] = useInView();
-  const [hov, setHov] = useState(false);
-  const Icon = p.icon;
-  return (
-    <div
-      ref={ref}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{ transitionDelay: `${i * 0.06}s` }}
-      className={`relative flex flex-col bg-white rounded-2xl border p-5 sm:p-6 cursor-default transition-all duration-500
-        ${hov ? `border-transparent shadow-xl shadow-slate-200/80 -translate-y-1 ${p.hoverBorder}` : "border-slate-200 shadow-sm"}
-        ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}
-      `}
-    >
-      {/* Top accent bar */}
-      <div
-        className="absolute top-0 left-6 right-6 h-0.5 rounded-full transition-all duration-300"
-        style={{ background: hov ? p.accent : "transparent" }}
-      />
-      {/* Layer badge — hidden on very small screens to avoid overlap */}
-      <span
-        className={`hidden sm:inline-flex absolute top-4 right-4 text-[9px] font-semibold tracking-wide px-2 py-0.5 rounded-full border ${p.layerClass}`}
-      >
-        {p.layer}
-      </span>
-      {/* Index */}
-      <p className="font-mono text-[10px] tracking-widest text-slate-300 mb-3">
-        {String(i + 1).padStart(2, "0")}
-      </p>
-      {/* Icon + mobile layer badge row */}
-      <div className="flex items-center justify-between mb-3 sm:block">
-        <div
-          className={`inline-flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-300 ${p.iconBg} ${hov ? "scale-110" : ""}`}
-        >
-          <Icon size={20} strokeWidth={1.75} style={{ color: p.accent }} />
-        </div>
-        <span
-          className={`sm:hidden inline-flex text-[9px] font-semibold tracking-wide px-2 py-0.5 rounded-full border ${p.layerClass}`}
-        >
-          {p.layer}
-        </span>
-      </div>
-      <h3 className="font-['Barlow_Condensed'] text-[19px] sm:text-[21px] font-black text-slate-900 leading-tight mb-0.5">
-        {p.name}
-      </h3>
-      <p
-        className={`text-[10px] font-semibold tracking-wide uppercase mb-3 ${p.accentText}`}
-      >
-        {p.tag}
-      </p>
-      <p className="text-slate-500 text-[13px] leading-relaxed mb-4 flex-1">
-        {p.desc}
-      </p>
-      <ul className="space-y-1.5 mb-4">
-        {p.features.map((f) => (
-          <li
-            key={f}
-            className="flex items-start gap-2 text-[12px] text-slate-500"
-          >
-            <span
-              className={`w-1.5 h-1.5 rounded-full shrink-0 mt-1.5 ${p.accentDot}`}
-            />
-            {f}
-          </li>
-        ))}
-      </ul>
-      <div className="pt-4 border-t border-slate-100 mt-auto">
-        <a
-          href="#contact"
-          className={`inline-flex items-center gap-1.5 text-[12px] font-semibold tracking-wide transition-colors ${p.accentBtn}`}
-        >
-          Learn more <ChevronRight size={12} />
-        </a>
-      </div>
-    </div>
-  );
-}
-
 function BundleCard({ b, i }) {
   const [ref, inView] = useInView();
   const Icon = b.icon;
@@ -507,12 +429,12 @@ export default function HomePage() {
                 >
                   <ShieldCheck size={17} /> Get Protected
                 </a>
-                <a
-                  href="#products"
+                <Link
+                  href="/products"
                   className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 rounded-xl border border-slate-200 hover:border-slate-300 text-slate-600 hover:text-slate-900 font-semibold text-[15px] transition-all duration-300 hover:bg-slate-50 w-full xs:w-auto"
                 >
                   Explore Products <ArrowRight size={15} />
-                </a>
+                </Link>
               </div>
 
               {/* Stats */}
@@ -804,37 +726,7 @@ export default function HomePage() {
       </section>
 
       {/* ── PRODUCTS ───────────────────────────────────────────────────── */}
-      <section
-        id="products"
-        className="relative py-16 sm:py-20 lg:py-24 bg-white overflow-hidden"
-      >
-        <div className="dot-grid absolute inset-0 opacity-40" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 mb-10 sm:mb-14">
-            <div>
-              <Tag>5 Products</Tag>
-              <h2
-                className="font-['Barlow_Condensed'] font-black text-slate-900 mt-4 leading-none"
-                style={{ fontSize: "clamp(28px,5vw,54px)" }}
-              >
-                THE COMPLETE{" "}
-                <span className="text-red-600">SECURITY SUITE</span>
-              </h2>
-            </div>
-            <p className="text-slate-500 text-[14px] max-w-xs sm:max-w-sm leading-relaxed">
-              Every product purpose-built for a specific attack layer — no
-              overlap, no gaps.
-            </p>
-          </div>
-
-          {/* Products grid — 1 col mobile, 2 col sm, 3 col lg, 5 col xl */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-5">
-            {PRODUCTS.map((p, i) => (
-              <ProductCard key={p.id} p={p} i={i} />
-            ))}
-          </div>
-        </div>
-      </section>
+      <Products />
 
       {/* ── WHY BITSS STRIP ────────────────────────────────────────────── */}
       <div className="bg-slate-900 py-12 sm:py-14 lg:py-16">
