@@ -14,6 +14,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import Image from "next/image";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -135,13 +136,12 @@ export default function LoginPage() {
                 <div className="p-8 sm:p-10">
                   {/* Logo */}
                   <div className="flex items-center gap-2.5 mb-8">
-                    <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center shadow-sm">
-                      <ShieldCheck
-                        size={18}
-                        className="text-white"
-                        strokeWidth={2}
-                      />
-                    </div>
+                    <Image
+                      src="/img/logo.png"
+                      alt="logo"
+                      width={48}
+                      height={48}
+                    />
                     <span
                       className="text-[20px] font-black text-slate-900 tracking-wide leading-none"
                       style={{ fontFamily: "'Barlow Condensed', sans-serif" }}

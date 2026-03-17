@@ -318,3 +318,14 @@
 .sun-editor-content tr:nth-child(even) td {
   background: #f8fafc;
 }
+
+.goog-te-banner-frame {
+  display: none !important;
+}
+body {
+  top: 0 !important;
+}
+.translated-ltr,
+.translated-rtl {
+  margin-top: 0 !important;
+}

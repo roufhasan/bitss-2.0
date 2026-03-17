@@ -15,6 +15,9 @@ import {
   Shield,
   CheckCircle2,
   Usb,
+  Mail,
+  Phone,
+  Clock,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -513,7 +516,7 @@ export default function SecurityAcademyPage() {
           </p>
           <div className="flex flex-col sm:flex-row flex-wrap gap-3 justify-center mb-10">
             <Link
-              href="mailto:security@bitss.com.bd"
+              href="mailto:support@bobosohomail.com"
               className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-[14px] transition-all duration-300 shadow-lg shadow-red-900/40 hover:-translate-y-0.5 w-full sm:w-auto"
             >
               <Zap size={16} /> Request a Demo
@@ -525,18 +528,22 @@ export default function SecurityAcademyPage() {
               Learn more at bitss.one <ArrowRight size={14} />
             </Link>
           </div>
-          <div className="grid grid-cols-3 gap-4 pt-8 border-t border-slate-800">
+          <div className="grid grid-cols-3 gap-4 sm:gap-6 pt-8 sm:pt-10 border-t border-slate-800">
             {[
-              ["📧", "Email", "security@bitss.com.bd"],
-              ["📞", "Hotline", "+880 1XXX-XXXXXX"],
-              ["🕐", "Support", "24/7 · 365 days"],
-            ].map(([icon, label, value]) => (
+              { icon: Mail, label: "Email", value: "support@bobosohomail.com" },
+              { icon: Phone, label: "Hotline", value: "+0033666100010" },
+              { icon: Clock, label: "Support", value: "24/7 · 365 days" },
+            ].map(({ icon: Icon, label, value }) => (
               <div key={label} className="text-center">
-                <div className="text-lg mb-1.5">{icon}</div>
-                <div className="font-mono text-[9px] sm:text-[10px] text-slate-500 tracking-widest uppercase mb-1">
+                <div className="flex items-center justify-center mb-1.5 sm:mb-2">
+                  <div className="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center">
+                    <Icon size={15} className="text-red-500" />
+                  </div>
+                </div>
+                <div className="font-mono text-[8px] sm:text-[10px] text-slate-500 tracking-widest uppercase mb-1 sm:mb-1.5">
                   {label}
                 </div>
-                <div className="text-[11px] sm:text-[12px] text-slate-300 font-medium break-all">
+                <div className="text-[11px] sm:text-[13px] text-slate-300 font-medium break-all">
                   {value}
                 </div>
               </div>

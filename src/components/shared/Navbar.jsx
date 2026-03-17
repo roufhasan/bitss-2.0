@@ -21,6 +21,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -94,8 +95,8 @@ const NAV_LINKS = [
     ],
   },
   { label: "Pricing", href: "#bundles" },
-  { label: "Why BITSS", href: "/why-bitss" }, // ← NEW
-  { label: "About", href: "#about" },
+  { label: "Why BITSS", href: "/why-bitss" },
+  { label: "Contact", href: "/contact" },
 ];
 
 // ─── PRODUCTS DROPDOWN (desktop) ─────────────────────────────────────────────
@@ -245,6 +246,18 @@ export default function Navbar() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
   const userMenuRef = useRef(null);
+  const [langOptions, setLangOptions] = useState([]);
+
+  useEffect(() => {
+    if (menuOpen) {
+      setTimeout(() => {
+        const options = Array.from(
+          document.querySelectorAll(".goog-te-combo option"),
+        ).filter((o) => o.value !== "");
+        setLangOptions(options.map((o) => ({ value: o.value, text: o.text })));
+      }, 350);
+    }
+  }, [menuOpen]);
 
   function handleLogout() {
     clearAuth();
@@ -518,6 +531,7 @@ export default function Navbar() {
           ) : (
             // ── Logged out — Sign in + Get Protected ──
             <>
+              <LanguageSwitcher />
               <Link
                 href="/login"
                 className="text-[14px] text-slate-600 hover:text-slate-900 font-medium transition-colors"
@@ -617,7 +631,6 @@ export default function Navbar() {
             Pricing
           </Link>
 
-          {/* Why BITSS — standalone, highlighted in mobile too */}
           <Link
             href="/why-bitss"
             onClick={() => setMenuOpen(false)}
@@ -627,17 +640,43 @@ export default function Navbar() {
           </Link>
 
           <Link
-            href="#about"
+            href="/contact"
             onClick={() => setMenuOpen(false)}
             className="px-3 py-2.5 text-[15px] text-slate-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium"
           >
-            About
+            Contact
           </Link>
+
+          {/* Translate — mobile */}
+          <div className="flex items-center gap-2 px-3 py-2.5 hover:bg-red-50 rounded-lg transition-colors">
+            <Globe size={15} className="text-slate-400 shrink-0" />
+            <span className="text-[15px] text-slate-700 font-medium">
+              Translate
+            </span>
+            <select
+              onChange={(e) => {
+                const desktopSelect = document.querySelector(".goog-te-combo");
+                if (desktopSelect) {
+                  desktopSelect.value = e.target.value;
+                  desktopSelect.dispatchEvent(
+                    new Event("change", { bubbles: true }),
+                  );
+                }
+              }}
+              className="ml-auto text-[13px] text-slate-500 border-none outline-none bg-transparent cursor-pointer"
+            >
+              <option value="">Select Language</option>
+              {langOptions.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.text}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <div className="pt-3 mt-1 border-t border-slate-100 flex flex-col gap-2">
             {isAuthenticated ? (
               <>
-                {/* User info row */}
                 <div className="flex items-center gap-3 px-3 py-2.5">
                   <div className="w-8 h-8 rounded-full bg-red-100 border border-red-200 flex items-center justify-center shrink-0">
                     <span className="text-[12px] font-black text-red-600">

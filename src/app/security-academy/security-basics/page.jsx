@@ -434,12 +434,12 @@ export default function SecurityBasicsPage() {
                     Bitss applies these security fundamentals automatically
                     across every layer of your business.
                   </p>
-                  <a
-                    href="#contact"
+                  <Link
+                    href="/register"
                     className="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-[12px] font-semibold transition-colors"
                   >
                     Get Protected <ArrowRight size={11} />
-                  </a>
+                  </Link>
                 </div>
 
                 <div className="mt-6">
@@ -524,7 +524,7 @@ export default function SecurityBasicsPage() {
           </p>
           <div className="flex flex-col sm:flex-row flex-wrap gap-3 justify-center">
             <a
-              href="mailto:security@bitss.com.bd"
+              href="mailto:support@bobosohomail.com"
               className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-[14px] transition-all duration-300 shadow-lg shadow-red-900/40 hover:-translate-y-0.5 w-full sm:w-auto"
             >
               <Zap size={16} /> Request a Demo

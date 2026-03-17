@@ -15,6 +15,9 @@ import {
   Server,
   ChevronRight,
   Shield,
+  Mail,
+  Phone,
+  Clock,
 } from "lucide-react";
 import Navbar from "@/components/shared/Navbar";
 import Products from "@/components/pages/home/Products";
@@ -343,12 +346,12 @@ function BundleCard({ b, i }) {
           </li>
         ))}
       </ul>
-      <a
-        href="#contact"
+      <Link
+        href="/contact"
         className={`flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-[14px] tracking-wide transition-all duration-300 ${b.btnClass}`}
       >
         Request a Demo <ArrowRight size={14} />
-      </a>
+      </Link>
     </div>
   );
 }
@@ -423,12 +426,12 @@ export default function HomePage() {
               </p>
 
               <div className="fu4 flex flex-col xs:flex-row flex-wrap gap-3 mb-10 sm:mb-14">
-                <a
-                  href="#bundles"
+                <Link
+                  href="/register"
                   className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-[15px] transition-all duration-300 shadow-lg shadow-red-200 hover:shadow-red-300 hover:-translate-y-0.5 w-full xs:w-auto"
                 >
                   <ShieldCheck size={17} /> Get Protected
-                </a>
+                </Link>
                 <Link
                   href="/products"
                   className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 rounded-xl border border-slate-200 hover:border-slate-300 text-slate-600 hover:text-slate-900 font-semibold text-[15px] transition-all duration-300 hover:bg-slate-50 w-full xs:w-auto"
@@ -866,13 +869,13 @@ export default function HomePage() {
 
           <div className="flex flex-col xs:flex-row flex-wrap gap-3 sm:gap-4 justify-center mb-10 sm:mb-14">
             <a
-              href="mailto:security@bitss.com.bd"
+              href="mailto:support@bobosohomail.com"
               className="inline-flex items-center justify-center gap-2.5 px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-[14px] sm:text-[15px] transition-all duration-300 shadow-lg shadow-red-900/40 hover:-translate-y-0.5 w-full xs:w-auto"
             >
               <Zap size={16} /> Request a Demo
             </a>
             <a
-              href="tel:+8801000000000"
+              href="tel:+0033666100010"
               className="inline-flex items-center justify-center gap-2.5 px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white font-semibold text-[14px] sm:text-[15px] transition-all duration-300 hover:bg-slate-800 w-full xs:w-auto"
             >
               Talk to an Expert
@@ -881,12 +884,16 @@ export default function HomePage() {
 
           <div className="grid grid-cols-3 gap-4 sm:gap-6 pt-8 sm:pt-10 border-t border-slate-800">
             {[
-              ["📧", "Email", "security@bitss.com.bd"],
-              ["📞", "Hotline", "+880 1XXX-XXXXXX"],
-              ["🕐", "Support", "24/7 · 365 days"],
-            ].map(([icon, label, value]) => (
+              { icon: Mail, label: "Email", value: "support@bobosohomail.com" },
+              { icon: Phone, label: "Hotline", value: "+0033666100010" },
+              { icon: Clock, label: "Support", value: "24/7 · 365 days" },
+            ].map(({ icon: Icon, label, value }) => (
               <div key={label} className="text-center">
-                <div className="text-lg sm:text-xl mb-1.5 sm:mb-2">{icon}</div>
+                <div className="flex items-center justify-center mb-1.5 sm:mb-2">
+                  <div className="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center">
+                    <Icon size={15} className="text-red-500" />
+                  </div>
+                </div>
                 <div className="font-mono text-[8px] sm:text-[10px] text-slate-500 tracking-widest uppercase mb-1 sm:mb-1.5">
                   {label}
                 </div>

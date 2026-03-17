@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { getBasePrice } from "@/hooks/useProductDetail";
 import { useCountry } from "@/context/CountryContext";
+import Link from "next/link";
 
 // ── Badge helpers ─────────────────────────────────────────────────────────────
 function Badge({ children, variant = "default" }) {
@@ -146,12 +147,12 @@ export default function ProductDetailHero({ product, selectedVariantId }) {
 
             {/* CTA */}
             <div className="flex flex-col xs:flex-row gap-3">
-              <a
-                href="#pricing"
+              <Link
+                href="/register"
                 className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-[14px] transition-all duration-300 shadow-lg shadow-red-200 hover:shadow-red-300 hover:-translate-y-0.5 w-full xs:w-auto"
               >
                 <ShieldCheck size={16} /> Get Protected
-              </a>
+              </Link>
             </div>
           </div>
 

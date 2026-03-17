@@ -71,13 +71,13 @@ function ProductDetailCTA({ productName }) {
 
         <div className="flex flex-col xs:flex-row flex-wrap gap-3 sm:gap-4 justify-center">
           <a
-            href="mailto:security@bitss.com.bd"
+            href="mailto:support@bobosohomail.com"
             className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-[14px] sm:text-[15px] transition-all duration-300 shadow-lg shadow-red-900/40 hover:-translate-y-0.5 w-full xs:w-auto"
           >
             Request a Demo
           </a>
           <a
-            href="tel:+8801000000000"
+            href="tel:+0033666100010"
             className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white font-semibold text-[14px] sm:text-[15px] transition-all duration-300 hover:bg-slate-800 w-full xs:w-auto"
           >
             Talk to an Expert

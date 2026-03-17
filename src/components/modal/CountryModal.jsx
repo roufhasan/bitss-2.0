@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useCountry } from "@/context/CountryContext";
 import { ShieldCheck, Globe, Loader2, AlertCircle } from "lucide-react";
+import Image from "next/image";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -41,10 +42,8 @@ export default function CountryModal() {
 
         <div className="overflow-y-auto flex-1 p-8 sm:p-10">
           {/* Logo mark */}
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center shadow-sm">
-              <ShieldCheck size={20} className="text-white" strokeWidth={2} />
-            </div>
+          <div className="flex items-center mb-8">
+            <Image src="/img/logo.png" alt="logo" width={48} height={48} />
             <span
               className="font-black text-slate-900 tracking-wide text-[20px]"
               style={{ fontFamily: "'Barlow Condensed', sans-serif" }}
