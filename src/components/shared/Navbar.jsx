@@ -22,6 +22,8 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import LanguageSwitcher from "./LanguageSwitcher";
+import CountrySelector from "./CountrySelector";
+import { useCountry } from "@/context/CountryContext";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -94,7 +96,7 @@ const NAV_LINKS = [
       },
     ],
   },
-  { label: "Pricing", href: "#bundles" },
+  { label: "Pricing", href: "/#bundles" },
   { label: "Why BITSS", href: "/why-bitss" },
   { label: "Contact", href: "/contact" },
 ];
@@ -247,6 +249,18 @@ export default function Navbar() {
   const dropdownRef = useRef(null);
   const userMenuRef = useRef(null);
   const [langOptions, setLangOptions] = useState([]);
+  const { selectedCountry, resetCountry, selectCountry } = useCountry();
+
+  const { data: countries } = useQuery({
+    queryKey: ["countries"],
+    queryFn: async () => {
+      const res = await fetch(`${BASE_URL}/countries`);
+      if (!res.ok) throw new Error("Failed");
+      const json = await res.json();
+      return json.data;
+    },
+    staleTime: 1000 * 60 * 10,
+  });
 
   useEffect(() => {
     if (menuOpen) {
@@ -311,273 +325,290 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header
-      className={`fixed top-0 inset-x-0 z-[99999] transition-all duration-300 ${
-        scrolled
-          ? "bg-white/95 backdrop-blur-sm shadow-sm border-b border-slate-100"
-          : "bg-transparent"
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 h-16 flex items-center justify-between gap-4">
-        {/* Logo */}
-        <Link href="/" className="flex items-center shrink-0">
-          <Image src="/img/logo.png" alt="logo" width={48} height={48} />
-          <span
-            className="font-['Barlow_Condensed'] text-[20px] font-black text-slate-900 tracking-wide leading-none"
-            style={{ fontFamily: "'Barlow Condensed', sans-serif" }}
-          >
-            BITSS
-          </span>
-        </Link>
-
-        {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-1" ref={dropdownRef}>
-          {/* ── Products dropdown (dynamic) ── */}
-          <div className="relative">
-            <button
-              onClick={() =>
-                setOpenDropdown(openDropdown === "Products" ? null : "Products")
-              }
-              className="flex items-center hover:cursor-pointer gap-1 px-4 py-2 text-[14px] text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors font-medium"
+    <>
+      <header
+        className={`fixed top-0 inset-x-0 z-100 transition-all duration-300 ${
+          scrolled
+            ? "bg-white/95 backdrop-blur-sm shadow-sm border-b border-slate-100"
+            : "bg-transparent"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 h-16 flex items-center justify-between gap-4">
+          {/* Logo */}
+          <Link href="/" className="flex items-center shrink-0">
+            <Image src="/img/logo.png" alt="logo" width={48} height={48} />
+            <span
+              className="font-['Barlow_Condensed'] text-[20px] font-black text-slate-900 tracking-wide leading-none"
+              style={{ fontFamily: "'Barlow Condensed', sans-serif" }}
             >
-              Products
-              <ChevronDown
-                size={14}
-                className={`transition-transform duration-200 ${openDropdown === "Products" ? "rotate-180" : ""}`}
-              />
-            </button>
-            {openDropdown === "Products" && (
-              <ProductsDropdown onClose={() => setOpenDropdown(null)} />
-            )}
-          </div>
+              BITSS
+            </span>
+          </Link>
 
-          {NAV_LINKS.map((l) =>
-            l.dropdown ? (
-              <div key={l.label} className="relative">
-                <button
-                  onClick={() =>
-                    setOpenDropdown(openDropdown === l.label ? null : l.label)
-                  }
-                  className="flex items-center hover:cursor-pointer gap-1 px-4 py-2 text-[14px] text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors font-medium"
+          {/* Desktop nav */}
+          <nav className="hidden md:flex items-center gap-1" ref={dropdownRef}>
+            <Link
+              href="/"
+              className={`px-4 py-2 text-[14px] rounded-lg transition-colors font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50`}
+            >
+              Home
+            </Link>
+
+            {/* ── Products dropdown (dynamic) ── */}
+            <div className="relative">
+              <button
+                onClick={() =>
+                  setOpenDropdown(
+                    openDropdown === "Products" ? null : "Products",
+                  )
+                }
+                className="flex items-center hover:cursor-pointer gap-1 px-4 py-2 text-[14px] text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors font-medium"
+              >
+                Products
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform duration-200 ${openDropdown === "Products" ? "rotate-180" : ""}`}
+                />
+              </button>
+              {openDropdown === "Products" && (
+                <ProductsDropdown onClose={() => setOpenDropdown(null)} />
+              )}
+            </div>
+
+            {NAV_LINKS.map((l) =>
+              l.dropdown ? (
+                <div key={l.label} className="relative">
+                  <button
+                    onClick={() =>
+                      setOpenDropdown(openDropdown === l.label ? null : l.label)
+                    }
+                    className="flex items-center hover:cursor-pointer gap-1 px-4 py-2 text-[14px] text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors font-medium"
+                  >
+                    {l.label}
+                    <ChevronDown
+                      size={14}
+                      className={`transition-transform duration-200 ${
+                        openDropdown === l.label ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {/* Dropdown panel */}
+                  {openDropdown === l.label && (
+                    <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50">
+                      <Link
+                        href="/security-academy"
+                        onClick={() => setOpenDropdown(null)}
+                        className="group flex items-center gap-3 px-4 py-4 bg-gradient-to-br from-slate-900 to-slate-800 hover:from-red-700 hover:to-red-900 transition-all duration-300"
+                      >
+                        <div className="w-9 h-9 rounded-xl bg-white/10 group-hover:bg-white/20 flex items-center justify-center shrink-0 transition-colors">
+                          <BookOpen size={17} className="text-white" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[14px] font-bold text-white">
+                              Security Academy
+                            </span>
+                            <span className="text-[9px] font-black text-red-400 group-hover:text-white bg-white/10 px-1.5 py-0.5 rounded-md leading-none tracking-wide uppercase">
+                              FREE
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-slate-400 group-hover:text-white/70 mt-0.5 transition-colors truncate">
+                            Free guides on every attack surface
+                          </p>
+                        </div>
+                        <ChevronDown
+                          size={14}
+                          className="text-slate-500 group-hover:text-white -rotate-90 shrink-0 transition-colors"
+                        />
+                      </Link>
+
+                      <div className="p-3 grid grid-cols-2 gap-1.5">
+                        {ACADEMY_LINKS.map(({ label, href, icon: Icon }, i) => {
+                          const colors = [
+                            {
+                              bg: "bg-blue-50 hover:bg-blue-100",
+                              icon: "text-blue-500",
+                              text: "hover:text-blue-700",
+                            },
+                            {
+                              bg: "bg-orange-50 hover:bg-orange-100",
+                              icon: "text-orange-500",
+                              text: "hover:text-orange-700",
+                            },
+                            {
+                              bg: "bg-red-50 hover:bg-red-100",
+                              icon: "text-red-500",
+                              text: "hover:text-red-700",
+                            },
+                            {
+                              bg: "bg-emerald-50 hover:bg-emerald-100",
+                              icon: "text-emerald-500",
+                              text: "hover:text-emerald-700",
+                            },
+                            {
+                              bg: "bg-violet-50 hover:bg-violet-100",
+                              icon: "text-violet-500",
+                              text: "hover:text-violet-700",
+                            },
+                            {
+                              bg: "bg-amber-50 hover:bg-amber-100",
+                              icon: "text-amber-500",
+                              text: "hover:text-amber-700",
+                            },
+                          ];
+                          const c = colors[i % colors.length];
+                          return (
+                            <Link
+                              key={label}
+                              href={href}
+                              onClick={() => setOpenDropdown(null)}
+                              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl ${c.bg} ${c.text} transition-all duration-150 group`}
+                            >
+                              <Icon
+                                size={14}
+                                className={`shrink-0 ${c.icon}`}
+                              />
+                              <span className="text-[12px] font-medium text-slate-700 group-hover:text-inherit leading-tight">
+                                {label}
+                              </span>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  key={l.label}
+                  href={l.href}
+                  className={`px-4 py-2 text-[14px] rounded-lg transition-colors font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50`}
                 >
                   {l.label}
+                </Link>
+              ),
+            )}
+          </nav>
+
+          {/* Desktop CTA */}
+          <div className="hidden md:flex items-center gap-3">
+            {authLoading ? (
+              // Skeleton while auth state loads from localStorage
+              <div className="w-20 h-8 bg-slate-100 rounded-lg animate-pulse" />
+            ) : isAuthenticated ? (
+              // ── Logged in — user avatar + dropdown ──
+              <div className="relative" ref={userMenuRef}>
+                <button
+                  onClick={() => setUserMenuOpen((o) => !o)}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200 transition-all duration-200"
+                >
+                  <div className="w-7 h-7 rounded-full bg-red-100 border border-red-200 flex items-center justify-center shrink-0">
+                    <span className="text-[11px] font-black text-red-600">
+                      {user?.name?.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <span className="text-[14px] font-medium text-slate-700 max-w-[100px] truncate">
+                    {user?.name?.split(" ")[0]}
+                  </span>
                   <ChevronDown
-                    size={14}
-                    className={`transition-transform duration-200 ${
-                      openDropdown === l.label ? "rotate-180" : ""
-                    }`}
+                    size={13}
+                    className={`text-slate-400 transition-transform duration-200 ${userMenuOpen ? "rotate-180" : ""}`}
                   />
                 </button>
 
-                {/* Dropdown panel */}
-                {openDropdown === l.label && (
-                  <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50">
-                    <a
-                      href="/security-academy"
-                      onClick={() => setOpenDropdown(null)}
-                      className="group flex items-center gap-3 px-4 py-4 bg-gradient-to-br from-slate-900 to-slate-800 hover:from-red-700 hover:to-red-900 transition-all duration-300"
-                    >
-                      <div className="w-9 h-9 rounded-xl bg-white/10 group-hover:bg-white/20 flex items-center justify-center shrink-0 transition-colors">
-                        <BookOpen size={17} className="text-white" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-[14px] font-bold text-white">
-                            Security Academy
-                          </span>
-                          <span className="text-[9px] font-black text-red-400 group-hover:text-white bg-white/10 px-1.5 py-0.5 rounded-md leading-none tracking-wide uppercase">
-                            FREE
+                {/* User dropdown */}
+                {userMenuOpen && (
+                  <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50">
+                    {/* User info */}
+                    <div className="px-4 py-4 bg-gradient-to-br from-slate-900 to-slate-800">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-red-500/20 border border-red-500/30 flex items-center justify-center shrink-0">
+                          <span className="text-[14px] font-black text-red-400">
+                            {user?.name?.charAt(0).toUpperCase()}
                           </span>
                         </div>
-                        <p className="text-[11px] text-slate-400 group-hover:text-white/70 mt-0.5 transition-colors truncate">
-                          Free guides on every attack surface
-                        </p>
+                        <div className="min-w-0">
+                          <p className="text-[13px] font-semibold text-white truncate">
+                            {user?.name}
+                          </p>
+                          <p className="text-[11px] text-slate-400 truncate">
+                            {user?.email}
+                          </p>
+                        </div>
                       </div>
-                      <ChevronDown
-                        size={14}
-                        className="text-slate-500 group-hover:text-white -rotate-90 shrink-0 transition-colors"
-                      />
-                    </a>
+                      {user?.role && (
+                        <span className="mt-2 inline-flex text-[9px] font-black tracking-widest uppercase text-red-400 bg-white/10 px-2 py-0.5 rounded-md">
+                          {user.role}
+                        </span>
+                      )}
+                    </div>
 
-                    <div className="p-3 grid grid-cols-2 gap-1.5">
-                      {ACADEMY_LINKS.map(({ label, href, icon: Icon }, i) => {
-                        const colors = [
-                          {
-                            bg: "bg-blue-50 hover:bg-blue-100",
-                            icon: "text-blue-500",
-                            text: "hover:text-blue-700",
-                          },
-                          {
-                            bg: "bg-orange-50 hover:bg-orange-100",
-                            icon: "text-orange-500",
-                            text: "hover:text-orange-700",
-                          },
-                          {
-                            bg: "bg-red-50 hover:bg-red-100",
-                            icon: "text-red-500",
-                            text: "hover:text-red-700",
-                          },
-                          {
-                            bg: "bg-emerald-50 hover:bg-emerald-100",
-                            icon: "text-emerald-500",
-                            text: "hover:text-emerald-700",
-                          },
-                          {
-                            bg: "bg-violet-50 hover:bg-violet-100",
-                            icon: "text-violet-500",
-                            text: "hover:text-violet-700",
-                          },
-                          {
-                            bg: "bg-amber-50 hover:bg-amber-100",
-                            icon: "text-amber-500",
-                            text: "hover:text-amber-700",
-                          },
-                        ];
-                        const c = colors[i % colors.length];
-                        return (
-                          <Link
-                            key={label}
-                            href={href}
-                            onClick={() => setOpenDropdown(null)}
-                            className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl ${c.bg} ${c.text} transition-all duration-150 group`}
-                          >
-                            <Icon size={14} className={`shrink-0 ${c.icon}`} />
-                            <span className="text-[12px] font-medium text-slate-700 group-hover:text-inherit leading-tight">
-                              {label}
-                            </span>
-                          </Link>
-                        );
-                      })}
+                    {/* Menu items */}
+                    <div className="p-1.5 flex flex-col gap-0.5">
+                      <Link
+                        href="/dashboard"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[13px] text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors font-medium"
+                      >
+                        <User size={14} className="text-slate-400 shrink-0" />
+                        My Dashboard
+                      </Link>
+                      <div className="my-1 border-t border-slate-100" />
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[13px] text-red-600 hover:bg-red-50 transition-colors font-medium"
+                      >
+                        <LogOut size={14} className="shrink-0" />
+                        Sign Out
+                      </button>
                     </div>
                   </div>
                 )}
               </div>
             ) : (
-              <Link
-                key={l.label}
-                href={l.href}
-                className={`px-4 py-2 text-[14px] rounded-lg transition-colors font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50`}
-              >
-                {l.label}
-              </Link>
-            ),
-          )}
-        </nav>
+              // ── Logged out — Sign in + Get Protected ──
+              <>
+                <CountrySelector />
+                <LanguageSwitcher />
+                <Link
+                  href="/login"
+                  className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-[14px] font-semibold transition-all duration-200 shadow-sm shadow-red-200 hover:shadow-red-300"
+                >
+                  Sign in
+                </Link>
+              </>
+            )}
+          </div>
 
-        {/* Desktop CTA */}
-        <div className="hidden md:flex items-center gap-3">
-          {authLoading ? (
-            // Skeleton while auth state loads from localStorage
-            <div className="w-20 h-8 bg-slate-100 rounded-lg animate-pulse" />
-          ) : isAuthenticated ? (
-            // ── Logged in — user avatar + dropdown ──
-            <div className="relative" ref={userMenuRef}>
-              <button
-                onClick={() => setUserMenuOpen((o) => !o)}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200 transition-all duration-200"
-              >
-                <div className="w-7 h-7 rounded-full bg-red-100 border border-red-200 flex items-center justify-center shrink-0">
-                  <span className="text-[11px] font-black text-red-600">
-                    {user?.name?.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-                <span className="text-[14px] font-medium text-slate-700 max-w-[100px] truncate">
-                  {user?.name?.split(" ")[0]}
-                </span>
-                <ChevronDown
-                  size={13}
-                  className={`text-slate-400 transition-transform duration-200 ${userMenuOpen ? "rotate-180" : ""}`}
-                />
-              </button>
-
-              {/* User dropdown */}
-              {userMenuOpen && (
-                <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50">
-                  {/* User info */}
-                  <div className="px-4 py-4 bg-gradient-to-br from-slate-900 to-slate-800">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-red-500/20 border border-red-500/30 flex items-center justify-center shrink-0">
-                        <span className="text-[14px] font-black text-red-400">
-                          {user?.name?.charAt(0).toUpperCase()}
-                        </span>
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[13px] font-semibold text-white truncate">
-                          {user?.name}
-                        </p>
-                        <p className="text-[11px] text-slate-400 truncate">
-                          {user?.email}
-                        </p>
-                      </div>
-                    </div>
-                    {user?.role && (
-                      <span className="mt-2 inline-flex text-[9px] font-black tracking-widest uppercase text-red-400 bg-white/10 px-2 py-0.5 rounded-md">
-                        {user.role}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Menu items */}
-                  <div className="p-1.5 flex flex-col gap-0.5">
-                    <Link
-                      href="/dashboard"
-                      onClick={() => setUserMenuOpen(false)}
-                      className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[13px] text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors font-medium"
-                    >
-                      <User size={14} className="text-slate-400 shrink-0" />
-                      My Dashboard
-                    </Link>
-                    <div className="my-1 border-t border-slate-100" />
-                    <button
-                      onClick={handleLogout}
-                      className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[13px] text-red-600 hover:bg-red-50 transition-colors font-medium"
-                    >
-                      <LogOut size={14} className="shrink-0" />
-                      Sign Out
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : (
-            // ── Logged out — Sign in + Get Protected ──
-            <>
-              <LanguageSwitcher />
-              <Link
-                href="/login"
-                className="text-[14px] text-slate-600 hover:text-slate-900 font-medium transition-colors"
-              >
-                Sign in
-              </Link>
-              <Link
-                href="/register"
-                className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-[14px] font-semibold transition-all duration-200 shadow-sm shadow-red-200 hover:shadow-red-300"
-              >
-                Get Protected
-              </Link>
-            </>
-          )}
+          {/* Mobile hamburger */}
+          <button
+            className="md:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors text-slate-700"
+            onClick={() => setMenuOpen((o) => !o)}
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
         </div>
-
-        {/* Mobile hamburger */}
-        <button
-          className="md:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors text-slate-700"
-          onClick={() => setMenuOpen((o) => !o)}
-          aria-label="Toggle menu"
-        >
-          {menuOpen ? <X size={22} /> : <Menu size={22} />}
-        </button>
-      </div>
+      </header>
 
       {/* Mobile menu drawer */}
       <div
-        className={`md:hidden fixed inset-x-0 top-16 bottom-0 z-[99998] h-full transition-all duration-300 overflow-y-auto ${
+        className={`md:hidden fixed inset-x-0 top-16 bottom-0 z-90 h-full transition-all duration-300 overflow-y-auto ${
           menuOpen
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
         }`}
       >
         <div className="bg-white border-t border-slate-100 px-4 pb-5 pt-3 flex flex-col gap-1 min-h-full">
+          <Link
+            href="/"
+            onClick={() => setMenuOpen(false)}
+            className="px-3 py-2.5 text-[15px] text-slate-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium"
+          >
+            Home
+          </Link>
+
           {/* Products — dynamic accordion */}
           <div>
             <button
@@ -637,7 +668,7 @@ export default function Navbar() {
           </div>
 
           <Link
-            href="#bundles"
+            href="/#bundles"
             onClick={() => setMenuOpen(false)}
             className="px-3 py-2.5 text-[15px] text-slate-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium"
           >
@@ -687,6 +718,45 @@ export default function Navbar() {
             </select>
           </div>
 
+          <div className="border-t border-slate-100 pt-1">
+            <p className="px-3 pt-2 pb-1 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+              Region
+            </p>
+            <div className="grid grid-cols-3 gap-1.5 px-2 pb-2">
+              {countries?.map((country) => (
+                <button
+                  key={country.id}
+                  onClick={() => {
+                    selectCountry(country);
+                    setMenuOpen(false);
+                  }}
+                  className={`flex flex-col items-center gap-1 p-2.5 rounded-xl border transition-all duration-150 cursor-pointer
+                    ${
+                      selectedCountry?.id === country.id
+                        ? "border-red-300 bg-red-50"
+                        : "border-slate-100 hover:border-red-200 hover:bg-red-50"
+                    }`}
+                >
+                  <span
+                    className="text-[15px] font-black leading-none text-slate-700"
+                    dangerouslySetInnerHTML={{ __html: country.currency_icon }}
+                  />
+                  <span className="text-[9px] font-bold text-slate-500 text-center">
+                    {country.abbreviation}
+                  </span>
+                </button>
+              ))}
+            </div>
+            {selectedCountry && (
+              <button
+                onClick={() => resetCountry()}
+                className="mx-2 w-[calc(100%-16px)] py-2 rounded-xl border border-slate-200 text-[12px] text-slate-400 hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition-all duration-200"
+              >
+                Reset region
+              </button>
+            )}
+          </div>
+
           <div className="pt-3 mt-1 border-t border-slate-100 flex flex-col gap-2">
             {isAuthenticated ? (
               <>
@@ -727,16 +797,9 @@ export default function Navbar() {
                 <Link
                   href="/login"
                   onClick={() => setMenuOpen(false)}
-                  className="w-full py-3 rounded-xl border border-slate-200 text-slate-700 text-center text-[15px] font-semibold hover:bg-slate-50 transition-colors"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/register"
-                  onClick={() => setMenuOpen(false)}
                   className="w-full py-3 rounded-xl bg-red-600 text-white text-center text-[15px] font-semibold"
                 >
-                  Get Protected
+                  Sign In
                 </Link>
               </>
             )}
@@ -753,6 +816,6 @@ export default function Navbar() {
           </div>
         </div>
       </div>
-    </header>
+    </>
   );
 }
