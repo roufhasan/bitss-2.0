@@ -259,6 +259,17 @@ export default function Navbar() {
     }
   }, [menuOpen]);
 
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
   function handleLogout() {
     clearAuth();
     setUserMenuOpen(false);
@@ -301,7 +312,7 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 inset-x-0 z-[99999] transition-all duration-300 ${
         scrolled
           ? "bg-white/95 backdrop-blur-sm shadow-sm border-b border-slate-100"
           : "bg-transparent"
@@ -560,11 +571,13 @@ export default function Navbar() {
 
       {/* Mobile menu drawer */}
       <div
-        className={`md:hidden overflow-hidden transition-all duration-300 ${
-          menuOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
+        className={`md:hidden fixed inset-x-0 top-16 bottom-0 z-[99998] h-full transition-all duration-300 overflow-y-auto ${
+          menuOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
         }`}
       >
-        <div className="bg-white border-t border-slate-100 px-4 pb-5 pt-3 flex flex-col gap-1">
+        <div className="bg-white border-t border-slate-100 px-4 pb-5 pt-3 flex flex-col gap-1 min-h-full">
           {/* Products — dynamic accordion */}
           <div>
             <button
@@ -727,6 +740,16 @@ export default function Navbar() {
                 </Link>
               </>
             )}
+          </div>
+
+          <div className="pt-4 pb-2 flex justify-center">
+            <button
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center gap-2 px-6 py-2.5 rounded-full border border-slate-200 text-slate-500 hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition-all duration-200 text-[13px] font-medium"
+            >
+              <X size={15} />
+              Close Menu
+            </button>
           </div>
         </div>
       </div>

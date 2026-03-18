@@ -112,8 +112,6 @@ export default function ProductDetailPage() {
         html { scroll-behavior: smooth; }
       `}</style>
 
-      <Navbar />
-
       {isLoading && <ProductDetailSkeleton />}
 
       {isError && <ProductDetailError message={error?.message} />}

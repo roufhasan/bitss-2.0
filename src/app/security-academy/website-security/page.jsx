@@ -334,8 +334,6 @@ export default function WebsiteSecurityPage() {
         }
       `}</style>
 
-      <Navbar />
-
       {/* ── HERO ───────────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-white pt-16">
         <div className="dot-grid absolute inset-0 opacity-60" />
