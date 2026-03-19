@@ -119,21 +119,31 @@ export default function ProductDetailPricing({
 
   // For USB products with no subscription_period, show one-time price
   const isOneTime = product.is_usb || !product.subscription_period?.length;
-  const priceObj = getBasePrice(product.prices, selectedVariantId);
+  const priceObj = getBasePrice(
+    product.prices,
+    selectedVariantId,
+    selectedCountry?.id,
+  );
   const basePrice = priceObj?.price ?? null;
 
   const activePeriod =
     product.subscription_period?.find((p) => p.id === selectedPeriod) ??
     product.subscription_period?.[0];
 
+  const countryAdjustedPrice = calcDiscountedPrice(
+    basePrice,
+    priceObj?.discount_type,
+    priceObj?.discount_amount, // note: prices[] uses discount_amount, not amount
+  );
+
   const periodFinalPrice =
-    activePeriod && basePrice != null
+    activePeriod && countryAdjustedPrice != null
       ? calcDiscountedPrice(
-          basePrice,
+          countryAdjustedPrice,
           activePeriod.discount_type,
-          activePeriod.amount,
+          activePeriod.amount, // subscription_period[] uses amount, not discount_amount
         )
-      : basePrice;
+      : countryAdjustedPrice;
 
   return (
     <section
@@ -196,10 +206,11 @@ export default function ProductDetailPricing({
                   </div>
                 </div>
                 {basePrice != null && (
-                  <div className="flex items-end gap-2 mb-1">
-                    <span className="font-['Barlow_Condensed'] text-[48px] font-black text-slate-900 leading-none">
+                  <div className="flex items-center justify-between text-[13px]">
+                    <span className="text-slate-500">Base Price</span>
+                    <span className="font-semibold text-slate-700">
                       {currencySymbol}
-                      {basePrice.toFixed(2)}
+                      {countryAdjustedPrice.toFixed(2)} {/* ← was basePrice */}
                     </span>
                   </div>
                 )}
@@ -212,14 +223,19 @@ export default function ProductDetailPricing({
               <div className="grid sm:grid-cols-2 gap-4">
                 {product.subscription_period.map((period) => {
                   const isSelected = selectedPeriod === period.id;
+
                   const finalPrice =
-                    basePrice != null
+                    countryAdjustedPrice != null
                       ? calcDiscountedPrice(
-                          basePrice,
+                          countryAdjustedPrice,
                           period.discount_type,
                           period.amount,
                         )
                       : null;
+
+                  const hasPeriodDiscount =
+                    period.amount != null && period.discount_type != null;
+
                   const isPopular = period.status === 1 && period.amount;
 
                   return (
@@ -227,11 +243,11 @@ export default function ProductDetailPricing({
                       key={period.id}
                       onClick={() => setSelectedPeriod(period.id)}
                       className={`relative text-left p-6 rounded-2xl border-2 transition-all duration-200 w-full
-                        ${
-                          isSelected
-                            ? "border-red-500 bg-white shadow-xl shadow-red-100/60"
-                            : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-md"
-                        }`}
+        ${
+          isSelected
+            ? "border-red-500 bg-white shadow-xl shadow-red-100/60"
+            : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-md"
+        }`}
                     >
                       {isPopular && (
                         <div className="absolute -top-3 left-4 bg-red-600 text-white text-[9px] font-black tracking-widest uppercase px-3 py-1 rounded-full shadow-md">
@@ -261,31 +277,39 @@ export default function ProductDetailPricing({
                         </div>
                       </div>
 
-                      {finalPrice != null && (
+                      {finalPrice != null ? (
                         <div className="flex items-end gap-2 mb-2">
                           <span className="font-['Barlow_Condensed'] text-[34px] font-black text-slate-900 leading-none">
                             {currencySymbol}
                             {finalPrice.toFixed(2)}
                           </span>
-                          {period.amount && period.discount_type && (
-                            <span className="text-[14px] text-slate-400 line-through mb-1">
-                              {currencySymbol}
-                              {basePrice?.toFixed(2)}
-                            </span>
-                          )}
+                          {/* Only show strikethrough if period has its own discount */}
+                          {hasPeriodDiscount &&
+                            countryAdjustedPrice != null && (
+                              <span className="text-[14px] text-slate-400 line-through mb-1">
+                                {currencySymbol}
+                                {countryAdjustedPrice.toFixed(2)}
+                              </span>
+                            )}
                         </div>
+                      ) : (
+                        <p className="text-[16px] text-slate-500 mb-2">
+                          Contact for pricing
+                        </p>
                       )}
 
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-[11px] text-slate-400">
                           per license
                         </span>
-                        <SavingsBadge
-                          discountType={period.discount_type}
-                          discountAmount={period.amount}
-                          basePrice={basePrice}
-                          currencySymbol={currencySymbol}
-                        />
+                        {hasPeriodDiscount && (
+                          <SavingsBadge
+                            discountType={period.discount_type}
+                            discountAmount={period.amount}
+                            basePrice={countryAdjustedPrice}
+                            currencySymbol={currencySymbol}
+                          />
+                        )}
                       </div>
                     </button>
                   );
@@ -319,20 +343,30 @@ export default function ProductDetailPricing({
                     <span className="text-slate-500">Base Price</span>
                     <span className="font-semibold text-slate-700">
                       {currencySymbol}
-                      {basePrice.toFixed(2)}
+                      {countryAdjustedPrice.toFixed(2)} {/* ← was basePrice */}
                     </span>
                   </div>
                 )}
-                {activePeriod?.amount && activePeriod.discount_type && (
-                  <div className="flex items-center justify-between text-[13px]">
-                    <span className="text-emerald-600">Discount</span>
-                    <span className="font-semibold text-emerald-600">
-                      {activePeriod.discount_type === "flat"
-                        ? `-$${activePeriod.amount}`
-                        : `-${activePeriod.amount}%`}
-                    </span>
-                  </div>
-                )}
+                {/* Show period discount if exists */}
+                {activePeriod?.amount != null &&
+                  activePeriod?.discount_type && (
+                    <div className="flex items-center justify-between text-[13px]">
+                      <span className="text-emerald-600">
+                        Discount (
+                        {activePeriod.discount_type === "flat"
+                          ? `${currencySymbol}${activePeriod.amount} off`
+                          : `${activePeriod.amount}% off`}
+                        )
+                      </span>
+                      <span className="font-semibold text-emerald-600">
+                        −{currencySymbol}
+                        {(countryAdjustedPrice - periodFinalPrice).toFixed(
+                          2,
+                        )}{" "}
+                        {/* ← was basePrice */}
+                      </span>
+                    </div>
+                  )}
               </div>
 
               <div className="flex items-center justify-between mb-6">
@@ -352,11 +386,13 @@ export default function ProductDetailPricing({
               >
                 {isAuthenticated ? (
                   <>
-                    Get Protected <ArrowRight size={14} />
+                    {" "}
+                    Get Protected <ArrowRight size={14} />{" "}
                   </>
                 ) : (
                   <>
-                    Sign in to Continue <LogIn size={14} />
+                    {" "}
+                    Sign in to Continue <LogIn size={14} />{" "}
                   </>
                 )}
               </button>

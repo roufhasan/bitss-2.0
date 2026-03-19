@@ -26,12 +26,20 @@ export function useProductDetail(productId, countryId = 1) {
 /**
  * Returns the base price for a product (optionally filtered by variant_id).
  */
-export function getBasePrice(prices, variantId = null) {
+export function getBasePrice(prices = [], variantId = null, countryId = null) {
   if (!prices?.length) return null;
-  const match = variantId
-    ? prices.find((p) => p.variant_id === variantId)
-    : prices[0];
-  return match ?? prices[0];
+
+  // 1. Filter by variant
+  const pool = prices.filter((p) =>
+    variantId ? p.variant_id === variantId : p.variant_id === null,
+  );
+
+  // 2. Match country — ONE entry per country
+  const match = countryId
+    ? (pool.find((p) => p.country_id === countryId) ?? pool[0])
+    : pool[0];
+
+  return match ?? null;
 }
 
 /**
@@ -39,8 +47,8 @@ export function getBasePrice(prices, variantId = null) {
  * discount_type: "percentage" | "percent" | "flat"
  */
 export function calcDiscountedPrice(basePrice, discountType, discountAmount) {
-  if (!discountAmount || !discountType) return basePrice;
-  const type = discountType.toLowerCase();
+  if (basePrice == null || !discountAmount) return basePrice;
+  const type = discountType?.toLowerCase();
   if (type === "percentage" || type === "percent") {
     return basePrice - (basePrice * discountAmount) / 100;
   }
