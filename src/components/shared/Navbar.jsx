@@ -97,7 +97,7 @@ const NAV_LINKS = [
     ],
   },
   { label: "Pricing", href: "/#bundles" },
-  { label: "Why BITSS", href: "/why-bitss" },
+  { label: "Why BITSS?", href: "/why-bitss" },
   { label: "Contact", href: "/contact" },
 ];
 

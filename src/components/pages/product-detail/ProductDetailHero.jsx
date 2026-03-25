@@ -46,16 +46,30 @@ function LiveDot({ color = "bg-red-500" }) {
 export default function ProductDetailHero({ product, selectedVariantId }) {
   const { selectedCountry } = useCountry();
 
-  const priceObj = getBasePrice(product?.prices, selectedVariantId);
-  const basePrice = priceObj?.price ?? null;
-  const hasDiscount =
-    priceObj?.discount_type && priceObj?.discount_amount != null;
-  const discountedPrice = hasDiscount
-    ? priceObj?.discount_type === "percentage" ||
-      priceObj?.discount_type === "percent"
-      ? basePrice - (basePrice * priceObj?.discount_amount) / 100
-      : basePrice - priceObj?.discount_amount
-    : basePrice;
+  const priceObj = getBasePrice(
+    product?.prices,
+    selectedVariantId,
+    selectedCountry?.id,
+  );
+
+  const isUsb = product?.is_usb;
+  const subscriptionPricing = priceObj?.subscription_pricing ?? [];
+
+  const displayPrice = (() => {
+    if (isUsb) {
+      // lowest unit price
+      const prices = product?.prices ?? [];
+      return Math.min(...prices.map((p) => p.price_after_discount));
+    }
+    if (subscriptionPricing.length > 0) {
+      return Math.min(...subscriptionPricing.map((s) => s.final_price));
+    }
+    return priceObj?.price_after_discount ?? priceObj?.original_price ?? null;
+  })();
+
+  const basePrice = displayPrice;
+
+  const hasDiscount = priceObj?.discount_type && priceObj?.discount_amount > 0;
 
   const currencySymbol = selectedCountry?.currency_icon
     ? new DOMParser().parseFromString(
@@ -191,7 +205,7 @@ export default function ProductDetailHero({ product, selectedVariantId }) {
                       style={{ fontSize: "clamp(36px,5vw,52px)" }}
                     >
                       {currencySymbol}
-                      {discountedPrice?.toFixed(2)}
+                      {displayPrice}
                     </span>
                     {hasDiscount && (
                       <span className="text-[15px] text-slate-400 line-through mb-1">

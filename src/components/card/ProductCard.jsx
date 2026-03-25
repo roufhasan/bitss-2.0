@@ -192,7 +192,7 @@ export default function ProductCard({ product, i }) {
       {/* CTA */}
       <div className="pt-4 border-t border-slate-100 mt-auto">
         <Link
-          href={`/products/${product.id}`}
+          href={`/products/${product.slug}`}
           className={`inline-flex items-center gap-1.5 text-[12px] font-semibold tracking-wide transition-colors ${c.accentBtn}`}
         >
           View Details <ChevronRight size={12} />

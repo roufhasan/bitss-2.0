@@ -1,12 +1,12 @@
 "use client";
 import { useState } from "react";
-import { CheckCircle2, Zap, ArrowRight, Tag, LogIn } from "lucide-react";
-import { calcDiscountedPrice, getBasePrice } from "@/hooks/useProductDetail";
+import { Zap, ArrowRight, Tag, LogIn } from "lucide-react";
+import { getBasePrice } from "@/hooks/useProductDetail";
 import { useCountry } from "@/context/CountryContext";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 
-// ── Duration label helper ─────────────────────────────────────────────────────
+// ── Duration label ────────────────────────────────────────────────────────────
 function durationLabel(months) {
   if (months === 12) return "1 Year";
   if (months === 24) return "2 Years";
@@ -15,12 +15,7 @@ function durationLabel(months) {
 }
 
 // ── Savings badge ─────────────────────────────────────────────────────────────
-function SavingsBadge({
-  discountType,
-  discountAmount,
-  basePrice,
-  currencySymbol,
-}) {
+function SavingsBadge({ discountType, discountAmount, currencySymbol }) {
   if (!discountAmount) return null;
   const type = discountType?.toLowerCase();
   if (type === "percentage" || type === "percent") {
@@ -41,51 +36,7 @@ function SavingsBadge({
   return null;
 }
 
-// ── Variant selector ──────────────────────────────────────────────────────────
-function VariantSelector({
-  variants,
-  prices,
-  selectedVariant,
-  onSelect,
-  currencySymbol,
-}) {
-  if (!variants?.length) return null;
-  return (
-    <div className="mb-8">
-      <p className="text-[12px] font-semibold text-slate-500 uppercase tracking-widest mb-3">
-        Select Variant
-      </p>
-      <div className="flex flex-wrap gap-2">
-        {variants.map((v) => {
-          const priceObj = prices?.find((p) => p.variant_id === v.id);
-          const isSelected = selectedVariant === v.id;
-          return (
-            <button
-              key={v.id}
-              onClick={() => onSelect(v.id)}
-              className={`px-4 py-2 rounded-xl border-2 text-[13px] font-semibold transition-all duration-200
-                ${
-                  isSelected
-                    ? "border-red-500 bg-red-50 text-red-700"
-                    : "border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50"
-                }`}
-            >
-              {v.name}
-              {priceObj?.price != null && (
-                <span className="ml-2 text-[11px] font-normal text-slate-400">
-                  {currencySymbol}
-                  {priceObj.price}
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-// ── Main component ─────────────────────────────────────────────────────────────
+// ── Main component ────────────────────────────────────────────────────────────
 export default function ProductDetailPricing({
   product,
   selectedVariantId,
@@ -102,55 +53,73 @@ export default function ProductDetailPricing({
       ).body.textContent
     : "$";
 
-  const [selectedPeriod, setSelectedPeriod] = useState(
-    product?.subscription_period?.[0]?.id ?? null,
+  // ─────────────────────────────────────────────────────────────────────────
+  // Determine product type
+  // Case A: USB with variant   → is_usb=true,  is_variant=true  → key by variant_id
+  // Case B: USB no variant     → is_usb=true,  is_variant=false → key by unit
+  // Case C: Subscription       → is_usb=false, subscription_pricing.length > 0
+  // Case D: One-time           → is_usb=false, subscription_pricing.length === 0
+  // ─────────────────────────────────────────────────────────────────────────
+
+  const allUsbPrices = product?.is_usb ? (product?.prices ?? []) : [];
+
+  // USB: key by variant_id if variant, else by unit
+  const usbKey = product?.is_variant ? "variant_id" : "unit";
+  const [selectedUsbKey, setSelectedUsbKey] = useState(
+    allUsbPrices[0]?.[usbKey] ?? null,
   );
+  const activeUsbPrice =
+    allUsbPrices.find((p) => String(p[usbKey]) === String(selectedUsbKey)) ??
+    allUsbPrices[0] ??
+    null;
+  const usbHasDiscount =
+    activeUsbPrice?.discount_type && activeUsbPrice?.discount_amount > 0;
+
+  // Subscription / one-time: use first matching country price
+  const priceObj = getBasePrice(
+    product?.prices,
+    selectedVariantId,
+    selectedCountry?.id,
+  );
+  const originalPrice = priceObj?.original_price ?? null;
+  const displayPrice = priceObj?.price_after_discount ?? originalPrice;
+  const hasCountryDiscount =
+    priceObj?.discount_type && priceObj?.discount_amount > 0;
+  const subscriptionPricing = priceObj?.subscription_pricing ?? [];
+  const isOneTime = !product?.is_usb && !subscriptionPricing.length;
+
+  const [selectedSubId, setSelectedSubId] = useState(
+    subscriptionPricing[0]?.subscription_id ?? null,
+  );
+  const activeSub =
+    subscriptionPricing.find((s) => s.subscription_id === selectedSubId) ??
+    subscriptionPricing[0] ??
+    null;
+  const periodFinalPrice = activeSub?.final_price ?? displayPrice;
+  const periodBeforeDiscount = activeSub?.total_before_sub_discount ?? null;
+  const hasPeriodDiscount =
+    activeSub?.discount_type && activeSub?.discount_amount > 0;
+
+  // Summary total — pick the right value based on product type
+  const summaryTotal = product?.is_usb
+    ? activeUsbPrice?.price_after_discount
+    : periodFinalPrice;
 
   function handleGetProtected() {
     if (!isAuthenticated) {
       router.push("/login");
       return;
     }
-    // TODO: navigate to checkout or open order flow
     router.push(`/checkout?product=${product.id}`);
   }
 
   if (!product) return null;
-
-  // For USB products with no subscription_period, show one-time price
-  const isOneTime = product.is_usb || !product.subscription_period?.length;
-  const priceObj = getBasePrice(
-    product.prices,
-    selectedVariantId,
-    selectedCountry?.id,
-  );
-  const basePrice = priceObj?.price ?? null;
-
-  const activePeriod =
-    product.subscription_period?.find((p) => p.id === selectedPeriod) ??
-    product.subscription_period?.[0];
-
-  const countryAdjustedPrice = calcDiscountedPrice(
-    basePrice,
-    priceObj?.discount_type,
-    priceObj?.discount_amount, // note: prices[] uses discount_amount, not amount
-  );
-
-  const periodFinalPrice =
-    activePeriod && countryAdjustedPrice != null
-      ? calcDiscountedPrice(
-          countryAdjustedPrice,
-          activePeriod.discount_type,
-          activePeriod.amount, // subscription_period[] uses amount, not discount_amount
-        )
-      : countryAdjustedPrice;
 
   return (
     <section
       id="pricing"
       className="py-16 sm:py-20 bg-slate-50 relative overflow-hidden"
     >
-      {/* Sub-grid background */}
       <div
         className="absolute inset-0"
         style={{
@@ -161,7 +130,7 @@ export default function ProductDetailPricing({
       />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
-        {/* Section header */}
+        {/* Header */}
         <div className="mb-10 sm:mb-12">
           <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-100 text-red-600 text-[11px] font-semibold tracking-wide uppercase mb-4">
             <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
@@ -176,21 +145,83 @@ export default function ProductDetailPricing({
         </div>
 
         <div className="grid lg:grid-cols-[1fr_380px] gap-8 items-start">
-          {/* LEFT — Period cards */}
+          {/* LEFT */}
           <div>
-            {/* Variant selector */}
-            {product.is_variant && (
-              <VariantSelector
-                variants={product.variants}
-                prices={product.prices}
-                selectedVariant={selectedVariantId}
-                onSelect={onVariantChange}
-                currencySymbol={currencySymbol}
-              />
-            )}
+            {product.is_usb ? (
+              /* ── CASE A & B: USB (variant or unit) ── */
+              <div className="grid sm:grid-cols-2 gap-4">
+                {allUsbPrices.map((p) => {
+                  const isSelected =
+                    String(p[usbKey]) === String(selectedUsbKey);
+                  const hasDisco = p.discount_type && p.discount_amount > 0;
+                  const cardLabel = product.is_variant
+                    ? p.variant_name
+                    : `${p.unit} ${p.unit === 1 ? "Key" : "Keys"}`;
+                  const cardSubLabel = product.is_variant
+                    ? "Variant"
+                    : "Quantity";
 
-            {isOneTime ? (
-              /* One-time purchase */
+                  return (
+                    <button
+                      key={p[usbKey]}
+                      onClick={() => setSelectedUsbKey(p[usbKey])}
+                      className={`relative text-left p-6 rounded-2xl border-2 transition-all duration-200 w-full
+                        ${
+                          isSelected
+                            ? "border-red-500 bg-white shadow-xl shadow-red-100/60"
+                            : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-md"
+                        }`}
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
+                            {cardSubLabel}
+                          </p>
+                          <p className="font-['Barlow_Condensed'] text-[22px] font-black text-slate-900 leading-tight mt-0.5">
+                            {cardLabel}
+                          </p>
+                        </div>
+                        <div
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 transition-colors
+                          ${isSelected ? "border-red-500 bg-red-500" : "border-slate-300"}`}
+                        >
+                          {isSelected && (
+                            <span className="w-2 h-2 rounded-full bg-white" />
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-end gap-2 mb-2">
+                        <span className="font-['Barlow_Condensed'] text-[34px] font-black text-slate-900 leading-none">
+                          {currencySymbol}
+                          {Number(p.price_after_discount).toFixed(2)}
+                        </span>
+                        {hasDisco && (
+                          <span className="text-[14px] text-slate-400 line-through mb-1">
+                            {currencySymbol}
+                            {Number(p.original_price).toFixed(2)}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-[11px] text-slate-400">
+                          one-time · no renewal
+                        </span>
+                        {hasDisco && (
+                          <SavingsBadge
+                            discountType={p.discount_type}
+                            discountAmount={p.discount_amount}
+                            currencySymbol={currencySymbol}
+                          />
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            ) : isOneTime ? (
+              /* ── CASE D: One-time (non-USB, no subscription) ── */
               <div className="bg-white rounded-2xl border-2 border-red-500 shadow-xl shadow-red-100/40 p-7">
                 <div className="flex items-center justify-between mb-4">
                   <div>
@@ -205,71 +236,68 @@ export default function ProductDetailPricing({
                     <Zap size={22} className="text-red-500" />
                   </div>
                 </div>
-                {basePrice != null && (
-                  <div className="flex items-center justify-between text-[13px]">
-                    <span className="text-slate-500">Base Price</span>
-                    <span className="font-semibold text-slate-700">
+                {displayPrice != null && (
+                  <div className="flex items-end gap-2 mb-2">
+                    <span className="font-['Barlow_Condensed'] text-[40px] font-black text-slate-900 leading-none">
                       {currencySymbol}
-                      {countryAdjustedPrice.toFixed(2)} {/* ← was basePrice */}
+                      {Number(displayPrice).toFixed(2)}
                     </span>
+                    {hasCountryDiscount && originalPrice != null && (
+                      <span className="text-[15px] text-slate-400 line-through mb-1">
+                        {currencySymbol}
+                        {Number(originalPrice).toFixed(2)}
+                      </span>
+                    )}
                   </div>
                 )}
-                <p className="text-[12px] text-slate-400">
-                  one-time · no renewal
-                </p>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="text-[12px] text-slate-400">
+                    one-time · no renewal
+                  </p>
+                  {hasCountryDiscount && (
+                    <SavingsBadge
+                      discountType={priceObj.discount_type}
+                      discountAmount={priceObj.discount_amount}
+                      currencySymbol={currencySymbol}
+                    />
+                  )}
+                </div>
               </div>
             ) : (
-              /* Subscription periods */
+              /* ── CASE C: Subscription ── */
               <div className="grid sm:grid-cols-2 gap-4">
-                {product.subscription_period.map((period) => {
-                  const isSelected = selectedPeriod === period.id;
-
-                  const finalPrice =
-                    countryAdjustedPrice != null
-                      ? calcDiscountedPrice(
-                          countryAdjustedPrice,
-                          period.discount_type,
-                          period.amount,
-                        )
-                      : null;
-
-                  const hasPeriodDiscount =
-                    period.amount != null && period.discount_type != null;
-
-                  const isPopular = period.status === 1 && period.amount;
-
+                {subscriptionPricing.map((sub) => {
+                  const isSelected = selectedSubId === sub.subscription_id;
+                  const hasDisco = sub.discount_type && sub.discount_amount > 0;
+                  const isPopular = hasDisco;
                   return (
                     <button
-                      key={period.id}
-                      onClick={() => setSelectedPeriod(period.id)}
+                      key={sub.subscription_id}
+                      onClick={() => setSelectedSubId(sub.subscription_id)}
                       className={`relative text-left p-6 rounded-2xl border-2 transition-all duration-200 w-full
-        ${
-          isSelected
-            ? "border-red-500 bg-white shadow-xl shadow-red-100/60"
-            : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-md"
-        }`}
+                        ${
+                          isSelected
+                            ? "border-red-500 bg-white shadow-xl shadow-red-100/60"
+                            : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-md"
+                        }`}
                     >
                       {isPopular && (
                         <div className="absolute -top-3 left-4 bg-red-600 text-white text-[9px] font-black tracking-widest uppercase px-3 py-1 rounded-full shadow-md">
                           ★ Best Value
                         </div>
                       )}
-
                       <div className="flex items-start justify-between mb-3">
                         <div>
                           <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
                             Duration
                           </p>
                           <p className="font-['Barlow_Condensed'] text-[22px] font-black text-slate-900 leading-tight mt-0.5">
-                            {durationLabel(period.duration)}
+                            {durationLabel(sub.duration_months)}
                           </p>
                         </div>
                         <div
-                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 transition-colors ${
-                            isSelected
-                              ? "border-red-500 bg-red-500"
-                              : "border-slate-300"
-                          }`}
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 transition-colors
+                          ${isSelected ? "border-red-500 bg-red-500" : "border-slate-300"}`}
                         >
                           {isSelected && (
                             <span className="w-2 h-2 rounded-full bg-white" />
@@ -277,36 +305,27 @@ export default function ProductDetailPricing({
                         </div>
                       </div>
 
-                      {finalPrice != null ? (
-                        <div className="flex items-end gap-2 mb-2">
-                          <span className="font-['Barlow_Condensed'] text-[34px] font-black text-slate-900 leading-none">
+                      <div className="flex items-end gap-2 mb-2">
+                        <span className="font-['Barlow_Condensed'] text-[34px] font-black text-slate-900 leading-none">
+                          {currencySymbol}
+                          {Number(sub.final_price).toFixed(2)}
+                        </span>
+                        {hasDisco && sub.total_before_sub_discount != null && (
+                          <span className="text-[14px] text-slate-400 line-through mb-1">
                             {currencySymbol}
-                            {finalPrice.toFixed(2)}
+                            {Number(sub.total_before_sub_discount).toFixed(2)}
                           </span>
-                          {/* Only show strikethrough if period has its own discount */}
-                          {hasPeriodDiscount &&
-                            countryAdjustedPrice != null && (
-                              <span className="text-[14px] text-slate-400 line-through mb-1">
-                                {currencySymbol}
-                                {countryAdjustedPrice.toFixed(2)}
-                              </span>
-                            )}
-                        </div>
-                      ) : (
-                        <p className="text-[16px] text-slate-500 mb-2">
-                          Contact for pricing
-                        </p>
-                      )}
+                        )}
+                      </div>
 
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-[11px] text-slate-400">
                           per license
                         </span>
-                        {hasPeriodDiscount && (
+                        {hasDisco && (
                           <SavingsBadge
-                            discountType={period.discount_type}
-                            discountAmount={period.amount}
-                            basePrice={countryAdjustedPrice}
+                            discountType={sub.discount_type}
+                            discountAmount={sub.discount_amount}
                             currencySymbol={currencySymbol}
                           />
                         )}
@@ -318,7 +337,7 @@ export default function ProductDetailPricing({
             )}
           </div>
 
-          {/* RIGHT — Summary card */}
+          {/* RIGHT — Order summary */}
           <div className="bg-white rounded-2xl border border-slate-200 shadow-lg overflow-hidden sticky top-24">
             <div className="h-1 w-full bg-gradient-to-r from-red-600 via-red-500 to-amber-500" />
             <div className="p-6">
@@ -330,52 +349,89 @@ export default function ProductDetailPricing({
               </h3>
 
               <div className="flex flex-col gap-3 pb-4 mb-4 border-b border-slate-100">
-                {activePeriod && (
+                {/* USB: variant or quantity row */}
+                {product.is_usb && activeUsbPrice && (
                   <div className="flex items-center justify-between text-[13px]">
-                    <span className="text-slate-500">Duration</span>
+                    <span className="text-slate-500">
+                      {product.is_variant ? "Variant" : "Quantity"}
+                    </span>
                     <span className="font-semibold text-slate-700">
-                      {durationLabel(activePeriod.duration)}
+                      {product.is_variant
+                        ? activeUsbPrice.variant_name
+                        : `${activeUsbPrice.unit} ${activeUsbPrice.unit === 1 ? "Key" : "Keys"}`}
                     </span>
                   </div>
                 )}
-                {basePrice != null && (
+
+                {/* USB: discount row */}
+                {product.is_usb && usbHasDiscount && activeUsbPrice && (
+                  <div className="flex items-center justify-between text-[13px]">
+                    <span className="text-emerald-600">
+                      Discount (
+                      {activeUsbPrice.discount_type === "flat"
+                        ? `${currencySymbol}${activeUsbPrice.discount_amount} off`
+                        : `${activeUsbPrice.discount_amount}% off`}
+                      )
+                    </span>
+                    <span className="font-semibold text-emerald-600">
+                      −{currencySymbol}
+                      {(
+                        activeUsbPrice.original_price -
+                        activeUsbPrice.price_after_discount
+                      ).toFixed(2)}
+                    </span>
+                  </div>
+                )}
+
+                {/* Subscription: duration row */}
+                {!product.is_usb && activeSub && (
+                  <div className="flex items-center justify-between text-[13px]">
+                    <span className="text-slate-500">Duration</span>
+                    <span className="font-semibold text-slate-700">
+                      {durationLabel(activeSub.duration_months)}
+                    </span>
+                  </div>
+                )}
+
+                {/* Subscription: base price row */}
+                {!product.is_usb && periodBeforeDiscount != null && (
                   <div className="flex items-center justify-between text-[13px]">
                     <span className="text-slate-500">Base Price</span>
                     <span className="font-semibold text-slate-700">
                       {currencySymbol}
-                      {countryAdjustedPrice.toFixed(2)} {/* ← was basePrice */}
+                      {Number(periodBeforeDiscount).toFixed(2)}
                     </span>
                   </div>
                 )}
-                {/* Show period discount if exists */}
-                {activePeriod?.amount != null &&
-                  activePeriod?.discount_type && (
+
+                {/* Subscription: discount row */}
+                {!product.is_usb &&
+                  hasPeriodDiscount &&
+                  periodBeforeDiscount != null && (
                     <div className="flex items-center justify-between text-[13px]">
                       <span className="text-emerald-600">
                         Discount (
-                        {activePeriod.discount_type === "flat"
-                          ? `${currencySymbol}${activePeriod.amount} off`
-                          : `${activePeriod.amount}% off`}
+                        {activeSub.discount_type === "flat"
+                          ? `${currencySymbol}${activeSub.discount_amount} off`
+                          : `${activeSub.discount_amount}% off`}
                         )
                       </span>
                       <span className="font-semibold text-emerald-600">
                         −{currencySymbol}
-                        {(countryAdjustedPrice - periodFinalPrice).toFixed(
-                          2,
-                        )}{" "}
-                        {/* ← was basePrice */}
+                        {(periodBeforeDiscount - periodFinalPrice).toFixed(2)}
                       </span>
                     </div>
                   )}
               </div>
 
+              {/* Total */}
               <div className="flex items-center justify-between mb-6">
                 <span className="text-[13px] font-semibold text-slate-700">
                   Total
                 </span>
                 <span className="font-['Barlow_Condensed'] text-[28px] font-black text-slate-900 leading-none">
-                  {periodFinalPrice != null
-                    ? `${currencySymbol}${periodFinalPrice.toFixed(2)}`
+                  {summaryTotal != null
+                    ? `${currencySymbol}${Number(summaryTotal).toFixed(2)}`
                     : "—"}
                 </span>
               </div>

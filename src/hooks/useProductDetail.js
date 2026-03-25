@@ -24,36 +24,30 @@ export function useProductDetail(productId, countryId = 1) {
 // ── Price helpers ──────────────────────────────────────────────────────────────
 
 /**
- * Returns the base price for a product (optionally filtered by variant_id).
+ * Returns the price object for a product filtered by variant + country.
+ * Includes subscription_pricing[] if present.
  */
 export function getBasePrice(prices = [], variantId = null, countryId = null) {
   if (!prices?.length) return null;
 
-  // 1. Filter by variant
   const pool = prices.filter((p) =>
     variantId ? p.variant_id === variantId : p.variant_id === null,
   );
 
-  // 2. Match country — ONE entry per country
   const match = countryId
-    ? (pool.find((p) => p.country_id === countryId) ?? pool[0])
+    ? (pool.find((p) => String(p.country_id) === String(countryId)) ?? pool[0])
     : pool[0];
 
   return match ?? null;
 }
 
 /**
- * Calculates the final price after discount.
- * discount_type: "percentage" | "percent" | "flat"
+ * Returns a single subscription pricing entry by subscription_id.
  */
-export function calcDiscountedPrice(basePrice, discountType, discountAmount) {
-  if (basePrice == null || !discountAmount) return basePrice;
-  const type = discountType?.toLowerCase();
-  if (type === "percentage" || type === "percent") {
-    return basePrice - (basePrice * discountAmount) / 100;
-  }
-  if (type === "flat") {
-    return basePrice - discountAmount;
-  }
-  return basePrice;
+export function getSubscriptionPrice(priceObj, subscriptionId) {
+  return (
+    priceObj?.subscription_pricing?.find(
+      (s) => s.subscription_id === subscriptionId,
+    ) ?? null
+  );
 }
