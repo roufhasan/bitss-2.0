@@ -5,6 +5,7 @@ import { getBasePrice } from "@/hooks/useProductDetail";
 import { useCountry } from "@/context/CountryContext";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { buildCheckoutParams } from "@/utils/buildCheckoutParams";
 
 // ── Duration label ────────────────────────────────────────────────────────────
 function durationLabel(months) {
@@ -91,6 +92,7 @@ export default function ProductDetailPricing({
   const [selectedSubId, setSelectedSubId] = useState(
     subscriptionPricing[0]?.subscription_id ?? null,
   );
+
   const activeSub =
     subscriptionPricing.find((s) => s.subscription_id === selectedSubId) ??
     subscriptionPricing[0] ??
@@ -105,13 +107,16 @@ export default function ProductDetailPricing({
     ? activeUsbPrice?.price_after_discount
     : periodFinalPrice;
 
-  function handleGetProtected() {
+  const handleGetProtected = () => {
+    const checkoutUrl = `/checkout?${buildCheckoutParams(product, activeSub, activeUsbPrice)}`;
+
     if (!isAuthenticated) {
-      router.push("/login");
+      router.push(`/login?redirect=${encodeURIComponent(checkoutUrl)}`);
       return;
     }
-    router.push(`/checkout?product=${product.id}`);
-  }
+
+    router.push(checkoutUrl);
+  };
 
   if (!product) return null;
 
@@ -270,6 +275,7 @@ export default function ProductDetailPricing({
                   const isSelected = selectedSubId === sub.subscription_id;
                   const hasDisco = sub.discount_type && sub.discount_amount > 0;
                   const isPopular = hasDisco;
+
                   return (
                     <button
                       key={sub.subscription_id}

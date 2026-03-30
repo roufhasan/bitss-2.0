@@ -37,9 +37,11 @@ const COMBO_COLORS = [
 
 function ComboProductCard({ comboProduct, index }) {
   const c = COMBO_COLORS[index % COMBO_COLORS.length];
+  console.log(comboProduct);
+
   return (
     <Link
-      href={`/products/${comboProduct.id}`}
+      href={`/products/${comboProduct.slug}`}
       className="group flex items-start gap-4 p-5 rounded-2xl border bg-white hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-slate-200 hover:border-slate-300"
     >
       <div

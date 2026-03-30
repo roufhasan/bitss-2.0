@@ -205,7 +205,7 @@ export default function ProductDetailHero({ product, selectedVariantId }) {
                       style={{ fontSize: "clamp(36px,5vw,52px)" }}
                     >
                       {currencySymbol}
-                      {displayPrice}
+                      {displayPrice?.toFixed(2)}
                     </span>
                     {hasDiscount && (
                       <span className="text-[15px] text-slate-400 line-through mb-1">

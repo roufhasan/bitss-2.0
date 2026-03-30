@@ -2,7 +2,6 @@
 import { useEffect, useState, useRef } from "react";
 import {
   Menu,
-  ShieldCheck,
   X,
   ChevronDown,
   BookOpen,
@@ -19,11 +18,10 @@ import {
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
 import LanguageSwitcher from "./LanguageSwitcher";
 import CountrySelector from "./CountrySelector";
 import { useCountry } from "@/context/CountryContext";
+import Image from "next/image";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -239,7 +237,6 @@ export default function Navbar() {
     isLoading: authLoading,
     clearAuth,
   } = useAuth();
-  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
@@ -287,7 +284,6 @@ export default function Navbar() {
   function handleLogout() {
     clearAuth();
     setUserMenuOpen(false);
-    router.push("/");
   }
 
   useEffect(() => {
@@ -493,6 +489,9 @@ export default function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
+            <CountrySelector />
+            <LanguageSwitcher />
+
             {authLoading ? (
               // Skeleton while auth state loads from localStorage
               <div className="w-20 h-8 bg-slate-100 rounded-lg animate-pulse" />
@@ -537,11 +536,6 @@ export default function Navbar() {
                           </p>
                         </div>
                       </div>
-                      {user?.role && (
-                        <span className="mt-2 inline-flex text-[9px] font-black tracking-widest uppercase text-red-400 bg-white/10 px-2 py-0.5 rounded-md">
-                          {user.role}
-                        </span>
-                      )}
                     </div>
 
                     {/* Menu items */}
@@ -569,8 +563,6 @@ export default function Navbar() {
             ) : (
               // ── Logged out — Sign in + Get Protected ──
               <>
-                <CountrySelector />
-                <LanguageSwitcher />
                 <Link
                   href="/login"
                   className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-[14px] font-semibold transition-all duration-200 shadow-sm shadow-red-200 hover:shadow-red-300"

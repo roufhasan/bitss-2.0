@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   ShieldCheck,
   Mail,
@@ -18,8 +18,10 @@ import Image from "next/image";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export default function LoginPage() {
+// ── Inner component: safe to call useSearchParams() here ──
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { saveAuth } = useAuth();
 
   const [form, setForm] = useState({ email: "", password: "" });
@@ -41,10 +43,7 @@ export default function LoginPage() {
       const res = await fetch(`${BASE_URL}/user/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: form.email,
-          password: form.password,
-        }),
+        body: JSON.stringify({ email: form.email, password: form.password }),
       });
 
       const data = await res.json();
@@ -53,14 +52,10 @@ export default function LoginPage() {
         throw new Error(data.message || "Invalid email or password.");
       }
 
-      // Save token + user to context AND localStorage
       saveAuth(data);
 
-      // Redirect to previous page, avoid looping back to /login
-      const prev = document.referrer;
-      const prevPath = prev ? new URL(prev).pathname : "/";
-      const redirectTo = prevPath && prevPath !== "/login" ? prevPath : "/";
-      router.push(redirectTo);
+      const redirect = searchParams.get("redirect");
+      router.push(redirect ? decodeURIComponent(redirect) : "/");
     } catch (err) {
       setError(err.message || "Something went wrong. Please try again.");
     } finally {
@@ -68,6 +63,205 @@ export default function LoginPage() {
     }
   }
 
+  return (
+    <section className="relative min-h-screen bg-white overflow-hidden pt-16 flex items-center">
+      {/* Background */}
+      <div className="dot-grid absolute inset-0 opacity-50" />
+      <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-red-600 via-red-500 to-amber-500" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_65%_30%,rgba(254,242,242,0.85)_0%,transparent_70%)]" />
+
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-16">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          {/* ── LEFT — Branding ── */}
+          <div className="hidden lg:block">
+            <div className="fu1 mb-6">
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-100 text-red-600 text-[11px] font-semibold tracking-wide uppercase">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                Secure Access
+              </span>
+            </div>
+            <h1
+              className="fu2 font-['Barlow_Condensed'] font-black leading-[0.88] text-slate-900 mb-6"
+              style={{ fontSize: "clamp(44px,5vw,80px)" }}
+            >
+              WELCOME
+              <br />
+              <span className="text-red-600">BACK.</span>
+            </h1>
+            <p className="fu3 text-slate-500 text-[16px] leading-relaxed max-w-sm mb-10">
+              Sign in to manage your security products, view your licenses, and
+              access your protection dashboard.
+            </p>
+
+            <div className="fu3 flex flex-col gap-3">
+              {[
+                "Your session is encrypted end-to-end",
+                "Protected by multi-layer access control",
+                "IP-based verification on every login",
+              ].map((item) => (
+                <div key={item} className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                    <ShieldCheck size={12} className="text-red-500" />
+                  </div>
+                  <span className="text-[13px] text-slate-500">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── RIGHT — Form ── */}
+          <div className="fu2 w-full max-w-md mx-auto lg:mx-0">
+            <div className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-100/80 overflow-hidden">
+              <div className="h-1 w-full bg-gradient-to-r from-red-600 via-red-500 to-amber-500" />
+
+              <div className="p-8 sm:p-10">
+                <div className="flex items-center gap-2.5 mb-8">
+                  <Image
+                    src="/img/logo.png"
+                    alt="logo"
+                    width={48}
+                    height={48}
+                  />
+                  <span
+                    className="text-[20px] font-black text-slate-900 tracking-wide leading-none"
+                    style={{ fontFamily: "'Barlow Condensed', sans-serif" }}
+                  >
+                    BITSS
+                  </span>
+                </div>
+
+                <h2
+                  className="font-['Barlow_Condensed'] font-black text-slate-900 mb-1 leading-tight"
+                  style={{ fontSize: "clamp(22px,3vw,28px)" }}
+                >
+                  SIGN IN
+                </h2>
+                <p className="text-slate-400 text-[13px] mb-8">
+                  Don&apos;t have an account?{" "}
+                  <Link
+                    href="/register"
+                    className="text-red-600 hover:text-red-700 font-semibold transition-colors"
+                  >
+                    Create one
+                  </Link>
+                </p>
+
+                {error && (
+                  <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-6">
+                    <AlertCircle
+                      size={15}
+                      className="text-red-500 shrink-0 mt-0.5"
+                    />
+                    <p className="text-red-600 text-[13px] leading-snug">
+                      {error}
+                    </p>
+                  </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-1.5">
+                    <label
+                      htmlFor="email"
+                      className="text-[12px] font-semibold text-slate-600 uppercase tracking-wide"
+                    >
+                      Email Address
+                    </label>
+                    <div className="relative">
+                      <Mail
+                        size={15}
+                        className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                      />
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        required
+                        autoComplete="email"
+                        placeholder="you@example.com"
+                        value={form.email}
+                        onChange={handleChange}
+                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 text-[14px] text-slate-800 placeholder:text-slate-300 focus:outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100 transition-all duration-200"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center justify-between">
+                      <label
+                        htmlFor="password"
+                        className="text-[12px] font-semibold text-slate-600 uppercase tracking-wide"
+                      >
+                        Password
+                      </label>
+                    </div>
+                    <div className="relative">
+                      <Lock
+                        size={15}
+                        className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                      />
+                      <input
+                        id="password"
+                        name="password"
+                        type={showPassword ? "text" : "password"}
+                        required
+                        autoComplete="current-password"
+                        placeholder="••••••••"
+                        value={form.password}
+                        onChange={handleChange}
+                        className="w-full pl-10 pr-11 py-3 rounded-xl border border-slate-200 text-[14px] text-slate-800 placeholder:text-slate-300 focus:outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100 transition-all duration-200"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((s) => !s)}
+                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                        tabIndex={-1}
+                      >
+                        {showPassword ? (
+                          <EyeOff size={15} />
+                        ) : (
+                          <Eye size={15} />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="mt-2 w-full flex items-center justify-center gap-2.5 py-3.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-[14px] font-semibold transition-all duration-200 shadow-sm shadow-red-200 hover:shadow-red-300 hover:-translate-y-0.5 active:translate-y-0"
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 size={15} className="animate-spin" /> Signing
+                        in…
+                      </>
+                    ) : (
+                      <>
+                        Sign In <ChevronRight size={15} />
+                      </>
+                    )}
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <div className="mt-6 text-center">
+              <Link
+                href="/"
+                className="inline-flex items-center gap-1.5 text-[13px] text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                ← Back to home
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── Outer page: owns the Suspense boundary and global styles ──
+export default function LoginPage() {
   return (
     <>
       <style>{`
@@ -79,211 +273,15 @@ export default function LoginPage() {
         .fu3{animation:fadeUp .5s ease forwards .28s;opacity:0}
         .dot-grid{ background-image:radial-gradient(circle,#e2e8f0 1.5px,transparent 1.5px); background-size:26px 26px; }
       `}</style>
-
-      <section className="relative min-h-screen bg-white overflow-hidden pt-16 flex items-center">
-        {/* Background */}
-        <div className="dot-grid absolute inset-0 opacity-50" />
-        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-red-600 via-red-500 to-amber-500" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_65%_30%,rgba(254,242,242,0.85)_0%,transparent_70%)]" />
-
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-16">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            {/* ── LEFT — Branding ── */}
-            <div className="hidden lg:block">
-              <div className="fu1 mb-6">
-                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-100 text-red-600 text-[11px] font-semibold tracking-wide uppercase">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                  Secure Access
-                </span>
-              </div>
-              <h1
-                className="fu2 font-['Barlow_Condensed'] font-black leading-[0.88] text-slate-900 mb-6"
-                style={{ fontSize: "clamp(44px,5vw,80px)" }}
-              >
-                WELCOME
-                <br />
-                <span className="text-red-600">BACK.</span>
-              </h1>
-              <p className="fu3 text-slate-500 text-[16px] leading-relaxed max-w-sm mb-10">
-                Sign in to manage your security products, view your licenses,
-                and access your protection dashboard.
-              </p>
-
-              {/* Trust signals */}
-              <div className="fu3 flex flex-col gap-3">
-                {[
-                  "Your session is encrypted end-to-end",
-                  "Protected by multi-layer access control",
-                  "IP-based verification on every login",
-                ].map((item) => (
-                  <div key={item} className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
-                      <ShieldCheck size={12} className="text-red-500" />
-                    </div>
-                    <span className="text-[13px] text-slate-500">{item}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* ── RIGHT — Form ── */}
-            <div className="fu2 w-full max-w-md mx-auto lg:mx-0">
-              {/* Card */}
-              <div className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-100/80 overflow-hidden">
-                {/* Card top accent */}
-                <div className="h-1 w-full bg-gradient-to-r from-red-600 via-red-500 to-amber-500" />
-
-                <div className="p-8 sm:p-10">
-                  {/* Logo */}
-                  <div className="flex items-center gap-2.5 mb-8">
-                    <Image
-                      src="/img/logo.png"
-                      alt="logo"
-                      width={48}
-                      height={48}
-                    />
-                    <span
-                      className="text-[20px] font-black text-slate-900 tracking-wide leading-none"
-                      style={{ fontFamily: "'Barlow Condensed', sans-serif" }}
-                    >
-                      BITSS
-                    </span>
-                  </div>
-
-                  <h2
-                    className="font-['Barlow_Condensed'] font-black text-slate-900 mb-1 leading-tight"
-                    style={{ fontSize: "clamp(22px,3vw,28px)" }}
-                  >
-                    SIGN IN
-                  </h2>
-                  <p className="text-slate-400 text-[13px] mb-8">
-                    Don't have an account?{" "}
-                    <Link
-                      href="/register"
-                      className="text-red-600 hover:text-red-700 font-semibold transition-colors"
-                    >
-                      Create one
-                    </Link>
-                  </p>
-
-                  {/* Error banner */}
-                  {error && (
-                    <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-6">
-                      <AlertCircle
-                        size={15}
-                        className="text-red-500 shrink-0 mt-0.5"
-                      />
-                      <p className="text-red-600 text-[13px] leading-snug">
-                        {error}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Form */}
-                  <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                    {/* Email */}
-                    <div className="flex flex-col gap-1.5">
-                      <label
-                        htmlFor="email"
-                        className="text-[12px] font-semibold text-slate-600 uppercase tracking-wide"
-                      >
-                        Email Address
-                      </label>
-                      <div className="relative">
-                        <Mail
-                          size={15}
-                          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                        />
-                        <input
-                          id="email"
-                          name="email"
-                          type="email"
-                          required
-                          autoComplete="email"
-                          placeholder="you@example.com"
-                          value={form.email}
-                          onChange={handleChange}
-                          className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 text-[14px] text-slate-800 placeholder:text-slate-300 focus:outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100 transition-all duration-200"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Password */}
-                    <div className="flex flex-col gap-1.5">
-                      <div className="flex items-center justify-between">
-                        <label
-                          htmlFor="password"
-                          className="text-[12px] font-semibold text-slate-600 uppercase tracking-wide"
-                        >
-                          Password
-                        </label>
-                      </div>
-                      <div className="relative">
-                        <Lock
-                          size={15}
-                          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                        />
-                        <input
-                          id="password"
-                          name="password"
-                          type={showPassword ? "text" : "password"}
-                          required
-                          autoComplete="current-password"
-                          placeholder="••••••••"
-                          value={form.password}
-                          onChange={handleChange}
-                          className="w-full pl-10 pr-11 py-3 rounded-xl border border-slate-200 text-[14px] text-slate-800 placeholder:text-slate-300 focus:outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100 transition-all duration-200"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword((s) => !s)}
-                          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
-                          tabIndex={-1}
-                        >
-                          {showPassword ? (
-                            <EyeOff size={15} />
-                          ) : (
-                            <Eye size={15} />
-                          )}
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Submit */}
-                    <button
-                      type="submit"
-                      disabled={isLoading}
-                      className="mt-2 w-full flex items-center justify-center gap-2.5 py-3.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-[14px] font-semibold transition-all duration-200 shadow-sm shadow-red-200 hover:shadow-red-300 hover:-translate-y-0.5 active:translate-y-0"
-                    >
-                      {isLoading ? (
-                        <>
-                          <Loader2 size={15} className="animate-spin" />
-                          Signing in…
-                        </>
-                      ) : (
-                        <>
-                          Sign In
-                          <ChevronRight size={15} />
-                        </>
-                      )}
-                    </button>
-                  </form>
-                </div>
-              </div>
-
-              {/* Back home */}
-              <div className="mt-6 text-center">
-                <Link
-                  href="/"
-                  className="inline-flex items-center gap-1.5 text-[13px] text-slate-400 hover:text-slate-600 transition-colors"
-                >
-                  ← Back to home
-                </Link>
-              </div>
-            </div>
+      <Suspense
+        fallback={
+          <div className="min-h-screen flex items-center justify-center">
+            <Loader2 size={24} className="animate-spin text-red-500" />
           </div>
-        </div>
-      </section>
+        }
+      >
+        <LoginForm />
+      </Suspense>
     </>
   );
 }
