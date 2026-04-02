@@ -32,7 +32,7 @@ export default function OrderDetailHeader({ order }) {
         </Link>
         <ChevronRight size={13} className="text-slate-300" />
         <span className="text-[13px] text-slate-600 font-medium">
-          Order #{order.id}
+          Order #{order.order_number}
         </span>
       </div>
 
@@ -51,7 +51,7 @@ export default function OrderDetailHeader({ order }) {
             </h1>
             <div className="flex items-center gap-2 mt-1.5 flex-wrap">
               <span className="font-mono text-[12px] text-slate-400">
-                #{order.id}
+                #{order.order_number}
               </span>
               <span
                 className={`text-[10px] font-bold border px-2 py-0.5 rounded-md ${typeBadge.color}`}

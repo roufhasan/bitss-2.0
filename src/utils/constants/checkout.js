@@ -16,13 +16,13 @@ export const PAYMENT_METHODS = [
   //   icon: Smartphone,
   //   accent: "emerald",
   // },
-  // {
-  //   id: "stripe",
-  //   label: "Card / Stripe",
-  //   desc: "Visa, Mastercard, Amex.",
-  //   icon: CreditCard,
-  //   accent: "violet",
-  // },
+  {
+    id: "stripe",
+    label: "Card / Stripe",
+    desc: "Visa, Mastercard, Amex.",
+    icon: CreditCard,
+    accent: "violet",
+  },
 ];
 
 export const ACCENT = {

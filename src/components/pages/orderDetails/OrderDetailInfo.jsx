@@ -25,7 +25,7 @@ export default function OrderDetailInfo({ order }) {
         </h2>
       </div>
       <div className="px-6 py-2">
-        <InfoRow label="Order ID" value={`#${order.id}`} />
+        <InfoRow label="Order ID" value={`#${order.order_number}`} />
         <InfoRow
           label="Amount"
           value={`${currency}${Number(order.amount).toLocaleString()}`}

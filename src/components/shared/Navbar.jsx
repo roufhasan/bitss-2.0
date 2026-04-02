@@ -546,7 +546,7 @@ export default function Navbar() {
                         className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[13px] text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors font-medium"
                       >
                         <User size={14} className="text-slate-400 shrink-0" />
-                        My Dashboard
+                        My Orders
                       </Link>
                       <div className="my-1 border-t border-slate-100" />
                       <button
@@ -772,7 +772,7 @@ export default function Navbar() {
                   onClick={() => setMenuOpen(false)}
                   className="w-full py-2.5 rounded-xl border border-slate-200 text-slate-700 text-center text-[14px] font-semibold hover:bg-slate-50 transition-colors"
                 >
-                  My Dashboard
+                  My Orders
                 </Link>
                 <button
                   onClick={() => {

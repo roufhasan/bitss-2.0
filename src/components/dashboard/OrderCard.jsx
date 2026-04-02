@@ -19,7 +19,7 @@ export default function OrderCard({ order }) {
   const currency = getCurrencySymbol(order.country?.currency_icon);
   const typeBadge = getProductTypeBadge(order.product);
   const statusBadge = getStatusBadge(order.status);
-  const payment = order.payments?.[0];
+  const payment = order?.payment;
 
   return (
     <Link
@@ -41,7 +41,7 @@ export default function OrderCard({ order }) {
                 {order.product.name}
               </p>
               <p className="text-[11px] text-slate-400 font-mono mt-0.5">
-                #{order.id}
+                #{order.order_number}
               </p>
             </div>
           </div>

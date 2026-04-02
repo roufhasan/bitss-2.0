@@ -14,8 +14,8 @@ function CopyValue({ value }) {
   );
 }
 
-export default function OrderDetailBankInfo({ bankInformations, payments }) {
-  const isBankTransfer = payments?.[0]?.payment_method === "bank_transfer";
+export default function OrderDetailBankInfo({ bankInformations, payment }) {
+  const isBankTransfer = payment?.payment_method === "bank_transfer";
   const banks =
     bankInformations?.filter((b) => b.type_name === "bank_transfer") ?? [];
   if (!isBankTransfer || !banks.length) return null;

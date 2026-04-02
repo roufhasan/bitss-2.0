@@ -1,14 +1,20 @@
 "use client";
 import Link from "next/link";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2, Truck } from "lucide-react";
 import { PAYMENT_METHODS } from "@/utils/constants/checkout";
 import { durationLabel } from "@/utils/checkoutUtils";
 
-function Row({ label, value }) {
+function Row({ label, value, highlight }) {
   return (
     <div className="flex items-center justify-between text-[13px]">
-      <span className="text-slate-500">{label}</span>
-      <span className="font-semibold text-slate-700 max-w-[180px] truncate text-right">
+      <span
+        className={highlight ? "text-blue-600 font-medium" : "text-slate-500"}
+      >
+        {label}
+      </span>
+      <span
+        className={`font-semibold max-w-[180px] truncate text-right ${highlight ? "text-blue-700" : "text-slate-700"}`}
+      >
         {value}
       </span>
     </div>
@@ -24,14 +30,19 @@ export default function CheckoutSummary({
   selectedCountry,
   paymentMethod,
   domain,
+  basePrice,
+  deliveryCharge,
   displayTotal,
   currencySymbol,
   isSubmitting,
   onSubmit,
   productSlug,
+  hideButton,
 }) {
+  const hasDelivery = deliveryCharge > 0;
+
   return (
-    <div className="fu3 sticky top-24">
+    <div className="fu3 sticky top-24 col-span-12 lg:col-span-5">
       <div className="bg-white rounded-2xl border border-slate-200 shadow-lg overflow-hidden">
         <div className="h-1 w-full bg-gradient-to-r from-red-600 via-red-500 to-amber-500" />
         <div className="p-6">
@@ -79,6 +90,30 @@ export default function CheckoutSummary({
             )}
           </div>
 
+          {/* Price breakdown — show subtotal + delivery when delivery applies */}
+          {hasDelivery ? (
+            <div className="flex flex-col gap-2 pb-4 mb-4 border-b border-slate-100">
+              <div className="flex items-center justify-between text-[13px]">
+                <span className="text-slate-500">Subtotal</span>
+                <span className="font-semibold text-slate-700">
+                  {basePrice != null
+                    ? `${currencySymbol}${Number(basePrice).toFixed(2)}`
+                    : "—"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-[13px]">
+                <span className="flex items-center gap-1.5 text-blue-600 font-medium">
+                  <Truck size={12} />
+                  Delivery Charge
+                </span>
+                <span className="font-semibold text-blue-700">
+                  +{currencySymbol}
+                  {Number(deliveryCharge).toFixed(2)}
+                </span>
+              </div>
+            </div>
+          ) : null}
+
           <div className="flex items-center justify-between mb-6">
             <span className="text-[13px] font-semibold text-slate-700">
               Total
@@ -90,24 +125,32 @@ export default function CheckoutSummary({
             </span>
           </div>
 
-          <button
-            onClick={onSubmit}
-            disabled={isSubmitting}
-            className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold text-[14px] transition-all duration-200 shadow-sm shadow-red-200 active:scale-[0.98]"
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 size={15} className="animate-spin" /> Placing Order…
-              </>
-            ) : (
-              <>
-                Place Order <ArrowRight size={14} />
-              </>
-            )}
-          </button>
-          <p className="text-center text-[11px] text-slate-400 mt-3">
-            Secured · Encrypted · No hidden fees
-          </p>
+          {!hideButton && (
+            <>
+              <button
+                onClick={onSubmit}
+                disabled={isSubmitting}
+                className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold text-[14px] transition-all duration-200 shadow-sm shadow-red-200 active:scale-[0.98]"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 size={15} className="animate-spin" /> Placing
+                    Order…
+                  </>
+                ) : (
+                  <>
+                    {paymentMethod === "stripe"
+                      ? "Continue to Payment"
+                      : "Place Order"}{" "}
+                    <ArrowRight size={14} />
+                  </>
+                )}
+              </button>
+              <p className="text-center text-[11px] text-slate-400 mt-3">
+                Secured · Encrypted · No hidden fees
+              </p>
+            </>
+          )}
         </div>
       </div>
 

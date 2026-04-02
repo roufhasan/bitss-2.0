@@ -6,6 +6,7 @@ import CheckoutPaymentMethod from "./CheckoutPaymentMethod";
 import CheckoutDomain from "./CheckoutDomain";
 import CheckoutBankInfo from "./CheckoutBankInfo";
 import CheckoutSummary from "./CheckoutSummary";
+import CheckoutStripePanel from "./CheckoutStripePanel";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useCountry } from "@/context/CountryContext";
@@ -27,6 +28,14 @@ export default function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState("bank_transfer");
   const [domain, setDomain] = useState("");
   const [validationError, setValidationError] = useState(null);
+
+  // ─── Stripe state ───────────────────────────────────────────────
+  const [stripeOrderId, setStripeOrderId] = useState(null);
+  const [clientSecret, setClientSecret] = useState(null);
+  const [stripeLoading, setStripeLoading] = useState(false);
+  const [stripeError, setStripeError] = useState(null);
+  // ────────────────────────────────────────────────────────────────
+
   const bankInformation = selectedCountry?.bank_informations || [];
 
   const {
@@ -49,9 +58,22 @@ export default function Checkout() {
   });
 
   const priceRow = resolveDisplayPrice(product, params);
-  const displayTotal = product?.is_usb
+
+  // Base product price (after any discount)
+  const basePrice = product?.is_usb
     ? priceRow?.price_after_discount
     : (priceRow?.final_price ?? priceRow?.price_after_discount);
+
+  // Delivery charge lives inside the matched price row — only add when the
+  // product has is_delivery_charge: true and the row carries a non-zero value.
+  const deliveryCharge =
+    product?.is_delivery_charge && priceRow?.delivery_charge
+      ? Number(priceRow.delivery_charge)
+      : 0;
+
+  // Final amount sent to the API and shown to the user
+  const displayTotal =
+    basePrice != null ? Number(basePrice) + deliveryCharge : null;
 
   const currencySymbol = selectedCountry?.currency_icon
     ? new DOMParser().parseFromString(
@@ -60,7 +82,7 @@ export default function Checkout() {
       ).body.textContent
     : "$";
 
-  // ---> Order Mutation <---
+  // ---> Bank / mobile order mutation (unchanged) <---
   const {
     mutate: placeOrder,
     isPending: isSubmitting,
@@ -83,31 +105,88 @@ export default function Checkout() {
     },
     onSuccess: (data) => {
       const order = data?.order ?? {};
-      const params = new URLSearchParams();
-      params.set("order", order.order_number ?? order.id ?? "");
-      params.set("method", data?.payment?.payment_method ?? "");
-      router.push(`/checkout/success?${params.toString()}`);
+      const p = new URLSearchParams();
+      p.set("order", order.order_number ?? order.id ?? "");
+      p.set("method", data?.payment?.payment_method ?? "");
+      router.push(`/checkout/success?${p.toString()}`);
     },
   });
 
-  const handleSubmit = () => {
+  // Validate domain + dispatch based on payment method
+  const handleSubmit = async () => {
     resetMutation();
     setValidationError(null);
+    setStripeError(null);
 
-    if (!domain.trim()) {
+    if (product?.is_domain && !domain.trim()) {
       setValidationError("Please enter the domain for this license.");
       return;
     }
-
-    if (!DOMAIN_REGEX.test(domain.trim())) {
+    if (product?.is_domain && !DOMAIN_REGEX.test(domain.trim())) {
       setValidationError("Please enter a valid domain — e.g. yoursite.com");
       return;
     }
-
     if (!productId || !countryId || displayTotal == null) {
       setValidationError("Missing order info. Please go back and try again.");
       return;
     }
+
+    // ── Stripe path ──────────────────────────────────────────────
+    if (paymentMethod === "stripe") {
+      setStripeLoading(true);
+      try {
+        const orderRes = await fetch(`${BASE_URL}/orders/create`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({
+            product_id: productId,
+            amount: displayTotal,
+            payment_method: "stripe",
+            country_id: countryId,
+            subscription_period_id: subId ?? null,
+            variant_id: variantId ?? null,
+            ...(product?.is_domain && { domain: domain.trim() }),
+          }),
+        });
+        const orderData = await orderRes.json();
+        if (!orderRes.ok || orderData.status === false)
+          throw new Error(orderData.message || "Could not create order.");
+
+        const orderId = orderData?.order?.id;
+
+        const intentRes = await fetch(`${BASE_URL}/payment/create-intent`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({
+            order_id: orderId,
+            amount: Math.round((displayTotal + Number.EPSILON) * 100),
+            currency: selectedCountry?.currency_name?.toLowerCase(),
+            payment_type: "regular",
+          }),
+        });
+        const intentData = await intentRes.json();
+        if (!intentRes.ok || intentData.status === false)
+          throw new Error(intentData.message || "Could not start payment.");
+
+        const secret = intentData.clientSecret ?? intentData.client_secret;
+        if (!secret) throw new Error("No client secret returned.");
+
+        setStripeOrderId(orderId);
+        setClientSecret(secret);
+      } catch (err) {
+        setStripeError(err.message);
+      } finally {
+        setStripeLoading(false);
+      }
+      return;
+    }
+    // ── End Stripe path ──────────────────────────────────────────
 
     placeOrder({
       product_id: productId,
@@ -116,7 +195,7 @@ export default function Checkout() {
       country_id: countryId,
       subscription_period_id: subId ?? null,
       variant_id: variantId ?? null,
-      domain: domain.trim() || null,
+      ...(product?.is_domain && { domain: domain.trim() || null }),
     });
   };
 
@@ -170,22 +249,23 @@ export default function Checkout() {
         <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-red-600 via-red-500 to-amber-500" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_30%_20%,rgba(254,242,242,0.8)_0%,transparent_70%)]" />
 
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-10 py-12 sm:py-16">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 w-full sm:px-6 lg:px-10 py-12 sm:py-16">
           <CheckoutBreadcrumb productName={product.name} />
 
-          <div className="grid lg:grid-cols-[1fr_360px] gap-8 items-start">
-            <div className="flex flex-col gap-6">
-              {(validationError || submitError) && (
+          <div className="grid grid-cols-12 gap-8 items-start w-full">
+            <div className="flex flex-col gap-6 col-span-12 lg:col-span-7">
+              {(validationError || submitError || stripeError) && (
                 <div className="fu2 flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
                   <AlertCircle
                     size={15}
                     className="text-red-500 shrink-0 mt-0.5"
                   />
                   <p className="text-red-600 text-[13px] leading-snug">
-                    {validationError ?? submitError?.message}
+                    {validationError ?? stripeError ?? submitError?.message}
                   </p>
                 </div>
               )}
+
               <CheckoutProductCard
                 product={product}
                 subId={subId}
@@ -193,19 +273,43 @@ export default function Checkout() {
                 unit={unit}
                 priceRow={priceRow}
               />
-              <CheckoutPaymentMethod
-                selected={paymentMethod}
-                onChange={setPaymentMethod}
-                bankInformation={bankInformation}
-              />
-              <CheckoutDomain
-                value={domain}
-                onChange={setDomain}
-                domainRegex={DOMAIN_REGEX}
-              />
-              {paymentMethod === "bank_transfer" && (
-                <CheckoutBankInfo
-                  bankInformations={selectedCountry?.bank_informations}
+
+              {!clientSecret && (
+                <>
+                  <CheckoutPaymentMethod
+                    selected={paymentMethod}
+                    onChange={(m) => {
+                      setPaymentMethod(m);
+                      setStripeError(null);
+                    }}
+                    bankInformation={bankInformation}
+                  />
+                  {product?.is_domain && (
+                    <CheckoutDomain
+                      value={domain}
+                      onChange={setDomain}
+                      domainRegex={DOMAIN_REGEX}
+                    />
+                  )}
+                  {paymentMethod === "bank_transfer" && (
+                    <CheckoutBankInfo
+                      bankInformations={selectedCountry?.bank_informations}
+                    />
+                  )}
+                </>
+              )}
+
+              {clientSecret && (
+                <CheckoutStripePanel
+                  clientSecret={clientSecret}
+                  orderId={stripeOrderId}
+                  token={token}
+                  displayTotal={`${currencySymbol}${Number(displayTotal).toFixed(2)}`}
+                  onBack={() => {
+                    setClientSecret(null);
+                    setStripeOrderId(null);
+                    setStripeError(null);
+                  }}
                 />
               )}
             </div>
@@ -219,11 +323,14 @@ export default function Checkout() {
               selectedCountry={selectedCountry}
               paymentMethod={paymentMethod}
               domain={domain}
+              basePrice={basePrice}
+              deliveryCharge={deliveryCharge}
               displayTotal={displayTotal}
               currencySymbol={currencySymbol}
-              isSubmitting={isSubmitting}
+              isSubmitting={isSubmitting || stripeLoading}
               onSubmit={handleSubmit}
               productSlug={productSlug}
+              hideButton={!!clientSecret}
             />
           </div>
         </div>

@@ -14,7 +14,7 @@ export default function DashboardHeader({ user, orderCount }) {
         <div>
           <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-100 text-red-600 text-[11px] font-semibold tracking-wide uppercase mb-3">
             <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-            My Dashboard
+            My Orders
           </span>
           <h1
             className="font-['Barlow_Condensed'] font-black text-slate-900 leading-none"
@@ -25,21 +25,6 @@ export default function DashboardHeader({ user, orderCount }) {
               {user?.name?.split(" ")[0]?.toUpperCase()}.
             </span>
           </h1>
-        </div>
-
-        {/* user avatar */}
-        <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-2xl px-4 py-3 shadow-sm">
-          <div className="w-10 h-10 rounded-full bg-red-100 border border-red-200 flex items-center justify-center shrink-0">
-            <span className="text-[14px] font-black text-red-600">
-              {user?.name?.charAt(0).toUpperCase()}
-            </span>
-          </div>
-          <div>
-            <p className="text-[13px] font-semibold text-slate-800">
-              {user?.name}
-            </p>
-            <p className="text-[11px] text-slate-400">{user?.email}</p>
-          </div>
         </div>
       </div>
 

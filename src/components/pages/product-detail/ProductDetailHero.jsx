@@ -11,6 +11,7 @@ import {
 import { getBasePrice } from "@/hooks/useProductDetail";
 import { useCountry } from "@/context/CountryContext";
 import Link from "next/link";
+import { formatPrice } from "@/utils/formatPrice";
 
 // ── Badge helpers ─────────────────────────────────────────────────────────────
 function Badge({ children, variant = "default" }) {
@@ -205,12 +206,12 @@ export default function ProductDetailHero({ product, selectedVariantId }) {
                       style={{ fontSize: "clamp(36px,5vw,52px)" }}
                     >
                       {currencySymbol}
-                      {displayPrice?.toFixed(2)}
+                      {formatPrice(displayPrice)}
                     </span>
                     {hasDiscount && (
                       <span className="text-[15px] text-slate-400 line-through mb-1">
                         {currencySymbol}
-                        {basePrice.toFixed(2)}
+                        {formatPrice(basePrice)}
                       </span>
                     )}
                   </div>

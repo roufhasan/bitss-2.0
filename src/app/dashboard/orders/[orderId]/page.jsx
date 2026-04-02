@@ -95,7 +95,7 @@ function OrderDetailsInner() {
             <div className="flex flex-col gap-6">
               <OrderDetailInfo order={order} />
               <OrderDetailPayments
-                payments={order.payments}
+                payment={order.payment}
                 currencyIcon={order.country?.currency_icon}
               />
             </div>
@@ -104,7 +104,7 @@ function OrderDetailsInner() {
             <div className="flex flex-col gap-6">
               <OrderDetailBankInfo
                 bankInformations={order.country?.bank_informations}
-                payments={order.payments}
+                payment={order.payment}
               />
             </div>
           </div>

@@ -6,6 +6,7 @@ import { useCountry } from "@/context/CountryContext";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { buildCheckoutParams } from "@/utils/buildCheckoutParams";
+import { formatPrice } from "@/utils/formatPrice";
 
 // ── Duration label ────────────────────────────────────────────────────────────
 function durationLabel(months) {
@@ -199,12 +200,12 @@ export default function ProductDetailPricing({
                       <div className="flex items-end gap-2 mb-2">
                         <span className="font-['Barlow_Condensed'] text-[34px] font-black text-slate-900 leading-none">
                           {currencySymbol}
-                          {Number(p.price_after_discount).toFixed(2)}
+                          {formatPrice(p.price_after_discount)}
                         </span>
                         {hasDisco && (
                           <span className="text-[14px] text-slate-400 line-through mb-1">
                             {currencySymbol}
-                            {Number(p.original_price).toFixed(2)}
+                            {formatPrice(p.original_price)}
                           </span>
                         )}
                       </div>
@@ -216,7 +217,7 @@ export default function ProductDetailPricing({
                         {hasDisco && (
                           <SavingsBadge
                             discountType={p.discount_type}
-                            discountAmount={p.discount_amount}
+                            discountAmount={formatPrice(p.discount_amount)}
                             currencySymbol={currencySymbol}
                           />
                         )}
@@ -245,12 +246,12 @@ export default function ProductDetailPricing({
                   <div className="flex items-end gap-2 mb-2">
                     <span className="font-['Barlow_Condensed'] text-[40px] font-black text-slate-900 leading-none">
                       {currencySymbol}
-                      {Number(displayPrice).toFixed(2)}
+                      {formatPrice(displayPrice)}
                     </span>
                     {hasCountryDiscount && originalPrice != null && (
                       <span className="text-[15px] text-slate-400 line-through mb-1">
                         {currencySymbol}
-                        {Number(originalPrice).toFixed(2)}
+                        {formatPrice(originalPrice)}
                       </span>
                     )}
                   </div>
@@ -262,7 +263,7 @@ export default function ProductDetailPricing({
                   {hasCountryDiscount && (
                     <SavingsBadge
                       discountType={priceObj.discount_type}
-                      discountAmount={priceObj.discount_amount}
+                      discountAmount={formatPrice(priceObj.discount_amount)}
                       currencySymbol={currencySymbol}
                     />
                   )}
@@ -314,12 +315,12 @@ export default function ProductDetailPricing({
                       <div className="flex items-end gap-2 mb-2">
                         <span className="font-['Barlow_Condensed'] text-[34px] font-black text-slate-900 leading-none">
                           {currencySymbol}
-                          {Number(sub.final_price).toFixed(2)}
+                          {formatPrice(sub.final_price)}
                         </span>
                         {hasDisco && sub.total_before_sub_discount != null && (
                           <span className="text-[14px] text-slate-400 line-through mb-1">
                             {currencySymbol}
-                            {Number(sub.total_before_sub_discount).toFixed(2)}
+                            {formatPrice(sub.total_before_sub_discount)}
                           </span>
                         )}
                       </div>
@@ -331,7 +332,7 @@ export default function ProductDetailPricing({
                         {hasDisco && (
                           <SavingsBadge
                             discountType={sub.discount_type}
-                            discountAmount={sub.discount_amount}
+                            discountAmount={formatPrice(sub.discount_amount)}
                             currencySymbol={currencySymbol}
                           />
                         )}
@@ -375,16 +376,16 @@ export default function ProductDetailPricing({
                     <span className="text-emerald-600">
                       Discount (
                       {activeUsbPrice.discount_type === "flat"
-                        ? `${currencySymbol}${activeUsbPrice.discount_amount} off`
+                        ? `${currencySymbol}${formatPrice(activeUsbPrice.discount_amount)} off`
                         : `${activeUsbPrice.discount_amount}% off`}
                       )
                     </span>
                     <span className="font-semibold text-emerald-600">
                       −{currencySymbol}
-                      {(
+                      {formatPrice(
                         activeUsbPrice.original_price -
-                        activeUsbPrice.price_after_discount
-                      ).toFixed(2)}
+                          activeUsbPrice.price_after_discount,
+                      )}
                     </span>
                   </div>
                 )}
@@ -405,7 +406,7 @@ export default function ProductDetailPricing({
                     <span className="text-slate-500">Base Price</span>
                     <span className="font-semibold text-slate-700">
                       {currencySymbol}
-                      {Number(periodBeforeDiscount).toFixed(2)}
+                      {formatPrice(periodBeforeDiscount)}
                     </span>
                   </div>
                 )}
@@ -418,13 +419,13 @@ export default function ProductDetailPricing({
                       <span className="text-emerald-600">
                         Discount (
                         {activeSub.discount_type === "flat"
-                          ? `${currencySymbol}${activeSub.discount_amount} off`
+                          ? `${currencySymbol}${formatPrice(activeSub.discount_amount)} off`
                           : `${activeSub.discount_amount}% off`}
                         )
                       </span>
                       <span className="font-semibold text-emerald-600">
                         −{currencySymbol}
-                        {(periodBeforeDiscount - periodFinalPrice).toFixed(2)}
+                        {formatPrice(periodBeforeDiscount - periodFinalPrice)}
                       </span>
                     </div>
                   )}
@@ -437,7 +438,7 @@ export default function ProductDetailPricing({
                 </span>
                 <span className="font-['Barlow_Condensed'] text-[28px] font-black text-slate-900 leading-none">
                   {summaryTotal != null
-                    ? `${currencySymbol}${Number(summaryTotal).toFixed(2)}`
+                    ? `${currencySymbol}${formatPrice(summaryTotal)}`
                     : "—"}
                 </span>
               </div>
