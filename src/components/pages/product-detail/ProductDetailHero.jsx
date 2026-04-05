@@ -138,37 +138,6 @@ export default function ProductDetailHero({ product, selectedVariantId }) {
                 dangerouslySetInnerHTML={{ __html: product.description }}
               />
             )}
-
-            {/* Top features preview */}
-            {product.details?.length > 0 && (
-              <ul className="flex flex-col gap-2 mb-8">
-                {product.details.slice(0, 4).map((d) => (
-                  <li
-                    key={d}
-                    className="flex items-center gap-3 text-[14px] text-slate-700"
-                  >
-                    <CheckCircle2 size={15} className="text-red-500 shrink-0" />
-                    {d}
-                  </li>
-                ))}
-                {product.details.length > 4 && (
-                  <li className="flex items-center gap-2 text-[13px] text-slate-400 pl-6">
-                    <ChevronRight size={12} />+{product.details.length - 4} more
-                    features below
-                  </li>
-                )}
-              </ul>
-            )}
-
-            {/* CTA */}
-            <div className="flex flex-col xs:flex-row gap-3">
-              <Link
-                href="/register"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-[14px] transition-all duration-300 shadow-lg shadow-red-200 hover:shadow-red-300 hover:-translate-y-0.5 w-full xs:w-auto"
-              >
-                <ShieldCheck size={16} /> Get Protected
-              </Link>
-            </div>
           </div>
 
           {/* RIGHT — Price card */}

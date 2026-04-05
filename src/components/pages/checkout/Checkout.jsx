@@ -12,7 +12,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useCountry } from "@/context/CountryContext";
 import { useCheckoutParams } from "@/hooks/useCheckoutParams";
 import { useState } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { resolveDisplayPrice } from "@/utils/checkoutUtils";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -22,6 +22,7 @@ export default function Checkout() {
   const router = useRouter();
   const { token } = useAuth();
   const { selectedCountry } = useCountry();
+  const queryClient = useQueryClient();
   const params = useCheckoutParams();
   const { productId, productSlug, subId, variantId, unit, countryId } = params;
 
@@ -104,6 +105,7 @@ export default function Checkout() {
       return data;
     },
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["user-orders"] }); // ← add this
       const order = data?.order ?? {};
       const p = new URLSearchParams();
       p.set("order", order.order_number ?? order.id ?? "");
@@ -152,9 +154,10 @@ export default function Checkout() {
           }),
         });
         const orderData = await orderRes.json();
-        if (!orderRes.ok || orderData.status === false)
+        if (!orderRes.ok || orderData.success === false)
           throw new Error(orderData.message || "Could not create order.");
 
+        const orderNumber = orderData?.order?.order_number;
         const orderId = orderData?.order?.id;
 
         const intentRes = await fetch(`${BASE_URL}/payment/create-intent`, {

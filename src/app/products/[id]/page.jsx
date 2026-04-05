@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { AlertCircle, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import Navbar from "@/components/shared/Navbar";
 import { useProductDetail } from "@/hooks/useProductDetail";
 import ProductDetailHero from "@/components/pages/product-detail/ProductDetailHero";
 import ProductDetailPricing from "@/components/pages/product-detail/ProductDetailPricing";
@@ -91,7 +90,7 @@ function ProductDetailCTA({ productName }) {
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function ProductDetailPage() {
   const params = useParams();
-  const productId = params?.id; // expects /products/[id]/page.jsx
+  const productId = params?.id;
 
   const [selectedVariantId, setSelectedVariantId] = useState(null);
 

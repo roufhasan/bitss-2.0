@@ -450,12 +450,12 @@ export default function ProductDetailPricing({
                 {isAuthenticated ? (
                   <>
                     {" "}
-                    Get Protected <ArrowRight size={14} />{" "}
+                    Proceed to Checkout <ArrowRight size={14} />{" "}
                   </>
                 ) : (
                   <>
                     {" "}
-                    Sign in to Continue <LogIn size={14} />{" "}
+                    Sign in to Checkout <LogIn size={14} />{" "}
                   </>
                 )}
               </button>

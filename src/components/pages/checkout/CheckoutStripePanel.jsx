@@ -16,6 +16,7 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const stripePromise = loadStripe(
@@ -27,6 +28,7 @@ function StripeForm({ orderId, token, displayTotal, onBack }) {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -70,6 +72,8 @@ function StripeForm({ orderId, token, displayTotal, onBack }) {
       const data = await res.json();
       if (!res.ok || data.status === false)
         throw new Error(data.message || "Confirmation failed.");
+
+      queryClient.invalidateQueries({ queryKey: ["user-orders"] });
 
       setDone(true);
       setTimeout(() => {

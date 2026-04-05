@@ -427,7 +427,7 @@ export default function HomePage() {
 
               <div className="fu4 flex flex-col xs:flex-row flex-wrap gap-3 mb-10 sm:mb-14">
                 <Link
-                  href="/register"
+                  href="/products"
                   className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-[15px] transition-all duration-300 shadow-lg shadow-red-200 hover:shadow-red-300 hover:-translate-y-0.5 w-full xs:w-auto"
                 >
                   <ShieldCheck size={17} /> Get Protected
