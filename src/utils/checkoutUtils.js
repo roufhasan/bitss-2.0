@@ -9,13 +9,13 @@ export function durationLabel(months) {
 
 export function resolveDisplayPrice(product, params) {
   if (!product) return null;
-  const { subId, variantId, unit, countryId } = params;
+  const { subId, variantId, priceId, countryId } = params;
 
   if (product.is_usb) {
     const prices = product.prices ?? [];
-    const match = product.is_variant
-      ? prices.find((p) => p.variant_id === variantId)
-      : prices.find((p) => p.unit === unit);
+    const match = priceId
+      ? prices.find((p) => p.price_id === priceId)
+      : prices[0];
     return match ?? prices[0] ?? null;
   }
 

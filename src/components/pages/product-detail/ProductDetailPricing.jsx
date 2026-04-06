@@ -66,12 +66,12 @@ export default function ProductDetailPricing({
   const allUsbPrices = product?.is_usb ? (product?.prices ?? []) : [];
 
   // USB: key by variant_id if variant, else by unit
-  const usbKey = product?.is_variant ? "variant_id" : "unit";
+
   const [selectedUsbKey, setSelectedUsbKey] = useState(
-    allUsbPrices[0]?.[usbKey] ?? null,
+    allUsbPrices[0]?.price_id ?? null,
   );
   const activeUsbPrice =
-    allUsbPrices.find((p) => String(p[usbKey]) === String(selectedUsbKey)) ??
+    allUsbPrices.find((p) => p.price_id === selectedUsbKey) ??
     allUsbPrices[0] ??
     null;
   const usbHasDiscount =
@@ -157,11 +157,10 @@ export default function ProductDetailPricing({
               /* ── CASE A & B: USB (variant or unit) ── */
               <div className="grid sm:grid-cols-2 gap-4">
                 {allUsbPrices.map((p) => {
-                  const isSelected =
-                    String(p[usbKey]) === String(selectedUsbKey);
+                  const isSelected = p.price_id === selectedUsbKey;
                   const hasDisco = p.discount_type && p.discount_amount > 0;
                   const cardLabel = product.is_variant
-                    ? p.variant_name
+                    ? `${p.variant_name} · ${p.unit} ${p.unit === 1 ? "Key" : "Keys"}`
                     : `${p.unit} ${p.unit === 1 ? "Key" : "Keys"}`;
                   const cardSubLabel = product.is_variant
                     ? "Variant"
@@ -169,8 +168,8 @@ export default function ProductDetailPricing({
 
                   return (
                     <button
-                      key={p[usbKey]}
-                      onClick={() => setSelectedUsbKey(p[usbKey])}
+                      key={p.price_id}
+                      onClick={() => setSelectedUsbKey(p.price_id)}
                       className={`relative text-left p-6 rounded-2xl border-2 transition-all duration-200 w-full
                         ${
                           isSelected

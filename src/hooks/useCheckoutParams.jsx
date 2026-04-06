@@ -15,6 +15,9 @@ export function useCheckoutParams() {
       ? Number(searchParams.get("variant"))
       : null,
     unit: searchParams.get("unit") ? Number(searchParams.get("unit")) : null,
+    priceId: searchParams.get("price_id")
+      ? Number(searchParams.get("price_id"))
+      : null,
     countryId: selectedCountry?.id ?? null,
     country: selectedCountry ?? null,
   };

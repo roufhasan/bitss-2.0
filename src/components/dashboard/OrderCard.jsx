@@ -8,6 +8,7 @@ import {
   getPaymentStatusBadge,
   formatDate,
 } from "@/utils/orderHelpers";
+import { formatPrice } from "@/utils/formatPrice";
 
 function ProductIcon({ product }) {
   if (product.is_usb) return <Usb size={18} className="text-violet-500" />;
@@ -63,7 +64,7 @@ export default function OrderCard({ order }) {
             </p>
             <p className="text-[14px] font-black text-slate-900 font-['Barlow_Condensed']">
               {currency}
-              {Number(order.amount).toLocaleString()}
+              {formatPrice(order.amount)}
             </p>
           </div>
           <div>

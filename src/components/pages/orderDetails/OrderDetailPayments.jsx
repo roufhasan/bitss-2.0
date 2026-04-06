@@ -1,3 +1,4 @@
+import { formatPrice } from "@/utils/formatPrice";
 import {
   getPaymentMethodLabel,
   getPaymentStatusBadge,
@@ -31,7 +32,7 @@ export default function OrderDetailPayments({ payment, currencyIcon }) {
             {[
               {
                 label: "Amount",
-                value: `${currency}${Number(payment.amount).toLocaleString()}`,
+                value: `${currency}${formatPrice(payment.amount)}`,
               },
               { label: "Type", value: payment.payment_type },
               { label: "Paid At", value: formatDate(payment.paid_at) },

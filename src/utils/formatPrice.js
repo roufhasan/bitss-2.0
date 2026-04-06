@@ -3,5 +3,5 @@ export function formatPrice(value) {
 
   return Number.isInteger(value)
     ? value.toString()
-    : parseFloat(value.toFixed(2)).toString();
+    : parseFloat(value).toFixed(2);
 }
