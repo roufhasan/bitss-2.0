@@ -1,3 +1,4 @@
+import { formatPrice } from "@/utils/formatPrice";
 import { getCurrencySymbol, formatDate } from "@/utils/orderHelpers";
 
 function InfoRow({ label, value }) {
@@ -28,7 +29,7 @@ export default function OrderDetailInfo({ order }) {
         <InfoRow label="Order ID" value={`#${order.order_number}`} />
         <InfoRow
           label="Amount"
-          value={`${currency}${Number(order.amount).toLocaleString()}`}
+          value={`${currency}${formatPrice(order.amount)}`}
         />
         <InfoRow label="Country" value={order.country?.country_name ?? "—"} />
         <InfoRow label="Started" value={formatDate(order.start_at)} />

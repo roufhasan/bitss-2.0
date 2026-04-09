@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  ShieldCheck,
   Mail,
+  MapPin,
   Lock,
   Eye,
   EyeOff,
@@ -14,6 +14,7 @@ import {
   AlertCircle,
   User,
   CheckCircle2,
+  Globe,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -22,10 +23,24 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export default function RegisterPage() {
   const router = useRouter();
 
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [countries, setCountries] = useState([]);
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    country: "",
+    address: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch("/country.json")
+      .then((r) => r.json())
+      .then(setCountries)
+      .catch(() => {});
+  }, []);
 
   function handleChange(e) {
     setError(null);
@@ -49,8 +64,17 @@ export default function RegisterPage() {
   async function handleSubmit(e) {
     e.preventDefault();
     setError(null);
-    setIsLoading(true);
 
+    if (!form.country) {
+      setError("Please select your country.");
+      return;
+    }
+    if (!form.address.trim()) {
+      setError("Please enter your address.");
+      return;
+    }
+
+    setIsLoading(true);
     try {
       const res = await fetch(`${BASE_URL}/user/register`, {
         method: "POST",
@@ -59,7 +83,7 @@ export default function RegisterPage() {
           name: form.name,
           email: form.email,
           password: form.password,
-          address: "Static (Frontend) Dhaka, Bangladesh",
+          address: `${form.address}, ${form.country}`,
         }),
       });
 
@@ -71,12 +95,10 @@ export default function RegisterPage() {
         );
       }
 
-      // Store token if returned
       if (data.token) localStorage.setItem("bitss_token", data.token);
       if (data.data?.token)
         localStorage.setItem("bitss_token", data.data.token);
 
-      // Redirect to login or home after successful registration
       router.push("/login");
     } catch (err) {
       setError(err.message || "Something went wrong. Please try again.");
@@ -315,6 +337,82 @@ export default function RegisterPage() {
                           </p>
                         </div>
                       )}
+                    </div>
+
+                    {/* Country */}
+                    <div className="flex flex-col gap-1.5">
+                      <label
+                        htmlFor="country"
+                        className="text-[12px] font-semibold text-slate-600 uppercase tracking-wide"
+                      >
+                        Country
+                      </label>
+                      <div className="relative">
+                        <Globe
+                          size={15}
+                          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10"
+                        />
+                        <select
+                          id="country"
+                          name="country"
+                          required
+                          value={form.country}
+                          onChange={handleChange}
+                          className="w-full pl-10 pr-8 py-3 rounded-xl border border-slate-200 text-[14px] text-slate-800 bg-white focus:outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100 transition-all duration-200 appearance-none cursor-pointer"
+                        >
+                          <option value="" disabled>
+                            Select your country…
+                          </option>
+                          {countries.map((c) => (
+                            <option key={c.name} value={c.name}>
+                              {c.name}
+                            </option>
+                          ))}
+                        </select>
+                        {/* Chevron icon */}
+                        <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
+                          <svg
+                            width="12"
+                            height="12"
+                            viewBox="0 0 12 12"
+                            fill="none"
+                          >
+                            <path
+                              d="M2 4l4 4 4-4"
+                              stroke="#94a3b8"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Address */}
+                    <div className="flex flex-col gap-1.5">
+                      <label
+                        htmlFor="address"
+                        className="text-[12px] font-semibold text-slate-600 uppercase tracking-wide"
+                      >
+                        Address
+                      </label>
+                      <div className="relative">
+                        <MapPin
+                          size={15}
+                          className="absolute left-3.5 top-3.5 text-slate-400 pointer-events-none"
+                        />
+                        <textarea
+                          id="address"
+                          name="address"
+                          required
+                          rows={2}
+                          placeholder="Street, city, state / province…"
+                          value={form.address}
+                          onChange={handleChange}
+                          className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 text-[14px] text-slate-800 placeholder:text-slate-300 focus:outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100 transition-all duration-200 resize-none"
+                        />
+                      </div>
                     </div>
 
                     {/* Submit */}
