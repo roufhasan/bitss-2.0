@@ -24,7 +24,8 @@ export default function Checkout() {
   const { selectedCountry } = useCountry();
   const queryClient = useQueryClient();
   const params = useCheckoutParams();
-  const { productId, productSlug, subId, variantId, unit, countryId } = params;
+  const { productId, productSlug, subId, variantId, unit, countryId, country } =
+    params;
 
   const [paymentMethod, setPaymentMethod] = useState("bank_transfer");
   const [domain, setDomain] = useState("");
@@ -61,9 +62,7 @@ export default function Checkout() {
   const priceRow = resolveDisplayPrice(product, params);
 
   // Base product price (after any discount)
-  const basePrice = product?.is_usb
-    ? priceRow?.price_after_discount
-    : (priceRow?.final_price ?? priceRow?.price_after_discount);
+  const basePrice = priceRow?.price_after_discount ?? null;
 
   // Delivery charge lives inside the matched price row — only add when the
   // product has is_delivery_charge: true and the row carries a non-zero value.

@@ -54,11 +54,8 @@ export default function CheckoutSummary({
           </h3>
 
           <div className="flex flex-col gap-3 pb-4 mb-4 border-b border-slate-100">
-            {subId && priceRow?.duration_months && (
-              <Row
-                label="Duration"
-                value={durationLabel(priceRow.duration_months)}
-              />
+            {subId && !product?.is_usb && priceRow?.duration && (
+              <Row label="Duration" value={durationLabel(priceRow.duration)} />
             )}
             {variantId && priceRow?.variant_name && (
               <Row label="Variant" value={priceRow.variant_name} />
@@ -66,7 +63,7 @@ export default function CheckoutSummary({
             {unit && !variantId && (
               <Row
                 label="Quantity"
-                value={`${unit} ${unit === 1 ? "Key" : "Keys"}`}
+                value={`${unit} ${Number(unit) === 1 ? "Key" : "Keys"}`}
               />
             )}
             <Row label="Country" value={selectedCountry?.country_name ?? "—"} />

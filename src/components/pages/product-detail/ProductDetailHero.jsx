@@ -47,30 +47,36 @@ function LiveDot({ color = "bg-red-500" }) {
 export default function ProductDetailHero({ product, selectedVariantId }) {
   const { selectedCountry } = useCountry();
 
-  const priceObj = getBasePrice(
-    product?.prices,
-    selectedVariantId,
-    selectedCountry?.id,
-  );
-
+  const allSubs = product?.subscriptions ?? [];
   const isUsb = product?.is_usb;
-  const subscriptionPricing = priceObj?.subscription_pricing ?? [];
 
   const displayPrice = (() => {
+    if (!allSubs.length) return null;
+
     if (isUsb) {
-      // lowest unit price
-      const prices = product?.prices ?? [];
-      return Math.min(...prices.map((p) => p.price_after_discount));
+      // USB: pick lowest price_after_discount across all sub rows
+      return Math.min(...allSubs.map((s) => Number(s.price_after_discount)));
     }
-    if (subscriptionPricing.length > 0) {
-      return Math.min(...subscriptionPricing.map((s) => s.final_price));
-    }
-    return priceObj?.price_after_discount ?? priceObj?.original_price ?? null;
+
+    // Subscription or one-time: pick the lowest price_after_discount
+    return Math.min(...allSubs.map((s) => Number(s.price_after_discount)));
   })();
 
-  const basePrice = displayPrice;
+  // Show strikethrough only if ANY sub row has a discount
+  const lowestSub = allSubs.length
+    ? allSubs.reduce((a, b) =>
+        Number(a.price_after_discount) <= Number(b.price_after_discount)
+          ? a
+          : b,
+      )
+    : null;
 
-  const hasDiscount = priceObj?.discount_type && priceObj?.discount_amount > 0;
+  const hasDiscount =
+    lowestSub?.discount_type && Number(lowestSub?.discount_amount) > 0;
+
+  const originalPrice = hasDiscount ? lowestSub?.original_price : null;
+
+  const basePrice = displayPrice;
 
   const currencySymbol = selectedCountry?.currency_icon
     ? new DOMParser().parseFromString(
@@ -177,10 +183,10 @@ export default function ProductDetailHero({ product, selectedVariantId }) {
                       {currencySymbol}
                       {formatPrice(displayPrice)}
                     </span>
-                    {hasDiscount && (
+                    {hasDiscount && originalPrice != null && (
                       <span className="text-[15px] text-slate-400 line-through mb-1">
                         {currencySymbol}
-                        {formatPrice(basePrice)}
+                        {formatPrice(originalPrice)}
                       </span>
                     )}
                   </div>

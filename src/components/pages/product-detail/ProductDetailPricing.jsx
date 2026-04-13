@@ -10,6 +10,7 @@ import { formatPrice } from "@/utils/formatPrice";
 
 // ── Duration label ────────────────────────────────────────────────────────────
 function durationLabel(months) {
+  if (!months) return "One-time";
   if (months === 12) return "1 Year";
   if (months === 24) return "2 Years";
   if (months === 36) return "3 Years";
@@ -20,7 +21,7 @@ function durationLabel(months) {
 function SavingsBadge({ discountType, discountAmount, currencySymbol }) {
   if (!discountAmount) return null;
   const type = discountType?.toLowerCase();
-  if (type === "percentage" || type === "percent") {
+  if (type === "percent" || type === "percentage") {
     return (
       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-100">
         <Tag size={9} /> Save {discountAmount}%
@@ -55,67 +56,47 @@ export default function ProductDetailPricing({
       ).body.textContent
     : "$";
 
-  // ─────────────────────────────────────────────────────────────────────────
-  // Determine product type
-  // Case A: USB with variant   → is_usb=true,  is_variant=true  → key by variant_id
-  // Case B: USB no variant     → is_usb=true,  is_variant=false → key by unit
-  // Case C: Subscription       → is_usb=false, subscription_pricing.length > 0
-  // Case D: One-time           → is_usb=false, subscription_pricing.length === 0
-  // ─────────────────────────────────────────────────────────────────────────
+  // ── New API shape: all pricing lives in product.subscriptions ──────────────
+  const allSubs = product?.subscriptions ?? [];
 
-  const allUsbPrices = product?.is_usb ? (product?.prices ?? []) : [];
+  // USB: subscriptions have a `unit` value (quantity of keys)
+  // Subscription: subscriptions have a `duration` (months)
+  // One-time: not usb, duration is null
 
-  // USB: key by variant_id if variant, else by unit
+  const isUsb = product?.is_usb;
 
-  const [selectedUsbKey, setSelectedUsbKey] = useState(
-    allUsbPrices[0]?.price_id ?? null,
-  );
-  const activeUsbPrice =
-    allUsbPrices.find((p) => p.price_id === selectedUsbKey) ??
-    allUsbPrices[0] ??
-    null;
+  // For USB — list all sub rows (each row = a selectable key-quantity/variant)
+  const usbPrices = isUsb ? allSubs : [];
+
+  const [selectedUsbId, setSelectedUsbId] = useState(usbPrices[0]?.id ?? null);
+  const activeUsb =
+    usbPrices.find((p) => p.id === selectedUsbId) ?? usbPrices[0] ?? null;
   const usbHasDiscount =
-    activeUsbPrice?.discount_type && activeUsbPrice?.discount_amount > 0;
+    activeUsb?.discount_type && activeUsb?.discount_amount > 0;
 
-  // Subscription / one-time: use first matching country price
-  const priceObj = getBasePrice(
-    product?.prices,
-    selectedVariantId,
-    selectedCountry?.id,
-  );
-  const originalPrice = priceObj?.original_price ?? null;
-  const displayPrice = priceObj?.price_after_discount ?? originalPrice;
-  const hasCountryDiscount =
-    priceObj?.discount_type && priceObj?.discount_amount > 0;
-  const subscriptionPricing = priceObj?.subscription_pricing ?? [];
-  const isOneTime = !product?.is_usb && !subscriptionPricing.length;
+  // For subscription/one-time products — list all durations
+  const subPrices = !isUsb ? allSubs : [];
+  const isOneTime =
+    !isUsb && subPrices.length > 0 && subPrices.every((s) => !s.duration);
 
-  const [selectedSubId, setSelectedSubId] = useState(
-    subscriptionPricing[0]?.subscription_id ?? null,
-  );
-
+  const [selectedSubId, setSelectedSubId] = useState(subPrices[0]?.id ?? null);
   const activeSub =
-    subscriptionPricing.find((s) => s.subscription_id === selectedSubId) ??
-    subscriptionPricing[0] ??
-    null;
-  const periodFinalPrice = activeSub?.final_price ?? displayPrice;
-  const periodBeforeDiscount = activeSub?.total_before_sub_discount ?? null;
-  const hasPeriodDiscount =
+    subPrices.find((s) => s.id === selectedSubId) ?? subPrices[0] ?? null;
+
+  const subFinalPrice = activeSub?.price_after_discount ?? null;
+  const subOriginalPrice = activeSub?.original_price ?? null;
+  const subHasDiscount =
     activeSub?.discount_type && activeSub?.discount_amount > 0;
 
-  // Summary total — pick the right value based on product type
-  const summaryTotal = product?.is_usb
-    ? activeUsbPrice?.price_after_discount
-    : periodFinalPrice;
+  // Summary total
+  const summaryTotal = isUsb ? activeUsb?.price_after_discount : subFinalPrice;
 
   const handleGetProtected = () => {
-    const checkoutUrl = `/checkout?${buildCheckoutParams(product, activeSub, activeUsbPrice)}`;
-
+    const checkoutUrl = `/checkout?${buildCheckoutParams(product, activeSub, activeUsb)}`;
     if (!isAuthenticated) {
       router.push(`/login?redirect=${encodeURIComponent(checkoutUrl)}`);
       return;
     }
-
     router.push(checkoutUrl);
   };
 
@@ -153,42 +134,38 @@ export default function ProductDetailPricing({
         <div className="grid lg:grid-cols-[1fr_380px] gap-8 items-start">
           {/* LEFT */}
           <div>
-            {product.is_usb ? (
-              /* ── CASE A & B: USB (variant or unit) ── */
+            {isUsb && (
               <div className="grid sm:grid-cols-2 gap-4">
-                {allUsbPrices.map((p) => {
-                  const isSelected = p.price_id === selectedUsbKey;
+                {usbPrices.map((p) => {
+                  const isSelected = p.id === selectedUsbId;
                   const hasDisco = p.discount_type && p.discount_amount > 0;
                   const cardLabel = product.is_variant
-                    ? `${p.variant_name} · ${p.unit} ${p.unit === 1 ? "Key" : "Keys"}`
-                    : `${p.unit} ${p.unit === 1 ? "Key" : "Keys"}`;
-                  const cardSubLabel = product.is_variant
-                    ? "Variant"
-                    : "Quantity";
+                    ? `${p.variant_name} · ${p.unit} ${Number(p.unit) === 1 ? "Key" : "Keys"}`
+                    : `${p.unit} ${Number(p.unit) === 1 ? "Key" : "Keys"}`;
 
                   return (
                     <button
-                      key={p.price_id}
-                      onClick={() => setSelectedUsbKey(p.price_id)}
+                      key={p.id}
+                      onClick={() => setSelectedUsbId(p.id)}
                       className={`relative text-left p-6 rounded-2xl border-2 transition-all duration-200 w-full
-                        ${
-                          isSelected
-                            ? "border-red-500 bg-white shadow-xl shadow-red-100/60"
-                            : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-md"
-                        }`}
+              ${
+                isSelected
+                  ? "border-red-500 bg-white shadow-xl shadow-red-100/60"
+                  : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-md"
+              }`}
                     >
                       <div className="flex items-start justify-between mb-3">
                         <div>
                           <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
-                            {cardSubLabel}
+                            {product.is_variant ? "Variant" : "Quantity"}
                           </p>
                           <p className="font-['Barlow_Condensed'] text-[22px] font-black text-slate-900 leading-tight mt-0.5">
                             {cardLabel}
                           </p>
                         </div>
                         <div
-                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 transition-colors
-                          ${isSelected ? "border-red-500 bg-red-500" : "border-slate-300"}`}
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1
+                ${isSelected ? "border-red-500 bg-red-500" : "border-slate-300"}`}
                         >
                           {isSelected && (
                             <span className="w-2 h-2 rounded-full bg-white" />
@@ -216,122 +193,7 @@ export default function ProductDetailPricing({
                         {hasDisco && (
                           <SavingsBadge
                             discountType={p.discount_type}
-                            discountAmount={formatPrice(p.discount_amount)}
-                            currencySymbol={currencySymbol}
-                          />
-                        )}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            ) : isOneTime ? (
-              /* ── CASE D: One-time (non-USB, no subscription) ── */
-              <div className="bg-white rounded-2xl border-2 border-red-500 shadow-xl shadow-red-100/40 p-7">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
-                      One-time Purchase
-                    </p>
-                    <h3 className="font-['Barlow_Condensed'] text-[28px] font-black text-slate-900 mt-0.5">
-                      Lifetime License
-                    </h3>
-                  </div>
-                  <div className="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center">
-                    <Zap size={22} className="text-red-500" />
-                  </div>
-                </div>
-                {displayPrice != null && (
-                  <div className="flex items-end gap-2 mb-2">
-                    <span className="font-['Barlow_Condensed'] text-[40px] font-black text-slate-900 leading-none">
-                      {currencySymbol}
-                      {formatPrice(displayPrice)}
-                    </span>
-                    {hasCountryDiscount && originalPrice != null && (
-                      <span className="text-[15px] text-slate-400 line-through mb-1">
-                        {currencySymbol}
-                        {formatPrice(originalPrice)}
-                      </span>
-                    )}
-                  </div>
-                )}
-                <div className="flex items-center gap-2 flex-wrap">
-                  <p className="text-[12px] text-slate-400">
-                    one-time · no renewal
-                  </p>
-                  {hasCountryDiscount && (
-                    <SavingsBadge
-                      discountType={priceObj.discount_type}
-                      discountAmount={formatPrice(priceObj.discount_amount)}
-                      currencySymbol={currencySymbol}
-                    />
-                  )}
-                </div>
-              </div>
-            ) : (
-              /* ── CASE C: Subscription ── */
-              <div className="grid sm:grid-cols-2 gap-4">
-                {subscriptionPricing.map((sub) => {
-                  const isSelected = selectedSubId === sub.subscription_id;
-                  const hasDisco = sub.discount_type && sub.discount_amount > 0;
-                  const isPopular = hasDisco;
-
-                  return (
-                    <button
-                      key={sub.subscription_id}
-                      onClick={() => setSelectedSubId(sub.subscription_id)}
-                      className={`relative text-left p-6 rounded-2xl border-2 transition-all duration-200 w-full
-                        ${
-                          isSelected
-                            ? "border-red-500 bg-white shadow-xl shadow-red-100/60"
-                            : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-md"
-                        }`}
-                    >
-                      {isPopular && (
-                        <div className="absolute -top-3 left-4 bg-red-600 text-white text-[9px] font-black tracking-widest uppercase px-3 py-1 rounded-full shadow-md">
-                          ★ Best Value
-                        </div>
-                      )}
-                      <div className="flex items-start justify-between mb-3">
-                        <div>
-                          <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
-                            Duration
-                          </p>
-                          <p className="font-['Barlow_Condensed'] text-[22px] font-black text-slate-900 leading-tight mt-0.5">
-                            {durationLabel(sub.duration_months)}
-                          </p>
-                        </div>
-                        <div
-                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 transition-colors
-                          ${isSelected ? "border-red-500 bg-red-500" : "border-slate-300"}`}
-                        >
-                          {isSelected && (
-                            <span className="w-2 h-2 rounded-full bg-white" />
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex items-end gap-2 mb-2">
-                        <span className="font-['Barlow_Condensed'] text-[34px] font-black text-slate-900 leading-none">
-                          {currencySymbol}
-                          {formatPrice(sub.final_price)}
-                        </span>
-                        {hasDisco && sub.total_before_sub_discount != null && (
-                          <span className="text-[14px] text-slate-400 line-through mb-1">
-                            {currencySymbol}
-                            {formatPrice(sub.total_before_sub_discount)}
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-[11px] text-slate-400">
-                          per license
-                        </span>
-                        {hasDisco && (
-                          <SavingsBadge
-                            discountType={sub.discount_type}
-                            discountAmount={formatPrice(sub.discount_amount)}
+                            discountAmount={p.discount_amount}
                             currencySymbol={currencySymbol}
                           />
                         )}
@@ -341,6 +203,126 @@ export default function ProductDetailPricing({
                 })}
               </div>
             )}
+
+            {!isUsb &&
+              subPrices.length > 0 &&
+              (isOneTime ? (
+                // One-time purchase (duration is null)
+                <div className="bg-white rounded-2xl border-2 border-red-500 shadow-xl shadow-red-100/40 p-7">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
+                        One-time Purchase
+                      </p>
+                      <h3 className="font-['Barlow_Condensed'] text-[28px] font-black text-slate-900 mt-0.5">
+                        Lifetime License
+                      </h3>
+                    </div>
+                    <div className="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center">
+                      <Zap size={22} className="text-red-500" />
+                    </div>
+                  </div>
+                  {subFinalPrice != null && (
+                    <div className="flex items-end gap-2 mb-2">
+                      <span className="font-['Barlow_Condensed'] text-[40px] font-black text-slate-900 leading-none">
+                        {currencySymbol}
+                        {formatPrice(subFinalPrice)}
+                      </span>
+                      {subHasDiscount && subOriginalPrice != null && (
+                        <span className="text-[15px] text-slate-400 line-through mb-1">
+                          {currencySymbol}
+                          {formatPrice(subOriginalPrice)}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="text-[12px] text-slate-400">
+                      one-time · no renewal
+                    </p>
+                    {subHasDiscount && (
+                      <SavingsBadge
+                        discountType={activeSub.discount_type}
+                        discountAmount={activeSub.discount_amount}
+                        currencySymbol={currencySymbol}
+                      />
+                    )}
+                  </div>
+                </div>
+              ) : (
+                // Subscription (duration is set)
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {subPrices.map((sub) => {
+                    const isSelected = selectedSubId === sub.id;
+                    const hasDisco =
+                      sub.discount_type && sub.discount_amount > 0;
+                    const isPopular = hasDisco;
+
+                    return (
+                      <button
+                        key={sub.id}
+                        onClick={() => setSelectedSubId(sub.id)}
+                        className={`relative text-left p-6 rounded-2xl border-2 transition-all duration-200 w-full
+                ${
+                  isSelected
+                    ? "border-red-500 bg-white shadow-xl shadow-red-100/60"
+                    : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-md"
+                }`}
+                      >
+                        {isPopular && (
+                          <div className="absolute -top-3 left-4 bg-red-600 text-white text-[9px] font-black tracking-widest uppercase px-3 py-1 rounded-full shadow-md">
+                            ★ Best Value
+                          </div>
+                        )}
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
+                              Duration
+                            </p>
+                            <p className="font-['Barlow_Condensed'] text-[22px] font-black text-slate-900 leading-tight mt-0.5">
+                              {durationLabel(sub.duration)}
+                            </p>
+                          </div>
+                          <div
+                            className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1
+                  ${isSelected ? "border-red-500 bg-red-500" : "border-slate-300"}`}
+                          >
+                            {isSelected && (
+                              <span className="w-2 h-2 rounded-full bg-white" />
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-end gap-2 mb-2">
+                          <span className="font-['Barlow_Condensed'] text-[34px] font-black text-slate-900 leading-none">
+                            {currencySymbol}
+                            {formatPrice(sub.price_after_discount)}
+                          </span>
+                          {hasDisco && sub.original_price != null && (
+                            <span className="text-[14px] text-slate-400 line-through mb-1">
+                              {currencySymbol}
+                              {formatPrice(sub.original_price)}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-[11px] text-slate-400">
+                            per license
+                          </span>
+                          {hasDisco && (
+                            <SavingsBadge
+                              discountType={sub.discount_type}
+                              discountAmount={sub.discount_amount}
+                              currencySymbol={currencySymbol}
+                            />
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              ))}
           </div>
 
           {/* RIGHT — Order summary */}
@@ -355,65 +337,56 @@ export default function ProductDetailPricing({
               </h3>
 
               <div className="flex flex-col gap-3 pb-4 mb-4 border-b border-slate-100">
-                {/* USB: variant or quantity row */}
-                {product.is_usb && activeUsbPrice && (
+                {/* USB rows */}
+                {isUsb && activeUsb && (
                   <div className="flex items-center justify-between text-[13px]">
                     <span className="text-slate-500">
                       {product.is_variant ? "Variant" : "Quantity"}
                     </span>
                     <span className="font-semibold text-slate-700">
                       {product.is_variant
-                        ? activeUsbPrice.variant_name
-                        : `${activeUsbPrice.unit} ${activeUsbPrice.unit === 1 ? "Key" : "Keys"}`}
+                        ? activeUsb.variant_name
+                        : `${activeUsb.unit} ${Number(activeUsb.unit) === 1 ? "Key" : "Keys"}`}
                     </span>
                   </div>
                 )}
-
-                {/* USB: discount row */}
-                {product.is_usb && usbHasDiscount && activeUsbPrice && (
+                {isUsb && usbHasDiscount && activeUsb && (
                   <div className="flex items-center justify-between text-[13px]">
                     <span className="text-emerald-600">
                       Discount (
-                      {activeUsbPrice.discount_type === "flat"
-                        ? `${currencySymbol}${formatPrice(activeUsbPrice.discount_amount)} off`
-                        : `${activeUsbPrice.discount_amount}% off`}
+                      {activeUsb.discount_type === "flat"
+                        ? `${currencySymbol}${formatPrice(activeUsb.discount_amount)} off`
+                        : `${activeUsb.discount_amount}% off`}
                       )
                     </span>
                     <span className="font-semibold text-emerald-600">
                       −{currencySymbol}
                       {formatPrice(
-                        activeUsbPrice.original_price -
-                          activeUsbPrice.price_after_discount,
+                        activeUsb.original_price -
+                          activeUsb.price_after_discount,
                       )}
                     </span>
                   </div>
                 )}
 
-                {/* Subscription: duration row */}
-                {!product.is_usb && activeSub && (
+                {/* Subscription rows */}
+                {!isUsb && activeSub?.duration && (
                   <div className="flex items-center justify-between text-[13px]">
                     <span className="text-slate-500">Duration</span>
                     <span className="font-semibold text-slate-700">
-                      {durationLabel(activeSub.duration_months)}
+                      {durationLabel(activeSub.duration)}
                     </span>
                   </div>
                 )}
-
-                {/* Subscription: base price row */}
-                {!product.is_usb && periodBeforeDiscount != null && (
-                  <div className="flex items-center justify-between text-[13px]">
-                    <span className="text-slate-500">Base Price</span>
-                    <span className="font-semibold text-slate-700">
-                      {currencySymbol}
-                      {formatPrice(periodBeforeDiscount)}
-                    </span>
-                  </div>
-                )}
-
-                {/* Subscription: discount row */}
-                {!product.is_usb &&
-                  hasPeriodDiscount &&
-                  periodBeforeDiscount != null && (
+                {!isUsb && subHasDiscount && (
+                  <>
+                    <div className="flex items-center justify-between text-[13px]">
+                      <span className="text-slate-500">Original Price</span>
+                      <span className="font-semibold text-slate-700">
+                        {currencySymbol}
+                        {formatPrice(subOriginalPrice)}
+                      </span>
+                    </div>
                     <div className="flex items-center justify-between text-[13px]">
                       <span className="text-emerald-600">
                         Discount (
@@ -424,10 +397,11 @@ export default function ProductDetailPricing({
                       </span>
                       <span className="font-semibold text-emerald-600">
                         −{currencySymbol}
-                        {formatPrice(periodBeforeDiscount - periodFinalPrice)}
+                        {formatPrice(subOriginalPrice - subFinalPrice)}
                       </span>
                     </div>
-                  )}
+                  </>
+                )}
               </div>
 
               {/* Total */}

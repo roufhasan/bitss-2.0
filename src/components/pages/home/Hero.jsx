@@ -1,8 +1,7 @@
-"use client";
-import { ShieldCheck, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import Tag from "@/components/ui/Tag";
-import { PRODUCTS, STATS } from "../data/home";
+import { ShieldCheck, ArrowRight } from "lucide-react";
+import Tag from "@/components/ui/tag";
+import { PRODUCTS, STATS } from "@/data";
 
 export default function Hero() {
   return (
@@ -13,27 +12,27 @@ export default function Hero() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-12 sm:py-16 lg:py-20 min-h-[calc(100vh-64px)] flex items-center">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center w-full">
-          {/* LEFT — copy */}
+          {/* LEFT */}
           <div className="order-2 lg:order-1">
             <div className="fu1 mb-5 sm:mb-6">
               <Tag>Enterprise Cybersecurity Platform</Tag>
             </div>
 
-            <h1
-              className="fu2 font-black leading-[0.88] tracking-tight mb-5 sm:mb-6"
-              style={{ fontSize: "clamp(44px,8vw,88px)" }}
-            >
-              <span className="block text-slate-900">DEFEND</span>
-              <span className="block text-red-600">EVERY</span>
-              <span className="block text-slate-900">ENTRY POINT.</span>
+            <h1 className="fu2 text-5xl md:text-7xl text-balance font-['Barlow_Condensed'] font-black tracking-tight mb-5 sm:mb-6">
+              <span className="block text-slate-900">DEFEND Every System.</span>
+              <span>
+                SECURE <span className="text-red-600">WEB2.</span>{" "}
+                <span className="text-slate-900">SECURE</span>{" "}
+                <span className=" text-red-600">WEB3.</span>
+              </span>
             </h1>
 
-            <p className="fu3 text-slate-500 text-[15px] sm:text-[17px] leading-relaxed max-w-[480px] mb-8 sm:mb-10">
-              Bitss secures your business across every attack surface — website
-              login, admin layer, contact forms, Windows devices, and USB
-              storage.{" "}
+            <p className="fu3 text-slate-500 text-[15px] sm:text-[17px] leading-relaxed max-w-120 mb-8 sm:mb-10">
+              Bitss secures your business across every attack surface — from
+              website login and admin layers to{" "}
               <strong className="text-slate-700 font-semibold">
-                One ecosystem. Full chain.
+                blockchain, wallets and digital assets. One ecosystem. Full
+                chain.
               </strong>
             </p>
 
@@ -48,18 +47,18 @@ export default function Hero() {
                 href="/products"
                 className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 rounded-xl border border-slate-200 hover:border-slate-300 text-slate-600 hover:text-slate-900 font-semibold text-[15px] transition-all duration-300 hover:bg-slate-50 w-full xs:w-auto"
               >
-                Explore Products <ArrowRight size={15} />
+                Explore Services <ArrowRight size={15} />
               </Link>
             </div>
 
-            {/* Stats bar */}
+            {/* Stats */}
             <div className="fu5 grid grid-cols-2 sm:grid-cols-4 gap-px bg-slate-100 rounded-2xl overflow-hidden border border-slate-100 shadow-sm">
               {STATS.map((s) => (
                 <div
                   key={s.l}
                   className="bg-white px-3 sm:px-4 py-3 sm:py-4 text-center"
                 >
-                  <div className="text-[20px] sm:text-[22px] font-black text-slate-900 leading-none">
+                  <div className="font-['Barlow_Condensed'] text-[20px] sm:text-[22px] font-black text-slate-900 leading-none">
                     {s.v}
                   </div>
                   <div className="text-[10px] text-slate-400 mt-1 leading-tight">
@@ -70,9 +69,9 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* RIGHT — orbital / mobile grid */}
+          {/* RIGHT — orbital visual, hidden on mobile, shown md+ */}
           <div className="order-1 lg:order-2 flex items-center justify-center">
-            {/* Mobile */}
+            {/* Mobile: simple product icon grid instead of orbital */}
             <div className="lg:hidden w-full">
               <div className="flex items-center justify-center mb-6">
                 <div className="w-20 h-20 rounded-3xl bg-white shadow-2xl shadow-red-100 border border-red-100 flex items-center justify-center">
@@ -107,6 +106,7 @@ export default function Hero() {
                   );
                 })}
               </div>
+              {/* Status badges row on mobile */}
               <div className="flex gap-3 justify-center mt-5">
                 <div className="bg-white rounded-xl px-3 py-2 shadow-md border border-slate-100 flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -124,10 +124,10 @@ export default function Hero() {
             </div>
 
             {/* Desktop orbital */}
-            <div className="hidden lg:flex relative items-center justify-center h-[460px] w-full">
-              <div className="spin-cw  absolute w-[360px] h-[360px] rounded-full border border-dashed border-red-200" />
-              <div className="spin-ccw absolute w-[288px] h-[288px] rounded-full border border-slate-200" />
-              <div className="absolute w-[420px] h-[420px] rounded-full border border-red-50" />
+            <div className="hidden lg:flex relative items-center justify-center h-115 w-full">
+              <div className="spin-cw  absolute w-90 h-90 rounded-full border border-dashed border-red-200" />
+              <div className="spin-ccw absolute w-[288px] h-72 rounded-full border border-slate-200" />
+              <div className="absolute w-105 h-105 rounded-full border border-red-50" />
               <div className="absolute w-36 h-36 rounded-full bg-red-50/60 blur-3xl" />
 
               <div className="shield-float relative z-10 flex items-center justify-center w-24 h-24 rounded-3xl bg-white shadow-2xl shadow-red-100 border border-red-100">

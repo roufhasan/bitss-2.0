@@ -21,9 +21,10 @@ export default function CheckoutProductCard({
           {product.name}
         </p>
       </div>
-      {subId && (
+
+      {subId && !product.is_usb && (
         <span className="ml-auto shrink-0 text-[10px] font-bold text-sky-600 bg-sky-50 border border-sky-100 px-2 py-1 rounded-lg">
-          {durationLabel(priceRow?.duration_months)}
+          {durationLabel(priceRow?.duration ?? null)}
         </span>
       )}
       {variantId && (
@@ -33,7 +34,7 @@ export default function CheckoutProductCard({
       )}
       {unit && !variantId && (
         <span className="ml-auto shrink-0 text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-1 rounded-lg">
-          {unit} {unit === 1 ? "Key" : "Keys"}
+          {unit} {Number(unit) === 1 ? "Key" : "Keys"}
         </span>
       )}
     </div>
