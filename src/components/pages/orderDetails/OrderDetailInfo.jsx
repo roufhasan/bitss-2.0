@@ -1,5 +1,6 @@
 import { formatPrice } from "@/utils/formatPrice";
 import { getCurrencySymbol, formatDate } from "@/utils/orderHelpers";
+import { MapPin, Phone } from "lucide-react";
 
 function InfoRow({ label, value }) {
   return (
@@ -10,6 +11,30 @@ function InfoRow({ label, value }) {
       <span className="text-[13px] font-semibold text-slate-700 text-right max-w-[60%]">
         {value}
       </span>
+    </div>
+  );
+}
+
+function DeliveryAddressBlock({ deliveryAddress }) {
+  return (
+    <div className="py-3 border-b border-slate-100 last:border-0 flex flex-col gap-2">
+      <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
+        Delivery Address
+      </span>
+      <div className="flex flex-col gap-1.5 bg-slate-50 border border-slate-100 rounded-xl px-4 py-3">
+        <div className="flex items-start gap-2">
+          <MapPin size={13} className="text-slate-400 mt-0.5 shrink-0" />
+          <span className="text-[13px] font-semibold text-slate-700 leading-snug">
+            {deliveryAddress.address}
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Phone size={13} className="text-slate-400 shrink-0" />
+          <span className="text-[13px] font-semibold text-slate-700">
+            {deliveryAddress.phone_number}
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
@@ -45,6 +70,9 @@ export default function OrderDetailInfo({ order }) {
                 : `${order.discount}%`
             }
           />
+        )}
+        {order.delivery_address && (
+          <DeliveryAddressBlock deliveryAddress={order.delivery_address} />
         )}
       </div>
     </div>

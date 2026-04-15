@@ -7,6 +7,7 @@ import CheckoutDomain from "./CheckoutDomain";
 import CheckoutBankInfo from "./CheckoutBankInfo";
 import CheckoutSummary from "./CheckoutSummary";
 import CheckoutStripePanel from "./CheckoutStripePanel";
+import CheckoutDeliveryAddress from "./CheckoutDeliveryAddress";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useCountry } from "@/context/CountryContext";
@@ -17,10 +18,11 @@ import { resolveDisplayPrice } from "@/utils/checkoutUtils";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const DOMAIN_REGEX = /^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/;
+const PHONE_REGEX = /^[+\d][\d\s\-().]{6,19}$/;
 
 export default function Checkout() {
   const router = useRouter();
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const { selectedCountry } = useCountry();
   const queryClient = useQueryClient();
   const params = useCheckoutParams();
@@ -30,6 +32,11 @@ export default function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState("bank_transfer");
   const [domain, setDomain] = useState("");
   const [validationError, setValidationError] = useState(null);
+
+  // ─── Delivery address state (pre-filled from user account) ──────
+  const [deliveryAddress, setDeliveryAddress] = useState(user?.address ?? "");
+  const [deliveryPhone, setDeliveryPhone] = useState("");
+  // ────────────────────────────────────────────────────────────────
 
   // ─── Stripe state ───────────────────────────────────────────────
   const [stripeOrderId, setStripeOrderId] = useState(null);
@@ -104,7 +111,7 @@ export default function Checkout() {
       return data;
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["user-orders"] }); // ← add this
+      queryClient.invalidateQueries({ queryKey: ["user-orders"] });
       const order = data?.order ?? {};
       const p = new URLSearchParams();
       p.set("order", order.order_number ?? order.id ?? "");
@@ -112,6 +119,21 @@ export default function Checkout() {
       router.push(`/checkout/success?${p.toString()}`);
     },
   });
+
+  // ─── Delivery address validation helper ─────────────────────────
+  const validateDeliveryAddress = () => {
+    if (!product?.is_delivery_address) return true;
+    if (!deliveryAddress.trim() || deliveryAddress.trim().length < 5) {
+      setValidationError("Please enter a valid delivery address.");
+      return false;
+    }
+    if (!deliveryPhone.trim() || !PHONE_REGEX.test(deliveryPhone.trim())) {
+      setValidationError("Please enter a valid delivery phone number.");
+      return false;
+    }
+    return true;
+  };
+  // ────────────────────────────────────────────────────────────────
 
   // Validate domain + dispatch based on payment method
   const handleSubmit = async () => {
@@ -127,10 +149,20 @@ export default function Checkout() {
       setValidationError("Please enter a valid domain — e.g. yoursite.com");
       return;
     }
+    if (!validateDeliveryAddress()) return;
     if (!productId || !countryId || displayTotal == null) {
       setValidationError("Missing order info. Please go back and try again.");
       return;
     }
+
+    // ─── Delivery address payload fragment ──────────────────────
+    const deliveryPayload = product?.is_delivery_address
+      ? {
+          delivery_address: deliveryAddress.trim(),
+          delivery_phone_number: deliveryPhone.trim(),
+        }
+      : {};
+    // ────────────────────────────────────────────────────────────
 
     // ── Stripe path ──────────────────────────────────────────────
     if (paymentMethod === "stripe") {
@@ -150,6 +182,7 @@ export default function Checkout() {
             subscription_period_id: subId ?? null,
             variant_id: variantId ?? null,
             ...(product?.is_domain && { domain: domain.trim() }),
+            ...deliveryPayload,
           }),
         });
         const orderData = await orderRes.json();
@@ -198,6 +231,7 @@ export default function Checkout() {
       subscription_period_id: subId ?? null,
       variant_id: variantId ?? null,
       ...(product?.is_domain && { domain: domain.trim() || null }),
+      ...deliveryPayload,
     });
   };
 
@@ -293,6 +327,14 @@ export default function Checkout() {
                       domainRegex={DOMAIN_REGEX}
                     />
                   )}
+                  {product?.is_delivery_address && (
+                    <CheckoutDeliveryAddress
+                      address={deliveryAddress}
+                      onAddressChange={setDeliveryAddress}
+                      phone={deliveryPhone}
+                      onPhoneChange={setDeliveryPhone}
+                    />
+                  )}
                   {paymentMethod === "bank_transfer" && (
                     <CheckoutBankInfo
                       bankInformations={selectedCountry?.bank_informations}
@@ -325,6 +367,8 @@ export default function Checkout() {
               selectedCountry={selectedCountry}
               paymentMethod={paymentMethod}
               domain={domain}
+              deliveryAddress={deliveryAddress}
+              deliveryPhone={deliveryPhone}
               basePrice={basePrice}
               deliveryCharge={deliveryCharge}
               displayTotal={displayTotal}

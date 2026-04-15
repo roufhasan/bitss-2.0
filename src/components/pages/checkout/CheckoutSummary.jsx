@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { ArrowRight, Loader2, Truck } from "lucide-react";
+import { ArrowRight, Loader2, Truck, MapPin, Phone } from "lucide-react";
 import { PAYMENT_METHODS } from "@/utils/constants/checkout";
 import { durationLabel } from "@/utils/checkoutUtils";
 
@@ -30,6 +30,8 @@ export default function CheckoutSummary({
   selectedCountry,
   paymentMethod,
   domain,
+  deliveryAddress,
+  deliveryPhone,
   basePrice,
   deliveryCharge,
   displayTotal,
@@ -75,6 +77,32 @@ export default function CheckoutSummary({
               }
             />
             {domain.trim() && <Row label="Domain" value={domain.trim()} />}
+
+            {/* ─── Delivery address rows ──────────────────────────── */}
+            {product?.is_delivery_address && deliveryAddress?.trim() && (
+              <div className="flex items-start justify-between text-[13px] gap-2">
+                <span className="flex items-center gap-1.5 text-slate-500 shrink-0">
+                  <MapPin size={11} />
+                  Deliver To
+                </span>
+                <span className="font-semibold text-slate-700 text-right max-w-[180px] line-clamp-2 break-words">
+                  {deliveryAddress.trim()}
+                </span>
+              </div>
+            )}
+            {product?.is_delivery_address && deliveryPhone?.trim() && (
+              <div className="flex items-center justify-between text-[13px] gap-2">
+                <span className="flex items-center gap-1.5 text-slate-500 shrink-0">
+                  <Phone size={11} />
+                  Contact
+                </span>
+                <span className="font-semibold text-slate-700 text-right max-w-[180px] truncate">
+                  {deliveryPhone.trim()}
+                </span>
+              </div>
+            )}
+            {/* ─────────────────────────────────────────────────────── */}
+
             {priceRow?.discount_amount > 0 && (
               <div className="flex items-center justify-between text-[13px]">
                 <span className="text-emerald-600">Discount</span>
