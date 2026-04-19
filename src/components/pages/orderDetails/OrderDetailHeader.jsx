@@ -74,7 +74,10 @@ export default function OrderDetailHeader({ order }) {
           </span>
 
           {order?.subscription && (
-            <OrderSubscriptionBadge subscription={order.subscription} />
+            <OrderSubscriptionBadge
+              order={order}
+              subscription={order.subscription}
+            />
           )}
         </div>
       </div>

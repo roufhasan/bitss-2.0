@@ -200,7 +200,7 @@ export default function ProductsPage() {
             {/* All tab */}
             <button
               onClick={() => handleCategory(null)}
-              className={`shrink-0 px-4 py-1.5 rounded-lg text-[13px] font-semibold transition-all duration-200 ${
+              className={`shrink-0 px-4 py-1.5 rounded-lg text-[13px] font-semibold transition-all duration-200 cursor-pointer ${
                 !activeCategoryId
                   ? "bg-red-600 text-white shadow-sm shadow-red-200"
                   : "text-slate-500 hover:text-slate-800 hover:bg-slate-100"
@@ -214,7 +214,7 @@ export default function ProductsPage() {
               <button
                 key={cat.id}
                 onClick={() => handleCategory(cat.id)}
-                className={`shrink-0 px-4 py-1.5 rounded-lg text-[13px] font-semibold transition-all duration-200 whitespace-nowrap ${
+                className={`shrink-0 px-4 py-1.5 rounded-lg text-[13px] font-semibold transition-all duration-200 whitespace-nowrap cursor-pointer ${
                   activeCategoryId === cat.id
                     ? "bg-red-600 text-white shadow-sm shadow-red-200"
                     : "text-slate-500 hover:text-slate-800 hover:bg-slate-100"
