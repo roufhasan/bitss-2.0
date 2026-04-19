@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ChevronRight, Usb, Layers, Box } from "lucide-react";
 import { getStatusBadge, getProductTypeBadge } from "@/utils/orderHelpers";
+import OrderSubscriptionBadge from "./OrderSubscriptionBadge";
 
 function ProductIcon({ product }) {
   if (product.is_usb) return <Usb size={22} className="text-violet-500" />;
@@ -62,14 +63,20 @@ export default function OrderDetailHeader({ order }) {
           </div>
         </div>
 
-        <span
-          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-[11px] font-bold uppercase tracking-widest ${statusBadge.color}`}
-        >
+        <div className="flex items-center gap-3 flex-wrap">
           <span
-            className={`w-2 h-2 rounded-full animate-pulse ${statusBadge.dot}`}
-          />
-          {statusBadge.label}
-        </span>
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-[11px] font-bold uppercase tracking-widest ${statusBadge.color}`}
+          >
+            <span
+              className={`w-2 h-2 rounded-full animate-pulse ${statusBadge.dot}`}
+            />
+            {statusBadge.label}
+          </span>
+
+          {order?.subscription && (
+            <OrderSubscriptionBadge subscription={order.subscription} />
+          )}
+        </div>
       </div>
     </div>
   );
