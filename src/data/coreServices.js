@@ -20,7 +20,7 @@ export const coreServices = [
       "Windows & USB security",
     ],
     cta: "Learn More",
-    ctaHref: "/products",
+    ctaHref: "/",
     ctaClass: "bg-slate-900 hover:bg-red-600 text-white",
   },
   {
@@ -42,7 +42,7 @@ export const coreServices = [
       "Node & infrastructure protection",
     ],
     cta: "Explore Crypto Security",
-    ctaHref: "/crypto-security",
+    ctaHref: "/",
     ctaClass: "border border-teal-400 text-teal-600 hover:bg-teal-50",
   },
   {
@@ -64,7 +64,7 @@ export const coreServices = [
       "Remediation tracking",
     ],
     cta: "View Audit Services",
-    ctaHref: "/audit",
+    ctaHref: "https://audit.bitss.one",
     ctaClass: "border border-slate-300 text-slate-600 hover:bg-slate-50",
   },
 ];

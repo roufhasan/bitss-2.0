@@ -48,7 +48,8 @@ export default function ServiceCard({ service }) {
 
       {/* CTA */}
       <Link
-        href="/" // TODO: replace href with this url after creting those site or page: {service.ctaHref}
+        href={service.ctaHref}
+        target="_blank"
         className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-200 ${service.ctaClass}`}
       >
         {service.cta}
