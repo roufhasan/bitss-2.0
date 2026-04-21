@@ -573,6 +573,28 @@ export default function Navbar() {
             )}
           </div>
 
+          <div className="flex items-center gap-2 px-3 py-2.5 hover:bg-red-50 rounded-lg transition-colors md:hidden">
+            <select
+              onChange={(e) => {
+                const desktopSelect = document.querySelector(".goog-te-combo");
+                if (desktopSelect) {
+                  desktopSelect.value = e.target.value;
+                  desktopSelect.dispatchEvent(
+                    new Event("change", { bubbles: true }),
+                  );
+                }
+              }}
+              className="text-[13px] text-slate-500 border-none outline-none bg-transparent cursor-pointer"
+            >
+              <option value="">Select Language</option>
+              {langOptions.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.text}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* Mobile hamburger */}
           <button
             className="md:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors text-slate-700"
