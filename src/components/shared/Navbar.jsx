@@ -76,6 +76,19 @@ const ACADEMY_LINKS = [
   },
 ];
 
+const CRYPTO_LINKS = [
+  {
+    label: "Crypto Server Security",
+    href: "https://audit.bitss.one/",
+    icon: Server,
+  },
+  {
+    label: "Crypto Audit Reporting",
+    href: "https://audit.bitss.one/expert-crypto-security-audit",
+    icon: BookOpen,
+  },
+];
+
 const NAV_LINKS = [
   {
     label: "Academy",
@@ -94,8 +107,17 @@ const NAV_LINKS = [
       },
     ],
   },
+  {
+    label: "Crypto",
+    dropdown: [
+      {
+        group: "Crypto",
+        items: CRYPTO_LINKS,
+      },
+    ],
+  },
   { label: "Pricing", href: "/#bundles" },
-  { label: "Why BITSS?", href: "/why-bitss" },
+  { label: "Why BITSS", href: "/why-bitss" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -243,6 +265,7 @@ export default function Navbar() {
   const [academyOpen, setAcademyOpen] = useState(false);
   const [productsOpen, setProductsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [cryptoOpen, setCryptoOpen] = useState(false);
   const dropdownRef = useRef(null);
   const userMenuRef = useRef(null);
   const [langOptions, setLangOptions] = useState([]);
@@ -389,28 +412,43 @@ export default function Navbar() {
                     />
                   </button>
 
-                  {/* Dropdown panel */}
                   {openDropdown === l.label && (
-                    <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50">
+                    <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50">
+                      {/* Header banner */}
                       <Link
-                        href="/security-academy"
+                        href={
+                          l.label === "Crypto"
+                            ? "https://audit.bitss.one/"
+                            : "/security-academy"
+                        }
+                        target={l.label === "Crypto" && "_blank"}
                         onClick={() => setOpenDropdown(null)}
                         className="group flex items-center gap-3 px-4 py-4 bg-gradient-to-br from-slate-900 to-slate-800 hover:from-red-700 hover:to-red-900 transition-all duration-300"
                       >
                         <div className="w-9 h-9 rounded-xl bg-white/10 group-hover:bg-white/20 flex items-center justify-center shrink-0 transition-colors">
-                          <BookOpen size={17} className="text-white" />
+                          {l.label === "Crypto" ? (
+                            <Shield size={17} className="text-white" />
+                          ) : (
+                            <BookOpen size={17} className="text-white" />
+                          )}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
                             <span className="text-[14px] font-bold text-white">
-                              Security Academy
+                              {l.label === "Crypto"
+                                ? "Crypto Security"
+                                : "Security Academy"}
                             </span>
-                            <span className="text-[9px] font-black text-red-400 group-hover:text-white bg-white/10 px-1.5 py-0.5 rounded-md leading-none tracking-wide uppercase">
-                              FREE
-                            </span>
+                            {l.label !== "Crypto" && (
+                              <span className="text-[9px] font-black text-red-400 group-hover:text-white bg-white/10 px-1.5 py-0.5 rounded-md leading-none tracking-wide uppercase">
+                                FREE
+                              </span>
+                            )}
                           </div>
                           <p className="text-[11px] text-slate-400 group-hover:text-white/70 mt-0.5 transition-colors truncate">
-                            Free guides on every attack surface
+                            {l.label === "Crypto"
+                              ? "Blockchain & crypto infrastructure protection"
+                              : "Free guides on every attack surface"}
                           </p>
                         </div>
                         <ChevronDown
@@ -419,38 +457,36 @@ export default function Navbar() {
                         />
                       </Link>
 
+                      {/* Links grid */}
                       <div className="p-3 grid grid-cols-2 gap-1.5">
-                        {ACADEMY_LINKS.map(({ label, href, icon: Icon }, i) => {
+                        {(l.label === "Crypto"
+                          ? CRYPTO_LINKS
+                          : ACADEMY_LINKS
+                        ).map(({ label, href, icon: Icon }, i) => {
                           const colors = [
                             {
-                              bg: "bg-blue-50 hover:bg-blue-100",
-                              icon: "text-blue-500",
-                              text: "hover:text-blue-700",
-                            },
-                            {
-                              bg: "bg-orange-50 hover:bg-orange-100",
-                              icon: "text-orange-500",
-                              text: "hover:text-orange-700",
-                            },
-                            {
-                              bg: "bg-red-50 hover:bg-red-100",
-                              icon: "text-red-500",
-                              text: "hover:text-red-700",
-                            },
-                            {
-                              bg: "bg-emerald-50 hover:bg-emerald-100",
-                              icon: "text-emerald-500",
-                              text: "hover:text-emerald-700",
+                              bg: "bg-amber-50 hover:bg-amber-100",
+                              icon: "text-amber-500",
                             },
                             {
                               bg: "bg-violet-50 hover:bg-violet-100",
                               icon: "text-violet-500",
-                              text: "hover:text-violet-700",
                             },
                             {
-                              bg: "bg-amber-50 hover:bg-amber-100",
-                              icon: "text-amber-500",
-                              text: "hover:text-amber-700",
+                              bg: "bg-blue-50 hover:bg-blue-100",
+                              icon: "text-blue-500",
+                            },
+                            {
+                              bg: "bg-orange-50 hover:bg-orange-100",
+                              icon: "text-orange-500",
+                            },
+                            {
+                              bg: "bg-red-50 hover:bg-red-100",
+                              icon: "text-red-500",
+                            },
+                            {
+                              bg: "bg-emerald-50 hover:bg-emerald-100",
+                              icon: "text-emerald-500",
                             },
                           ];
                           const c = colors[i % colors.length];
@@ -458,14 +494,15 @@ export default function Navbar() {
                             <Link
                               key={label}
                               href={href}
+                              target={l.label === "Crypto" && "_blank"}
                               onClick={() => setOpenDropdown(null)}
-                              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl ${c.bg} ${c.text} transition-all duration-150 group`}
+                              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl ${c.bg} transition-all duration-150 group`}
                             >
                               <Icon
                                 size={14}
                                 className={`shrink-0 ${c.icon}`}
                               />
-                              <span className="text-[12px] font-medium text-slate-700 group-hover:text-inherit leading-tight">
+                              <span className="text-[12px] font-medium text-slate-700 group-hover:text-slate-900 leading-tight">
                                 {label}
                               </span>
                             </Link>
@@ -479,7 +516,7 @@ export default function Navbar() {
                 <Link
                   key={l.label}
                   href={l.href}
-                  className={`px-4 py-2 text-[14px] rounded-lg transition-colors font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50`}
+                  className="px-4 py-2 text-[14px] rounded-lg transition-colors font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                 >
                   {l.label}
                 </Link>
@@ -674,6 +711,48 @@ export default function Navbar() {
                     className="flex items-center gap-2 px-2 py-1.5 text-[13px] text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                   >
                     <Icon size={13} className="text-slate-400 shrink-0" />
+                    {label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <button
+              onClick={() => setCryptoOpen((o) => !o)}
+              className="w-full flex items-center justify-between px-3 py-2.5 text-[15px] text-slate-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium"
+            >
+              Crypto
+              <ChevronDown
+                size={16}
+                className={`transition-transform duration-200 ${cryptoOpen ? "rotate-180" : ""}`}
+              />
+            </button>
+
+            {cryptoOpen && (
+              <div className="ml-3 mt-1 border-l-2 border-amber-100 pl-3 flex flex-col gap-0.5">
+                <Link
+                  href="https://audit.bitss.one"
+                  target="_blank"
+                  onClick={() => setMenuOpen(false)}
+                  className="px-2 py-1.5 text-[13px] text-slate-500 hover:text-red-600 rounded-lg transition-colors"
+                >
+                  View all Crypto
+                </Link>
+                <div className="my-1 border-t border-slate-100" />
+                <p className="px-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider pb-1">
+                  Crypto Security
+                </p>
+                {CRYPTO_LINKS.map(({ label, href, icon: Icon }) => (
+                  <Link
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center gap-2 px-2 py-1.5 text-[13px] text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  >
+                    <Icon size={13} className="text-amber-500 shrink-0" />
                     {label}
                   </Link>
                 ))}

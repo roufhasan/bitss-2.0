@@ -49,7 +49,7 @@ export const coreServices = [
   {
     id: "audit",
     icon: ClipboardList,
-    title: "BITSS",
+    title: "Crypto",
     subtitle: "AUDIT REPORTING",
     subtitleColor: "text-slate-700",
     accent: "#64748b",
@@ -65,7 +65,7 @@ export const coreServices = [
       "Remediation tracking",
     ],
     cta: "View Audit Services",
-    ctaHref: "https://audit.bitss.one/audit-services",
+    ctaHref: "https://audit.bitss.one/expert-crypto-security-audit",
     ctaClass: "border border-slate-300 text-slate-600 hover:bg-slate-50",
     external: true,
   },
