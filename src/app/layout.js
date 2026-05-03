@@ -3,6 +3,7 @@ import Navbar from "@/components/shared/Navbar";
 import CountryModal from "@/components/modal/CountryModal";
 import { TanstackProvider } from "@/context/TanstackProvider";
 import "./globals.css";
+import TopBar from "@/components/shared/Topbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,6 +34,7 @@ export default function RootLayout({ children }) {
       >
         <TanstackProvider>
           <CountryModal />
+          <TopBar />
           <Navbar />
           <main className="bg-white text-slate-900 min-h-screen">
             {children}

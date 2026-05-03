@@ -36,7 +36,7 @@ export default function CountrySelector() {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 hover:border-red-300 hover:bg-red-50 transition-all duration-200 text-[13px] font-medium text-slate-600 hover:text-red-600"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-500 hover:border-red-300 hover:bg-red-50 transition-all duration-200 text-[13px] font-medium text-slate-400 hover:text-red-600"
       >
         {selectedCountry ? (
           <>

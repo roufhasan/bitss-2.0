@@ -11,6 +11,7 @@ import ProductDetailFeatures from "@/components/pages/product-detail/ProductDeta
 import ProductDetailCombo from "@/components/pages/product-detail/ProductDetailCombo";
 import ProductDetailSkeleton from "@/components/pages/product-detail/ProductDetailSkeleton";
 import { useCountry } from "@/context/CountryContext";
+import VwarCompareTable from "@/components/pages/product-detail/VwarCompareTable";
 
 // ── Error state ───────────────────────────────────────────────────────────────
 function ProductDetailError({ message }) {
@@ -103,6 +104,10 @@ export default function ProductDetailPage() {
     error,
   } = useProductDetail(productId, selectedCountry?.id);
 
+  const showCompareTable =
+    productId === "bitss-vwar-usb-flash-memory-self-installation" ||
+    productId === "bitss-vwar-usb-flash-memory";
+
   return (
     <>
       <style>{`
@@ -148,6 +153,8 @@ export default function ProductDetailPage() {
 
           {/* Combo products (only shown for bundles) */}
           <ProductDetailCombo product={product} />
+
+          {showCompareTable && <VwarCompareTable />}
 
           {/* Pricing */}
           <ProductDetailPricing

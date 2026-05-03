@@ -18,8 +18,6 @@ import {
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
-import LanguageSwitcher from "./LanguageSwitcher";
-import CountrySelector from "./CountrySelector";
 import { useCountry } from "@/context/CountryContext";
 import Image from "next/image";
 
@@ -349,7 +347,7 @@ export default function Navbar() {
         className={`fixed top-0 inset-x-0 z-100 transition-all duration-300 ${
           scrolled
             ? "bg-white/95 backdrop-blur-sm shadow-sm border-b border-slate-100"
-            : "bg-transparent"
+            : "bg-transparent md:top-8"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 h-16 flex items-center justify-between gap-4">
@@ -526,9 +524,6 @@ export default function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
-            <CountrySelector />
-            <LanguageSwitcher />
-
             {authLoading ? (
               // Skeleton while auth state loads from localStorage
               <div className="w-20 h-8 bg-slate-100 rounded-lg animate-pulse" />
