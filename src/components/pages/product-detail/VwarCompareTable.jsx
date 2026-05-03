@@ -128,7 +128,8 @@ export default function VwarCompareTable() {
             className="font-['Barlow_Condensed'] font-black text-slate-900 leading-none"
             style={{ fontSize: "clamp(28px,4vw,48px)" }}
           >
-            HOW WE <span className="text-red-600">COMPARE</span>
+            VWAR <span className="text-red-600">vs.</span> Industry Competitors
+            Feature <span className="text-red-600">Comparison</span>
           </h2>
           <p className="text-[14px] text-slate-400 mt-2">
             Feature-by-feature breakdown vs leading endpoint security vendors
