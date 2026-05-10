@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { AlertCircle, ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -11,7 +11,6 @@ import ProductDetailFeatures from "@/components/pages/product-detail/ProductDeta
 import ProductDetailCombo from "@/components/pages/product-detail/ProductDetailCombo";
 import ProductDetailSkeleton from "@/components/pages/product-detail/ProductDetailSkeleton";
 import { useCountry } from "@/context/CountryContext";
-import VwarCompareTable from "@/components/pages/product-detail/VwarCompareTable";
 
 // ── Error state ───────────────────────────────────────────────────────────────
 function ProductDetailError({ message }) {
@@ -104,9 +103,13 @@ export default function ProductDetailPage() {
     error,
   } = useProductDetail(productId, selectedCountry?.id);
 
-  const showCompareTable =
-    productId === "bitss-vwar-usb-flash-memory-self-installation" ||
-    productId === "bitss-vwar-usb-flash-memory";
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", fn, { passive: true });
+    return () => window.removeEventListener("scroll", fn);
+  }, []);
 
   return (
     <>
@@ -114,6 +117,21 @@ export default function ProductDetailPage() {
         @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=DM+Sans:wght@300;400;500;600;700&display=swap');
         body { font-family:'DM Sans',sans-serif; }
         html { scroll-behavior: smooth; }
+
+        /* Fix SunEditor image sizing */
+        #editor_description img {
+        max-width: 100% !important;
+        width: 100% !important;
+        height: auto !important;
+        border-radius: 12px;
+  }
+
+  /* Also remove the inline style SunEditor sometimes injects */
+  #editor_description figure {
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
       `}</style>
 
       {isLoading && <ProductDetailSkeleton />}
@@ -123,7 +141,9 @@ export default function ProductDetailPage() {
       {product && (
         <>
           {/* Breadcrumb */}
-          <div className="fixed top-16 inset-x-0 z-40 bg-white/90 backdrop-blur-sm border-b border-slate-100">
+          <div
+            className={`fixed inset-x-0 z-40 bg-white/90 backdrop-blur-sm border-b border-slate-100 ${scrolled ? "top-15.5" : "top-24"}`}
+          >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 h-10 flex items-center gap-2 text-[12px] text-slate-400">
               <Link href="/" className="hover:text-slate-600 transition-colors">
                 Home
@@ -153,8 +173,6 @@ export default function ProductDetailPage() {
 
           {/* Combo products (only shown for bundles) */}
           <ProductDetailCombo product={product} />
-
-          {showCompareTable && <VwarCompareTable />}
 
           {/* Pricing */}
           <ProductDetailPricing

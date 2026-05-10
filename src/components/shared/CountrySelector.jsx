@@ -36,7 +36,7 @@ export default function CountrySelector() {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-500 hover:border-red-300 hover:bg-red-50 transition-all duration-200 text-[13px] font-medium text-slate-400 hover:text-red-600"
+        className="flex items-center gap-1.5 cursor-pointer px-3 py-1 rounded-xl border border-slate-500 hover:border-red-300 hover:bg-red-50 transition-all duration-200 text-[13px] font-medium text-slate-400 hover:text-red-600"
       >
         {selectedCountry ? (
           <>
@@ -65,7 +65,7 @@ export default function CountrySelector() {
       {open && (
         <div className="absolute top-full right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50">
           {/* Header */}
-          <div className="px-4 py-3 bg-gradient-to-br from-slate-900 to-slate-800">
+          <div className="px-4 py-3 bg-linear-to-br from-slate-900 to-slate-800">
             <div className="flex items-center gap-2">
               <Globe size={13} className="text-red-400" />
               <span className="text-[12px] font-bold text-white tracking-wide uppercase">
@@ -113,7 +113,7 @@ export default function CountrySelector() {
                   resetCountry();
                   setOpen(false);
                 }}
-                className="w-full py-2 rounded-xl border border-slate-200 text-[12px] text-slate-400 hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition-all duration-200"
+                className="w-full py-2 rounded-xl border cursor-pointer border-slate-200 text-[12px] text-slate-400 hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition-all duration-200"
               >
                 Reset region
               </button>

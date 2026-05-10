@@ -38,7 +38,7 @@ export default function LanguageSwitcher() {
   .goog-te-combo {
     font-size: 13px !important;
     font-family: inherit !important;
-    color: #475569 !important;
+    color: #a4b0c0 !important;
     background: transparent !important;
     border: none !important;
     outline: none !important;
@@ -57,8 +57,8 @@ export default function LanguageSwitcher() {
   }, []);
 
   return (
-    <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg hover:bg-slate-50 transition-colors">
-      <Globe size={15} className="text-slate-500 shrink-0" />
+    <div className="flex items-center gap-1.5 group px-2 py-1 rounded-xl border border-slate-500 transition-colors">
+      <Globe size={15} className="text-slate-400 shrink-0" />
       <div id="google_translate_element" />
     </div>
   );

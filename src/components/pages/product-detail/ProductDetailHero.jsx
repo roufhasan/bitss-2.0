@@ -103,10 +103,10 @@ export default function ProductDetailHero({ product, selectedVariantId }) {
       />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_30%_40%,rgba(254,242,242,0.85)_0%,transparent_70%)]" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pt-32 pb-12 sm:pb-16">
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pt-40 pb-12 sm:pb-16">
+        <div className="flex flex-col lg:flex-row gap-10">
           {/* LEFT — Text */}
-          <div>
+          <div className="flex-1">
             {/* Badges row */}
             <div className="flex flex-wrap gap-2 mb-5">
               {product.is_combo && (
@@ -140,14 +140,15 @@ export default function ProductDetailHero({ product, selectedVariantId }) {
             {/* Rich HTML description from SunEditor */}
             {product.description && (
               <div
-                className="sun-editor-content text-slate-500 text-[15px] sm:text-[16px] leading-relaxed max-w-[500px] mb-8"
+                id="editor_description"
+                className="sun-editor-content text-slate-500 text-[15px] sm:text-[16px] leading-relaxed mb-8"
                 dangerouslySetInnerHTML={{ __html: product.description }}
               />
             )}
           </div>
 
           {/* RIGHT — Price card */}
-          <div className="flex justify-center lg:justify-end">
+          <div className="flex justify-center h-fit lg:justify-end">
             <div className="w-full max-w-sm bg-white rounded-3xl border border-slate-200 shadow-2xl shadow-slate-100/80 overflow-hidden">
               <div className="h-1 w-full bg-gradient-to-r from-red-600 via-red-500 to-amber-500" />
               <div className="p-7">
