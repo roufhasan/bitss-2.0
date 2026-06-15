@@ -10,10 +10,10 @@ import {
   ChevronRight,
   BookOpen,
   ArrowRight,
-  Zap,
   CheckCircle2,
 } from "lucide-react";
 import Link from "next/link";
+import CTA from "@/components/shared/CTA";
 
 const SECTIONS = [
   {
@@ -497,47 +497,7 @@ export default function SecurityBasicsPage() {
         </div>
       </div>
 
-      {/* ── CTA ── */}
-      <section
-        id="contact"
-        className="relative py-20 sm:py-24 bg-slate-900 overflow-hidden"
-      >
-        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-red-600 via-red-500 to-amber-500" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(220,38,38,0.15)_0%,transparent_70%)]" />
-
-        <div className="relative max-w-2xl mx-auto px-4 sm:px-6 text-center">
-          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase mb-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-            Start Today
-          </span>
-          <h2
-            className="font-['Barlow_Condensed'] font-black text-white leading-[0.9] mb-5"
-            style={{ fontSize: "clamp(44px,8vw,88px)" }}
-          >
-            READY TO
-            <br />
-            <span className="text-red-500">FIGHT BACK?</span>
-          </h2>
-          <p className="text-slate-400 text-[14px] sm:text-[16px] leading-relaxed mb-10 px-2 sm:px-0">
-            Now that you understand the fundamentals — let Bitss put them into
-            practice across every attack surface your business faces.
-          </p>
-          <div className="flex flex-col sm:flex-row flex-wrap gap-3 justify-center">
-            <a
-              href="mailto:support@bobosohomail.com"
-              className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-[14px] transition-all duration-300 shadow-lg shadow-red-900/40 hover:-translate-y-0.5 w-full sm:w-auto"
-            >
-              <Zap size={16} /> Request a Demo
-            </a>
-            <a
-              href="/security-academy"
-              className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white font-semibold text-[14px] transition-all duration-300 hover:bg-slate-800 w-full sm:w-auto"
-            >
-              Explore More Topics
-            </a>
-          </div>
-        </div>
-      </section>
+      <CTA />
     </>
   );
 }
