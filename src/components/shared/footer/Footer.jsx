@@ -19,7 +19,7 @@ export default function Footer() {
       <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-red-600 via-red-500 to-amber-500" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pt-14 pb-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-slate-200">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10">
           <FooterBrand />
           <FooterLinks />
         </div>

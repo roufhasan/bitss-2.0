@@ -17,7 +17,7 @@ export default function FooterBottom() {
   const year = new Date().getFullYear();
 
   return (
-    <div className="mt-12 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-100">
+    <div className="mt-12 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-200">
       <p className="text-[12px] text-slate-400 text-center sm:text-left">
         © {year} BFIN Company. All rights reserved · 8 rue de Dublin, 34200,
         Sète, France.
