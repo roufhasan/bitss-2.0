@@ -10,7 +10,7 @@ const SOCIALS = [
     icon: Linkedin,
     href: "https://www.linkedin.com/showcase/website-administration-database-protection-cybersecurity/?viewAsMember=true",
   },
-  { icon: Youtube, href: "/https://www.youtube.com/@BitssCyberSecurity" },
+  { icon: Youtube, href: "https://www.youtube.com/@BitssCyberSecurity" },
 ];
 
 export default function FooterBottom() {
