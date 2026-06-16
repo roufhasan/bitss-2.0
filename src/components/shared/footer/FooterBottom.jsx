@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Facebook, Instagram, Linkedin, Twitter, Youtube } from "lucide-react";
+import { Facebook, Linkedin, Youtube } from "lucide-react";
 
 const SOCIALS = [
   {
@@ -17,8 +17,8 @@ export default function FooterBottom() {
   const year = new Date().getFullYear();
 
   return (
-    <div className=" mt-12 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <p className="text-[12px] text-slate-500 text-center sm:text-left">
+    <div className="mt-12 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-100">
+      <p className="text-[12px] text-slate-400 text-center sm:text-left">
         © {year} BFIN Company. All rights reserved · 8 rue de Dublin, 34200,
         Sète, France.
       </p>
@@ -28,7 +28,7 @@ export default function FooterBottom() {
             key={href + Icon.displayName}
             href={href}
             target="_blank"
-            className="text-slate-500 hover:text-red-400 transition-colors"
+            className="text-slate-400 hover:text-red-500 transition-colors"
           >
             <Icon size={18} />
           </Link>

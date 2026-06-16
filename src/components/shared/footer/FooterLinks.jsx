@@ -6,7 +6,7 @@ import Link from "next/link";
 function LinkGroup({ title, links }) {
   return (
     <div>
-      <h6 className="font-['Barlow_Condensed'] text-[13px] font-black text-white uppercase tracking-widest mb-5">
+      <h6 className="font-['Barlow_Condensed'] text-[13px] font-black text-slate-900 uppercase tracking-widest mb-5">
         {title}
       </h6>
       <ul className="flex flex-col gap-3">
@@ -15,7 +15,7 @@ function LinkGroup({ title, links }) {
             <Link
               href={l.link}
               target={l?.target ? l?.target : "_blank"}
-              className="text-[13px] text-slate-400 hover:text-red-400 transition-colors"
+              className="text-[13px] text-slate-500 hover:text-red-500 transition-colors"
             >
               {l.name}
             </Link>
